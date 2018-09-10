@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Edelstein.Network.Codecs;
 using Edelstein.Network.Crypto;
 using Edelstein.Network.Packets;
@@ -10,7 +11,7 @@ using DotNetty.Transport.Channels.Sockets;
 
 namespace Edelstein.Network
 {
-    public class Server<T> : ChannelHandlerAdapter, IRunnable
+    public class Server<T> : ChannelHandlerAdapter
         where T : Socket
     {
         public IChannel Channel { get; private set; }
@@ -26,7 +27,7 @@ namespace Edelstein.Network
             this._handlers = handlers;
         }
 
-        public async void Run()
+        public async Task Run()
         {
             var bossGroup = new MultithreadEventLoopGroup();
             var workerGroup = new MultithreadEventLoopGroup();
@@ -76,9 +77,9 @@ namespace Edelstein.Network
             var p = (InPacket) message;
 
             if (socket == null) return;
-
+            
             var operation = p.Decode<short>();
-            var handler = this._handlers[operation];
+            var handler = this._handlers.GetValueOrDefault(operation, null);
 
             if (handler != null) handler.handle(socket);
             else Console.WriteLine("Unhandled: " + operation);
