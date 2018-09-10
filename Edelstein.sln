@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{62E36AAC-3027-4C1C-8BC8-3C3E76913573}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{99EA493C-0C72-4DDB-8DAE-31F31B0BC492}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edelstein.WvsLogin", "src\Edelstein.WvsLogin\Edelstein.WvsLogin.csproj", "{D19EFF6D-9F25-47FE-BACA-ECF4059F23F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edelstein.Network", "src\Edelstein.Network\Edelstein.Network.csproj", "{E140F776-0AB2-4B35-A43C-73C96A359348}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edelstein.Network.Tests", "test\Edelstein.Network.Tests\Edelstein.Network.Tests.csproj", "{7B602ABE-41BE-4BAB-BA0C-95456286211C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D19EFF6D-9F25-47FE-BACA-ECF4059F23F5} = {62E36AAC-3027-4C1C-8BC8-3C3E76913573}
+		{E140F776-0AB2-4B35-A43C-73C96A359348} = {62E36AAC-3027-4C1C-8BC8-3C3E76913573}
+		{7B602ABE-41BE-4BAB-BA0C-95456286211C} = {99EA493C-0C72-4DDB-8DAE-31F31B0BC492}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D19EFF6D-9F25-47FE-BACA-ECF4059F23F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D19EFF6D-9F25-47FE-BACA-ECF4059F23F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D19EFF6D-9F25-47FE-BACA-ECF4059F23F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D19EFF6D-9F25-47FE-BACA-ECF4059F23F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E140F776-0AB2-4B35-A43C-73C96A359348}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E140F776-0AB2-4B35-A43C-73C96A359348}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E140F776-0AB2-4B35-A43C-73C96A359348}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E140F776-0AB2-4B35-A43C-73C96A359348}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B602ABE-41BE-4BAB-BA0C-95456286211C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B602ABE-41BE-4BAB-BA0C-95456286211C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B602ABE-41BE-4BAB-BA0C-95456286211C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B602ABE-41BE-4BAB-BA0C-95456286211C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
