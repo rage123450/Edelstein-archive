@@ -72,12 +72,6 @@ namespace Edelstein.Network
                 );
 
                 context.Channel.GetAttribute(Socket.SocketKey).Set(newSocket);
-
-                using (var a = new OutPacket())
-                {
-                    a.Encode<short>(0x0);
-                    newSocket.SendPacket(a);
-                }
             }
         }
     }
