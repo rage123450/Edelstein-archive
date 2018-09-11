@@ -13,7 +13,11 @@ namespace Edelstein.Network.Codecs
         {
             var socket = context.Channel.GetAttribute(Socket.SocketKey).Get();
 
-            if (socket == null) return;
+            if (socket == null)
+            {
+                output.Add(new InPacket(Unpooled.CopiedBuffer(input)));
+                return;
+            }
 
             lock (socket.LockRecv)
             {
