@@ -10,8 +10,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edelstein.Network", "src\Ed
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edelstein.Network.Tests", "test\Edelstein.Network.Tests\Edelstein.Network.Tests.csproj", "{7B602ABE-41BE-4BAB-BA0C-95456286211C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shared", "shared", "{2233B498-3F05-434F-A41A-531A8BE67870}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edelstein.WvsCenter", "src\Edelstein.WvsCenter\Edelstein.WvsCenter.csproj", "{1AB37B9C-17DB-44E2-B213-22C7FE6BB254}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shared", "shared", "{00046B58-95F2-482B-A570-7F2FA850A656}"
 ProjectSection(SolutionItems) = preProject
+	shared\WvsCenter.example.json = shared\WvsCenter.example.json
 	shared\WvsLogin.example.json = shared\WvsLogin.example.json
 EndProjectSection
 EndProject
@@ -24,6 +27,7 @@ Global
 		{D19EFF6D-9F25-47FE-BACA-ECF4059F23F5} = {62E36AAC-3027-4C1C-8BC8-3C3E76913573}
 		{E140F776-0AB2-4B35-A43C-73C96A359348} = {62E36AAC-3027-4C1C-8BC8-3C3E76913573}
 		{7B602ABE-41BE-4BAB-BA0C-95456286211C} = {99EA493C-0C72-4DDB-8DAE-31F31B0BC492}
+		{1AB37B9C-17DB-44E2-B213-22C7FE6BB254} = {62E36AAC-3027-4C1C-8BC8-3C3E76913573}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{D19EFF6D-9F25-47FE-BACA-ECF4059F23F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -38,5 +42,9 @@ Global
 		{7B602ABE-41BE-4BAB-BA0C-95456286211C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B602ABE-41BE-4BAB-BA0C-95456286211C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B602ABE-41BE-4BAB-BA0C-95456286211C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AB37B9C-17DB-44E2-B213-22C7FE6BB254}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AB37B9C-17DB-44E2-B213-22C7FE6BB254}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AB37B9C-17DB-44E2-B213-22C7FE6BB254}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AB37B9C-17DB-44E2-B213-22C7FE6BB254}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
