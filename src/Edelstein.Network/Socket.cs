@@ -6,7 +6,7 @@ using DotNetty.Transport.Channels;
 
 namespace Edelstein.Network
 {
-    public class Socket : IDisposable
+    public abstract class Socket : IDisposable
     {
         public static readonly AttributeKey<Socket> SocketKey = AttributeKey<Socket>.ValueOf("Socket");
 
@@ -24,6 +24,8 @@ namespace Edelstein.Network
             this.SeqSend = seqSend;
             this.SeqRecv = seqRecv;
         }
+
+        public abstract void OnPacket(InPacket packet);
 
         public Task SendPacket(OutPacket packet)
         {

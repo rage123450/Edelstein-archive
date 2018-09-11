@@ -1,10 +1,9 @@
 using System;
-using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using Edelstein.Network.Codecs;
 using Edelstein.Network.Crypto;
 using Edelstein.Network.Packets;
-using DotNetty.Common.Concurrency;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
@@ -15,16 +14,16 @@ namespace Edelstein.Network
         where T : Socket
     {
         public IChannel Channel { get; private set; }
+        private readonly ServerOptions _options;
         private readonly ISocketFactory<T> _socketFactory;
-        private readonly Dictionary<short, IPacketHandler<T>> _handlers;
 
         public Server(
-            ISocketFactory<T> socketFactory,
-            Dictionary<short, IPacketHandler<T>> handlers
+            ServerOptions options,
+            ISocketFactory<T> socketFactory
         )
         {
+            this._options = options;
             this._socketFactory = socketFactory;
-            this._handlers = handlers;
         }
 
         public async Task Run()
@@ -44,7 +43,7 @@ namespace Edelstein.Network
                         new PacketEncoder()
                     );
                 }))
-                .BindAsync(8484);
+                .BindAsync(IPAddress.Parse(this._options.Host), this._options.Port);
         }
 
         public override void ChannelActive(IChannelHandlerContext context)
@@ -76,13 +75,7 @@ namespace Edelstein.Network
             var socket = (T) context.Channel.GetAttribute(Socket.SocketKey).Get();
             var p = (InPacket) message;
 
-            if (socket == null) return;
-            
-            var operation = p.Decode<short>();
-            var handler = this._handlers.GetValueOrDefault(operation, null);
-
-            if (handler != null) handler.handle(socket);
-            else Console.WriteLine("Unhandled: " + operation);
+            socket?.OnPacket(p);
         }
     }
 }

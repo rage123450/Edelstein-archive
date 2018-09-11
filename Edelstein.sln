@@ -10,6 +10,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edelstein.Network", "src\Ed
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edelstein.Network.Tests", "test\Edelstein.Network.Tests\Edelstein.Network.Tests.csproj", "{7B602ABE-41BE-4BAB-BA0C-95456286211C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shared", "shared", "{2233B498-3F05-434F-A41A-531A8BE67870}"
+ProjectSection(SolutionItems) = preProject
+	shared\WvsLogin.example.json = shared\WvsLogin.example.json
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
