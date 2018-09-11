@@ -7,7 +7,7 @@ namespace Edelstein.WvsLogin
     public class WvsLogin
     {
         private WvsLoginOptions _options;
-        private Client<InteropClientSocket> _interopClient;
+        private Client<CenterServerSocket> _interopClient;
         private Server<LoginClientSocket> _gameServer;
 
         public WvsLogin(WvsLoginOptions options)
@@ -17,9 +17,9 @@ namespace Edelstein.WvsLogin
 
         public async Task Run()
         {
-            this._interopClient = new Client<InteropClientSocket>(
+            this._interopClient = new Client<CenterServerSocket>(
                 this._options.InteropClientOptions,
-                new InteropClientSocketFactory()
+                new CenterServerSocketFactory()
             );
             this._gameServer = new Server<LoginClientSocket>(
                 this._options.GameServerOptions,

@@ -4,9 +4,9 @@ using Edelstein.Network.Packets;
 
 namespace Edelstein.WvsLogin.Interop
 {
-    public class InteropClientSocket : Socket
+    public class CenterServerSocket : Socket
     {
-        public InteropClientSocket(IChannel channel, uint seqSend, uint seqRecv)
+        public CenterServerSocket(IChannel channel, uint seqSend, uint seqRecv)
             : base(channel, seqSend, seqRecv)
         {
         }
