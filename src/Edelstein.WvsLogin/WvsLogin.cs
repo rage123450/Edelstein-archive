@@ -1,12 +1,14 @@
 using System.Threading.Tasks;
 using Edelstein.Network;
+using Edelstein.WvsLogin.Interop;
 
 namespace Edelstein.WvsLogin
 {
     public class WvsLogin
     {
         private WvsLoginOptions _options;
-        private Server<LoginClientSocket> _server;
+        private Client<InteropClientSocket> _interopClient;
+        private Server<LoginClientSocket> _gameServer;
 
         public WvsLogin(WvsLoginOptions options)
         {
@@ -15,13 +17,22 @@ namespace Edelstein.WvsLogin
 
         public async Task Run()
         {
-            this._server = new Server<LoginClientSocket>(
+            this._interopClient = new Client<InteropClientSocket>(
+                this._options.InteropClientOptions,
+                new InteropClientSocketFactory()
+            );
+            this._gameServer = new Server<LoginClientSocket>(
                 this._options.GameServerOptions,
                 new LoginClientSocketFactory()
             );
 
-            await this._server.Run();
-            await this._server.Channel.CloseCompletion;
+            await this._interopClient.Run();
+            await this._gameServer.Run();
+
+            await Task.WhenAll(
+                this._interopClient.Channel.CloseCompletion,
+                this._gameServer.Channel.CloseCompletion
+            );
         }
     }
 }

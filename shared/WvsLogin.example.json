@@ -1,6 +1,10 @@
 {
-    "GameServerOptions": {
-      "Host": "127.0.0.1",
-      "Port": 8484
-    }
+  "InteropClientOptions": {
+    "TargetHost": "127.0.0.1",
+    "TargetPort": 9000
+  },
+  "GameServerOptions": {
+    "Host": "127.0.0.1",
+    "Port": 8484
   }
+}
