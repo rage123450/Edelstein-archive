@@ -1,29 +1,34 @@
 using System.Threading.Tasks;
 using Edelstein.Network;
 using Edelstein.WvsLogin.Interop;
+using Lamar;
 
 namespace Edelstein.WvsLogin
 {
     public class WvsLogin
     {
-        private WvsLoginOptions _options;
-        private Client<CenterServerSocket> _interopClient;
-        private Server<LoginClientSocket> _gameServer;
+        private readonly IContainer _container;
+        private Client<Socket> _interopClient;
+        private Server<Socket> _gameServer;
 
-        public WvsLogin(WvsLoginOptions options)
+        public WvsLogin(IContainer container)
         {
-            this._options = options;
+            this._container = container;
         }
 
         public async Task Run()
         {
-            this._interopClient = new Client<CenterServerSocket>(
-                this._options.InteropClientOptions,
-                new CenterServerSocketFactory()
+            var options = this._container.GetInstance<WvsLoginOptions>();
+
+            this._interopClient = new Client<Socket>(
+                options.InteropClientOptions,
+                this._container.GetInstance(typeof(ISocketFactory<>), "Interop")
+                    as ISocketFactory<Socket>
             );
-            this._gameServer = new Server<LoginClientSocket>(
-                this._options.GameServerOptions,
-                new LoginClientSocketFactory()
+            this._gameServer = new Server<Socket>(
+                options.GameServerOptions,
+                this._container.GetInstance(typeof(ISocketFactory<>), "Game")
+                    as ISocketFactory<Socket>
             );
 
             await this._interopClient.Run();

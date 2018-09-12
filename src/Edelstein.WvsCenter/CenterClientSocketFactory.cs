@@ -5,7 +5,7 @@ namespace Edelstein.WvsCenter
 {
     public class CenterClientSocketFactory : ISocketFactory<CenterClientSocket>
     {
-        public CenterClientSocket createNew(IChannel channel, uint seqSend, uint seqRecv)
+        public CenterClientSocket Build(IChannel channel, uint seqSend, uint seqRecv)
         {
             return new CenterClientSocket(channel, seqSend, seqRecv);
         }

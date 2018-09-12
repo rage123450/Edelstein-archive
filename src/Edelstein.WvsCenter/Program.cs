@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Microsoft.Extensions.Configuration;
+﻿using Lamar;
 
 namespace Edelstein.WvsCenter
 {
@@ -7,18 +6,10 @@ namespace Edelstein.WvsCenter
     {
         static void Main(string[] args)
         {
-            var configBuilder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("WvsCenter.example.json")
-                .AddJsonFile("WvsCenter.json", true);
-            var config = configBuilder.Build();
-            var options = new WvsCenterOptions();
+            var registry = new WvsCenterRegistry();
+            var container = new Container(registry);
 
-            config.Bind(options);
-
-            var wvsCenter = new WvsCenter(options);
-
-            wvsCenter.Run().Wait();
+            container.GetInstance<WvsCenter>().Run().Wait();
         }
     }
 }

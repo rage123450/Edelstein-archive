@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Lamar;
 using Microsoft.Extensions.Configuration;
 
 namespace Edelstein.WvsLogin
@@ -7,18 +8,10 @@ namespace Edelstein.WvsLogin
     {
         static void Main(string[] args)
         {
-            var configBuilder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("WvsLogin.example.json")
-                .AddJsonFile("WvsLogin.json", true);
-            var config = configBuilder.Build();
-            var options = new WvsLoginOptions();
+            var registry = new WvsLoginRegistry();
+            var container = new Container(registry);
 
-            config.Bind(options);
-
-            var wvsLogin = new WvsLogin(options);
-
-            wvsLogin.Run().Wait();
+            container.GetInstance<WvsLogin>().Run().Wait();
         }
     }
 }

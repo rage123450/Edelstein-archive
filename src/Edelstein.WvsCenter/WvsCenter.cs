@@ -1,27 +1,29 @@
 using System.Threading.Tasks;
 using Edelstein.Network;
+using Lamar;
 
 namespace Edelstein.WvsCenter
 {
     public class WvsCenter
     {
-        private WvsCenterOptions _options;
-        private Server<CenterClientSocket> _server;
+        private readonly IContainer _container;
+        private Server<Socket> _interopServer;
 
-        public WvsCenter(WvsCenterOptions options)
+        public WvsCenter(IContainer container)
         {
-            this._options = options;
+            this._container = container;
         }
 
         public async Task Run()
         {
-            this._server = new Server<CenterClientSocket>(
-                this._options.InteropServerOptions,
-                new CenterClientSocketFactory()
+            this._interopServer = new Server<Socket>(
+                this._container.GetInstance<WvsCenterOptions>().InteropServerOptions,
+                this._container.GetInstance(typeof(ISocketFactory<>))
+                    as ISocketFactory<Socket>
             );
 
-            await this._server.Run();
-            await this._server.Channel.CloseCompletion;
+            await this._interopServer.Run();
+            await this._interopServer.Channel.CloseCompletion;
         }
     }
 }

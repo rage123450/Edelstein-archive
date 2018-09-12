@@ -49,7 +49,7 @@ namespace Edelstein.Network
         public override void ChannelActive(IChannelHandlerContext context)
         {
             var random = new Random();
-            var socket = this._socketFactory.createNew(
+            var socket = this._socketFactory.Build(
                 context.Channel,
                 (uint) random.Next(),
                 (uint) random.Next()

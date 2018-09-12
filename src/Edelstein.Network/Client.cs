@@ -65,7 +65,7 @@ namespace Edelstein.Network
 
                 if (version != AESCipher.Version) return;
                 
-                var newSocket = _socketFactory.createNew(
+                var newSocket = _socketFactory.Build(
                     context.Channel,
                     seqSend,
                     seqRecv
