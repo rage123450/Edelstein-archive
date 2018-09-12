@@ -58,8 +58,8 @@ namespace Edelstein.Network
 
                 p.Decode<string>();
 
-                var seqSend = (uint) p.Decode<int>();
-                var seqRecv = (uint) p.Decode<int>();
+                var seqSend = p.Decode<uint>();
+                var seqRecv = p.Decode<uint>();
 
                 p.Decode<byte>();
 

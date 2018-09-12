@@ -60,8 +60,8 @@ namespace Edelstein.Network
                 p.Encode<short>(0x0E);
                 p.Encode<short>(AESCipher.Version);
                 p.Encode<string>("1");
-                p.Encode<int>((int) socket.SeqRecv);
-                p.Encode<int>((int) socket.SeqSend);
+                p.Encode<uint>(socket.SeqRecv);
+                p.Encode<uint>( socket.SeqSend);
                 p.Encode<byte>(8);
 
                 socket.SendPacket(p);

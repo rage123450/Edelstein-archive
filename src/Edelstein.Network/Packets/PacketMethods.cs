@@ -14,7 +14,9 @@ namespace Edelstein.Network.Packets
             {
                 {typeof(byte), buffer => buffer.ReadByte()},
                 {typeof(short), buffer => buffer.ReadShortLE()},
+                {typeof(ushort), buffer => buffer.ReadUnsignedShortLE()},
                 {typeof(int), buffer => buffer.ReadIntLE()},
+                {typeof(uint), buffer => buffer.ReadUnsignedIntLE()},
                 {typeof(long), buffer => buffer.ReadLongLE()},
                 {typeof(string), buffer => buffer.ReadString(buffer.ReadShortLE(), StringEncoding)}
             };
@@ -24,7 +26,9 @@ namespace Edelstein.Network.Packets
             {
                 {typeof(byte), (buffer, value) => buffer.WriteByte((byte) value)},
                 {typeof(short), (buffer, value) => buffer.WriteShortLE((short) value)},
+                {typeof(ushort), (buffer, value) => buffer.WriteUnsignedShortLE((ushort) value)},
                 {typeof(int), (buffer, value) => buffer.WriteIntLE((int) value)},
+                {typeof(uint), (buffer, value) => buffer.WriteIntLE((int) value)},
                 {typeof(long), (buffer, value) => buffer.WriteLongLE((long) value)},
                 {
                     typeof(string), (buffer, value) =>
