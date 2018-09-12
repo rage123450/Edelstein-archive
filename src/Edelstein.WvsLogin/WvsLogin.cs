@@ -1,12 +1,14 @@
 using System.Threading.Tasks;
 using Edelstein.Network;
-using Edelstein.WvsLogin.Interop;
+using Edelstein.WvsLogin.Logging;
 using Lamar;
 
 namespace Edelstein.WvsLogin
 {
     public class WvsLogin
     {
+        private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
+
         private readonly IContainer _container;
         private Client<Socket> _interopClient;
         private Server<Socket> _gameServer;
@@ -32,7 +34,10 @@ namespace Edelstein.WvsLogin
             );
 
             await this._interopClient.Run();
+            Logger.Info($"Connected to WvsCenter on {this._interopClient.Channel.RemoteAddress}");
+
             await this._gameServer.Run();
+            Logger.Info($"Bounded WvsLogin on {this._gameServer.Channel.LocalAddress}");
 
             await Task.WhenAll(
                 this._interopClient.Channel.CloseCompletion,

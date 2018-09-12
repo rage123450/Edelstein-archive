@@ -1,11 +1,14 @@
 using System.Threading.Tasks;
 using Edelstein.Network;
+using Edelstein.WvsCenter.Logging;
 using Lamar;
 
 namespace Edelstein.WvsCenter
 {
     public class WvsCenter
     {
+        private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
+
         private readonly IContainer _container;
         private Server<Socket> _interopServer;
 
@@ -23,6 +26,8 @@ namespace Edelstein.WvsCenter
             );
 
             await this._interopServer.Run();
+            Logger.Info($"Bounded WvsCenter on {this._interopServer.Channel.LocalAddress}");
+
             await this._interopServer.Channel.CloseCompletion;
         }
     }

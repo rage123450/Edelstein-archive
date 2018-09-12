@@ -11,10 +11,18 @@
 
     <ItemGroup>
         <PackageReference Include="Lamar" Version="1.1.2" />
+        <PackageReference Include="LibLog" Version="5.0.2" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.1" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.1.1" />
         <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.1.1" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="3.1.2-dev-00777" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10">
+        <HintPath>..\..\..\..\.nuget\packages\serilog\2.7.1\lib\netstandard1.3\Serilog.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

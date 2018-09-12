@@ -1,6 +1,6 @@
-﻿using System.IO;
-using Lamar;
-using Microsoft.Extensions.Configuration;
+﻿using Lamar;
+using Serilog;
+using Serilog.Sinks.SystemConsole.Themes;
 
 namespace Edelstein.WvsLogin
 {
@@ -8,6 +8,10 @@ namespace Edelstein.WvsLogin
     {
         static void Main(string[] args)
         {
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Verbose()
+                .WriteTo.Console(theme: AnsiConsoleTheme.Code)
+                .CreateLogger();
             var registry = new WvsLoginRegistry();
             var container = new Container(registry);
 
