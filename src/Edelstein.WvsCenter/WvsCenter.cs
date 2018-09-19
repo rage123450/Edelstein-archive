@@ -10,7 +10,7 @@ namespace Edelstein.WvsCenter
         private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
 
         private readonly IContainer _container;
-        private Server<Socket> _interopServer;
+        public Server<CenterClientSocket> InteropServer;
 
         public WvsCenter(IContainer container)
         {
@@ -19,16 +19,15 @@ namespace Edelstein.WvsCenter
 
         public async Task Run()
         {
-            this._interopServer = new Server<Socket>(
+            this.InteropServer = new Server<CenterClientSocket>(
                 this._container.GetInstance<WvsCenterOptions>().InteropServerOptions,
-                this._container.GetInstance(typeof(ISocketFactory<>))
-                    as ISocketFactory<Socket>
+                this._container.GetInstance<CenterClientSocketFactory>()
             );
 
-            await this._interopServer.Run();
-            Logger.Info($"Bounded WvsCenter on {this._interopServer.Channel.LocalAddress}");
+            await this.InteropServer.Run();
+            Logger.Info($"Bounded WvsCenter on {this.InteropServer.Channel.LocalAddress}");
 
-            await this._interopServer.Channel.CloseCompletion;
+            await this.InteropServer.Channel.CloseCompletion;
         }
     }
 }

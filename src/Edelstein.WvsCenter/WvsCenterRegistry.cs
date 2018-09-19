@@ -21,8 +21,9 @@ namespace Edelstein.WvsCenter
                 config.Bind(options);
                 return options;
             }).Singleton();
-            For(typeof(ISocketFactory<>)).Use(typeof(CenterClientSocketFactory));
-            
+
+            For<CenterClientSocketFactory>().Use<CenterClientSocketFactory>();
+
             For<WvsCenter>().Use<WvsCenter>().Singleton();
         }
     }
