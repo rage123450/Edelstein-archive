@@ -1,4 +1,5 @@
 using Edelstein.Database.Entities;
+using Edelstein.Database.Entities.Inventory;
 using Microsoft.EntityFrameworkCore;
 
 namespace Edelstein.Database
@@ -11,6 +12,12 @@ namespace Edelstein.Database
         public DataContext(DbContextOptions<DataContext> options)
             : base(options)
         {
+        }
+        
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ItemSlotEquip>().HasBaseType<ItemSlot>();
+            modelBuilder.Entity<ItemSlotBundle>().HasBaseType<ItemSlot>();
         }
     }
 }
