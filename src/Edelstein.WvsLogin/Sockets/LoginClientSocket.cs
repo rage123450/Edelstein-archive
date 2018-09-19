@@ -140,11 +140,11 @@ namespace Edelstein.WvsLogin.Sockets
                         p.Encode<int>(account.ID); // pBlockReason
                         p.Encode<byte>(0); // pBlockReasonIter
                         p.Encode<byte>(0); // nGradeCode
-                        p.Encode<short>(0); // v40 unk
+                        p.Encode<short>(0); // nSubGradeCode
                         p.Encode<byte>(0); // nCountryID
                         p.Encode<string>(account.Username); // sNexonClubID
                         p.Encode<byte>(0); // nPurchaseEXP
-                        p.Encode<byte>(0); // sMsg2
+                        p.Encode<byte>(0); // ChatUnblockReason
                         p.Encode<long>(0); // dtChatUnblockDate
                         p.Encode<long>(0); // dtRegisterDate
                         p.Encode<int>(4); // nNumOfCharacter
