@@ -54,7 +54,7 @@ namespace Edelstein.Network
                 p.Encode<int>((int) socket.SeqSend);
                 p.Encode<byte>(8);
 
-                context.WriteAndFlushAsync(p);
+                context.Channel.WriteAndFlushAsync(p);
             }
 
             context.Channel.GetAttribute(Socket.SocketKey).Set(socket);
