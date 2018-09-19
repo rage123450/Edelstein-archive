@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Edelstein.Database.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20180919114209_InitialMigration")]
+    [Migration("20180919124129_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,48 +40,48 @@ namespace Edelstein.Database.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<short>("AP");
+
                     b.Property<int?>("AccountId");
 
-                    b.Property<short>("Ap");
+                    b.Property<short>("DEX");
 
-                    b.Property<short>("Dex");
-
-                    b.Property<int>("Exp");
+                    b.Property<int>("EXP");
 
                     b.Property<int>("Face");
 
                     b.Property<byte>("Gender");
 
+                    b.Property<int>("HP");
+
                     b.Property<int>("Hair");
 
-                    b.Property<int>("Hp");
-
-                    b.Property<short>("Int");
+                    b.Property<short>("INT");
 
                     b.Property<short>("Job");
 
+                    b.Property<short>("LUK");
+
                     b.Property<byte>("Level");
 
-                    b.Property<short>("Luk");
+                    b.Property<int>("MP");
 
-                    b.Property<int>("MaxHp");
+                    b.Property<int>("MaxHP");
 
-                    b.Property<int>("MaxMp");
+                    b.Property<int>("MaxMP");
 
                     b.Property<int>("Money");
-
-                    b.Property<int>("Mp");
 
                     b.Property<string>("Name")
                         .HasMaxLength(13);
 
-                    b.Property<short>("Pop");
+                    b.Property<short>("POP");
+
+                    b.Property<short>("SP");
+
+                    b.Property<short>("STR");
 
                     b.Property<byte>("Skin");
-
-                    b.Property<short>("Sp");
-
-                    b.Property<short>("Str");
 
                     b.HasKey("Id");
 

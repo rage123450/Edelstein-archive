@@ -20,21 +20,21 @@ namespace Edelstein.Database.Entities
         
         public byte Level { get; set; }
         public short Job { get; set; }
-        public short Str { get; set; }
-        public short Dex { get; set; }
-        public short Int { get; set; }
-        public short Luk { get; set; }
+        public short STR { get; set; }
+        public short DEX { get; set; }
+        public short INT { get; set; }
+        public short LUK { get; set; }
         
-        public int Hp { get; set; }
-        public int MaxHp { get; set; }
-        public int Mp { get; set; }
-        public int MaxMp { get; set; }
+        public int HP { get; set; }
+        public int MaxHP { get; set; }
+        public int MP { get; set; }
+        public int MaxMP { get; set; }
         
-        public short Ap { get; set; }
-        public short Sp { get; set; }
+        public short AP { get; set; }
+        public short SP { get; set; }
         
-        public int Exp { get; set; }
-        public short Pop { get; set; }
+        public int EXP { get; set; }
+        public short POP { get; set; }
         
         public int Money { get; set; }
     }
