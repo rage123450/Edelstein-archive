@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Edelstein.Network.Packets;
 using DotNetty.Common.Utilities;
 using DotNetty.Transport.Channels;
@@ -26,9 +27,8 @@ namespace Edelstein.Network
 
         public abstract void OnPacket(InPacket packet);
 
-        public void Dispose()
-        {
-            this._channel.CloseAsync();
-        }
+        public Task SendPacket(OutPacket packet) => this._channel.WriteAndFlushAsync(packet);
+
+        public void Dispose() => this._channel.CloseAsync();
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using DotNetty.Buffers;
 
 namespace Edelstein.Network.Packets
@@ -6,6 +7,11 @@ namespace Edelstein.Network.Packets
     {
         public OutPacket()
         {
+        }
+
+        public OutPacket(Enum operation)
+        {
+            Encode<short>(Convert.ToInt16(operation));
         }
 
         public OutPacket(IByteBuffer buffer) : base(buffer)

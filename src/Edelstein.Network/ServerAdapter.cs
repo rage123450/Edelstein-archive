@@ -11,7 +11,7 @@ namespace Edelstein.Network
         where T : Socket
     {
         private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
-        
+
         private readonly Server<T> _server;
         private readonly ISocketFactory<T> _socketFactory;
 
@@ -54,19 +54,19 @@ namespace Edelstein.Network
                 p.Encode<int>((int) socket.SeqSend);
                 p.Encode<byte>(8);
 
-                context.Channel.WriteAndFlushAsync(p);
+                socket.SendPacket(p);
             }
 
             context.Channel.GetAttribute(Socket.SocketKey).Set(socket);
             group?.Add(context.Channel);
-            
+
             Logger.Debug($"Accepted connection from {context.Channel.RemoteAddress}");
         }
 
         public override void ChannelInactive(IChannelHandlerContext context)
         {
             base.ChannelInactive(context);
-            
+
             Logger.Debug($"Released connection from {context.Channel.RemoteAddress}");
         }
 

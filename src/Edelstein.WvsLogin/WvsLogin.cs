@@ -40,9 +40,8 @@ namespace Edelstein.WvsLogin
             await this.GameServer.Run();
             Logger.Info($"Bounded WvsLogin on {this.GameServer.Channel.LocalAddress}");
 
-            using (var p = new OutPacket())
+            using (var p = new OutPacket(InteropRecvOperations.RegisterServer))
             {
-                p.Encode<short>((short) InteropRecvOperations.RegisterServer);
                 p.Encode<byte>((byte) ServerType.Login);
                 p.Encode<string>(options.ServerName);
 

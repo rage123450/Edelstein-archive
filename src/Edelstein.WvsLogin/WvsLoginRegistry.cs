@@ -1,5 +1,4 @@
 using System.IO;
-using Edelstein.Network;
 using Edelstein.WvsLogin.Sockets;
 using Lamar;
 using Microsoft.Extensions.Configuration;

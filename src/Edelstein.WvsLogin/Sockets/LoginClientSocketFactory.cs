@@ -1,21 +1,21 @@
-using System;
 using DotNetty.Transport.Channels;
 using Edelstein.Network;
+using Lamar;
 
 namespace Edelstein.WvsLogin.Sockets
 {
     public class LoginClientSocketFactory : ISocketFactory<LoginClientSocket>
     {
-        private readonly WvsLogin _wvsLogin;
+        private readonly IContainer _container;
 
-        public LoginClientSocketFactory(WvsLogin wvsLogin)
+        public LoginClientSocketFactory(IContainer container)
         {
-            this._wvsLogin = wvsLogin;
+            this._container = container;
         }
 
         public LoginClientSocket Build(IChannel channel, uint seqSend, uint seqRecv)
         {
-            return new LoginClientSocket(this._wvsLogin, channel, seqSend, seqRecv);
+            return new LoginClientSocket(this._container, channel, seqSend, seqRecv);
         }
     }
 }

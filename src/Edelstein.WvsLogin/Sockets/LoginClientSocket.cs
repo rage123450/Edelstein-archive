@@ -3,6 +3,7 @@ using DotNetty.Transport.Channels;
 using Edelstein.Network;
 using Edelstein.Network.Packets;
 using Edelstein.WvsLogin.Logging;
+using Lamar;
 
 namespace Edelstein.WvsLogin.Sockets
 {
@@ -11,10 +12,10 @@ namespace Edelstein.WvsLogin.Sockets
         private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
         private WvsLogin _wvsLogin;
 
-        public LoginClientSocket(WvsLogin wvsLogin, IChannel channel, uint seqSend, uint seqRecv)
+        public LoginClientSocket(IContainer container, IChannel channel, uint seqSend, uint seqRecv)
             : base(channel, seqSend, seqRecv)
         {
-            this._wvsLogin = wvsLogin;
+            this._wvsLogin = container.GetInstance<WvsLogin>();
         }
 
         public override void OnPacket(InPacket packet)
