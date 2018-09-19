@@ -1,6 +1,8 @@
 # Edelstein
 A MapleStory Global v.95 server emulator written in C#.
 
+**btw, this project is no where near complete.**
+
 ## ⭐️ Acknowledgements
 * [Rebirth](https://github.com/RajanGrewal/Rebirth) - lot's of referencing from here.
 * [Destiny](https://github.com/Fraysa/Destiny) - even more referencing from here.
