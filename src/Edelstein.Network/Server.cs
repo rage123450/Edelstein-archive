@@ -1,11 +1,13 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using DotNetty.Common.Concurrency;
 using Edelstein.Network.Codecs;
 using Edelstein.Network.Crypto;
 using Edelstein.Network.Packets;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
+using DotNetty.Transport.Channels.Groups;
 using DotNetty.Transport.Channels.Sockets;
 
 namespace Edelstein.Network
@@ -14,6 +16,7 @@ namespace Edelstein.Network
         where T : Socket
     {
         public IChannel Channel { get; private set; }
+        public IChannelGroup ChannelGroup { get; private set; }
         private readonly ServerOptions _options;
         private readonly ISocketFactory<T> _socketFactory;
 
@@ -48,6 +51,17 @@ namespace Edelstein.Network
 
         public override void ChannelActive(IChannelHandlerContext context)
         {
+            var group = this.ChannelGroup;
+
+            if (group == null)
+            {
+                lock (this)
+                {
+                    if (this.ChannelGroup == null)
+                        group = this.ChannelGroup = new DefaultChannelGroup(context.Executor);
+                }
+            }
+
             var random = new Random();
             var socket = this._socketFactory.Build(
                 context.Channel,
@@ -61,13 +75,14 @@ namespace Edelstein.Network
                 p.Encode<short>(AESCipher.Version);
                 p.Encode<string>("1");
                 p.Encode<uint>(socket.SeqRecv);
-                p.Encode<uint>( socket.SeqSend);
+                p.Encode<uint>(socket.SeqSend);
                 p.Encode<byte>(8);
 
-                socket.SendPacket(p);
+                context.WriteAndFlushAsync(p);
             }
 
             context.Channel.GetAttribute(Socket.SocketKey).Set(socket);
+            group?.Add(context.Channel);
         }
 
         public override void ChannelRead(IChannelHandlerContext context, object message)

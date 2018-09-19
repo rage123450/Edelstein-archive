@@ -27,11 +27,6 @@ namespace Edelstein.Network
 
         public abstract void OnPacket(InPacket packet);
 
-        public Task SendPacket(OutPacket packet)
-        {
-            return this._channel.WriteAndFlushAsync(packet);
-        }
-
         public void Dispose()
         {
             this._channel.CloseAsync();
