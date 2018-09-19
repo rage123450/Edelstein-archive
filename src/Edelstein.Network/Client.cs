@@ -4,12 +4,10 @@ using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 using Edelstein.Network.Codecs;
-using Edelstein.Network.Crypto;
-using Edelstein.Network.Packets;
 
 namespace Edelstein.Network
 {
-    public class Client<T> : ChannelHandlerAdapter
+    public class Client<T>
         where T : Socket
     {
         public IChannel Channel { get; private set; }
@@ -36,42 +34,11 @@ namespace Edelstein.Network
                 {
                     ch.Pipeline.AddLast(
                         new PacketDecoder(),
-                        this,
+                        new ClientAdapter<T>(this, this._socketFactory),
                         new PacketEncoder()
                     );
                 }))
                 .ConnectAsync(IPAddress.Parse(this._options.TargetHost), this._options.TargetPort);
-        }
-
-        public override void ChannelRead(IChannelHandlerContext context, object message)
-        {
-            var socket = (T) context.Channel.GetAttribute(Socket.SocketKey).Get();
-            var p = (InPacket) message;
-
-            if (socket != null) socket.OnPacket(p);
-            else
-            {
-                p.Decode<short>();
-
-                var version = p.Decode<short>();
-
-                p.Decode<string>();
-
-                var seqSend = p.Decode<uint>();
-                var seqRecv = p.Decode<uint>();
-
-                p.Decode<byte>();
-
-                if (version != AESCipher.Version) return;
-                
-                var newSocket = _socketFactory.Build(
-                    context.Channel,
-                    seqSend,
-                    seqRecv
-                );
-
-                context.Channel.GetAttribute(Socket.SocketKey).Set(newSocket);
-            }
         }
     }
 }
