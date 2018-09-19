@@ -1,7 +1,6 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
-using DotNetty.Common.Concurrency;
 using Edelstein.Network.Codecs;
 using Edelstein.Network.Crypto;
 using Edelstein.Network.Packets;
@@ -74,11 +73,11 @@ namespace Edelstein.Network
                 p.Encode<short>(0x0E);
                 p.Encode<short>(AESCipher.Version);
                 p.Encode<string>("1");
-                p.Encode<uint>(socket.SeqRecv);
-                p.Encode<uint>(socket.SeqSend);
+                p.Encode<int>((int) socket.SeqRecv);
+                p.Encode<int>((int) socket.SeqSend);
                 p.Encode<byte>(8);
 
-                context.WriteAndFlushAsync(p);
+                context.Channel.WriteAndFlushAsync(p);
             }
 
             context.Channel.GetAttribute(Socket.SocketKey).Set(socket);

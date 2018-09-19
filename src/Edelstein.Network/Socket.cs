@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using Edelstein.Network.Packets;
 using DotNetty.Common.Utilities;
 using DotNetty.Transport.Channels;

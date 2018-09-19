@@ -1,6 +1,6 @@
 using System.IO;
 using Edelstein.Network;
-using Edelstein.WvsLogin.Interop;
+using Edelstein.WvsLogin.Sockets;
 using Lamar;
 using Microsoft.Extensions.Configuration;
 
@@ -22,9 +22,9 @@ namespace Edelstein.WvsLogin
                 config.Bind(options);
                 return options;
             }).Singleton();
-            
-            For(typeof(ISocketFactory<>)).Use(typeof(CenterServerSocketFactory)).Named("Interop");
-            For(typeof(ISocketFactory<>)).Use(typeof(LoginClientSocketFactory)).Named("Game");
+
+            For<CenterServerSocketFactory>().Use<CenterServerSocketFactory>();
+            For<LoginClientSocketFactory>().Use<LoginClientSocketFactory>();
             
             For<WvsLogin>().Use<WvsLogin>().Singleton();
         }

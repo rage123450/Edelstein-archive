@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Edelstein.Network;
 using Edelstein.WvsLogin.Logging;
+using Edelstein.WvsLogin.Sockets;
 using Lamar;
 
 namespace Edelstein.WvsLogin
@@ -10,8 +11,8 @@ namespace Edelstein.WvsLogin
         private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
 
         private readonly IContainer _container;
-        private Client<Socket> _interopClient;
-        private Server<Socket> _gameServer;
+        public Client<CenterServerSocket> InteropClient;
+        public Server<LoginClientSocket> GameServer;
 
         public WvsLogin(IContainer container)
         {
@@ -22,26 +23,24 @@ namespace Edelstein.WvsLogin
         {
             var options = this._container.GetInstance<WvsLoginOptions>();
 
-            this._interopClient = new Client<Socket>(
+            this.InteropClient = new Client<CenterServerSocket>(
                 options.InteropClientOptions,
-                this._container.GetInstance(typeof(ISocketFactory<>), "Interop")
-                    as ISocketFactory<Socket>
+                this._container.GetInstance<CenterServerSocketFactory>()
             );
-            this._gameServer = new Server<Socket>(
+            this.GameServer = new Server<LoginClientSocket>(
                 options.GameServerOptions,
-                this._container.GetInstance(typeof(ISocketFactory<>), "Game")
-                    as ISocketFactory<Socket>
+                this._container.GetInstance<LoginClientSocketFactory>()
             );
 
-            await this._interopClient.Run();
-            Logger.Info($"Connected to WvsCenter on {this._interopClient.Channel.RemoteAddress}");
+            await this.InteropClient.Run();
+            Logger.Info($"Connected to WvsCenter on {this.InteropClient.Channel.RemoteAddress}");
 
-            await this._gameServer.Run();
-            Logger.Info($"Bounded WvsLogin on {this._gameServer.Channel.LocalAddress}");
+            await this.GameServer.Run();
+            Logger.Info($"Bounded WvsLogin on {this.GameServer.Channel.LocalAddress}");
 
             await Task.WhenAll(
-                this._interopClient.Channel.CloseCompletion,
-                this._gameServer.Channel.CloseCompletion
+                this.InteropClient.Channel.CloseCompletion,
+                this.GameServer.Channel.CloseCompletion
             );
         }
     }

@@ -1,7 +1,7 @@
 using DotNetty.Transport.Channels;
 using Edelstein.Network;
 
-namespace Edelstein.WvsLogin.Interop
+namespace Edelstein.WvsLogin.Sockets
 {
     public class CenterServerSocketFactory : ISocketFactory<CenterServerSocket>
     {
