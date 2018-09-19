@@ -1,2 +1,2 @@
 # Edelstein
-a server emulator for maplestory global v.95
+A MapleStory Global v.95 server emulator written in C#.
