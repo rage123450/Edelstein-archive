@@ -49,6 +49,14 @@ namespace Edelstein.Network
                     seqRecv
                 );
 
+                lock (this._client)
+                {
+                    if (this._client.Socket == null)
+                    {
+                        this._client.Socket = newSocket;
+                    }
+                }
+
                 context.Channel.GetAttribute(Socket.SocketKey).Set(newSocket);
             }
         }

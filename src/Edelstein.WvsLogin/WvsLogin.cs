@@ -45,7 +45,7 @@ namespace Edelstein.WvsLogin
                 p.Encode<byte>((byte) ServerType.Login);
                 p.Encode<string>(options.ServerName);
 
-                await this.InteropClient.Channel.WriteAndFlushAsync(p);
+                await this.InteropClient.Socket.SendPacket(p);
             }
         }
     }

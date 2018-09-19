@@ -12,6 +12,7 @@ namespace Edelstein.Network
     {
         public IEventLoopGroup WorkerGroup { get; set; }
         public IChannel Channel { get; private set; }
+        public T Socket { get; set; }
         private readonly ClientOptions _options;
         private readonly ISocketFactory<T> _socketFactory;
 
