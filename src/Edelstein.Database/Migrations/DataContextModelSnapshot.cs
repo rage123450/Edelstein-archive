@@ -19,7 +19,7 @@ namespace Edelstein.Database.Migrations
 
             modelBuilder.Entity("Edelstein.Database.Entities.Account", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Password")
@@ -28,19 +28,19 @@ namespace Edelstein.Database.Migrations
                     b.Property<string>("Username")
                         .HasMaxLength(13);
 
-                    b.HasKey("Id");
+                    b.HasKey("ID");
 
                     b.ToTable("Accounts");
                 });
 
             modelBuilder.Entity("Edelstein.Database.Entities.Character", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd();
 
                     b.Property<short>("AP");
 
-                    b.Property<int?>("AccountId");
+                    b.Property<int?>("AccountID");
 
                     b.Property<short>("DEX");
 
@@ -81,9 +81,9 @@ namespace Edelstein.Database.Migrations
 
                     b.Property<byte>("Skin");
 
-                    b.HasKey("Id");
+                    b.HasKey("ID");
 
-                    b.HasIndex("AccountId");
+                    b.HasIndex("AccountID");
 
                     b.ToTable("Characters");
                 });
@@ -92,7 +92,7 @@ namespace Edelstein.Database.Migrations
                 {
                     b.HasOne("Edelstein.Database.Entities.Account", "Account")
                         .WithMany("Characters")
-                        .HasForeignKey("AccountId");
+                        .HasForeignKey("AccountID");
                 });
 #pragma warning restore 612, 618
         }

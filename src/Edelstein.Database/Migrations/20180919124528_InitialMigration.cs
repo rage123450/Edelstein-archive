@@ -11,23 +11,23 @@ namespace Edelstein.Database.Migrations
                 name: "Accounts",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
+                    ID = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Username = table.Column<string>(maxLength: 13, nullable: true),
                     Password = table.Column<string>(maxLength: 128, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Accounts", x => x.Id);
+                    table.PrimaryKey("PK_Accounts", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Characters",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
+                    ID = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    AccountId = table.Column<int>(nullable: true),
+                    AccountID = table.Column<int>(nullable: true),
                     Name = table.Column<string>(maxLength: 13, nullable: true),
                     Gender = table.Column<byte>(nullable: false),
                     Skin = table.Column<byte>(nullable: false),
@@ -51,19 +51,19 @@ namespace Edelstein.Database.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Characters", x => x.Id);
+                    table.PrimaryKey("PK_Characters", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_Characters_Accounts_AccountId",
-                        column: x => x.AccountId,
+                        name: "FK_Characters_Accounts_AccountID",
+                        column: x => x.AccountID,
                         principalTable: "Accounts",
-                        principalColumn: "Id",
+                        principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Characters_AccountId",
+                name: "IX_Characters_AccountID",
                 table: "Characters",
-                column: "AccountId");
+                column: "AccountID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
