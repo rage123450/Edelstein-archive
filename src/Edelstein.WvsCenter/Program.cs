@@ -14,8 +14,10 @@ namespace Edelstein.WvsCenter
                 .CreateLogger();
             var registry = new WvsCenterRegistry();
             var container = new Container(registry);
+            var wvsCenter = container.GetInstance<WvsCenter>();
 
-            container.GetInstance<WvsCenter>().Run().Wait();
+            wvsCenter.Run().Wait();
+            wvsCenter.InteropServer.Channel.CloseCompletion.Wait();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Lamar;
+﻿using System.Threading.Tasks;
+using Lamar;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 
@@ -14,8 +15,19 @@ namespace Edelstein.WvsLogin
                 .CreateLogger();
             var registry = new WvsLoginRegistry();
             var container = new Container(registry);
+            var wvsLogin = container.GetInstance<WvsLogin>();
 
-            container.GetInstance<WvsLogin>().Run().Wait();
+            wvsLogin.Run().Wait();
+
+            wvsLogin.InteropClient.Channel.CloseCompletion.ContinueWith(t =>
+            {
+                wvsLogin.GameServer.Channel.CloseAsync();
+            });
+
+            Task.WhenAll(
+                wvsLogin.InteropClient.Channel.CloseCompletion,
+                wvsLogin.GameServer.Channel.CloseCompletion
+            ).Wait();
         }
     }
 }

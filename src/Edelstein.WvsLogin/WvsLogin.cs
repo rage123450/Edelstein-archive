@@ -37,11 +37,6 @@ namespace Edelstein.WvsLogin
 
             await this.GameServer.Run();
             Logger.Info($"Bounded WvsLogin on {this.GameServer.Channel.LocalAddress}");
-
-            await Task.WhenAll(
-                this.InteropClient.Channel.CloseCompletion,
-                this.GameServer.Channel.CloseCompletion
-            );
         }
     }
 }

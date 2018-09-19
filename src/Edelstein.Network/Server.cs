@@ -11,8 +11,11 @@ namespace Edelstein.Network
     public class Server<T> : ChannelHandlerAdapter
         where T : Socket
     {
+        public IEventLoopGroup bossGroup { get; set; }
+        public IEventLoopGroup workerGroup { get; set; }
         public IChannel Channel { get; private set; }
         public IChannelGroup ChannelGroup { get; set; }
+        
         private readonly ServerOptions _options;
         private readonly ISocketFactory<T> _socketFactory;
 
@@ -27,8 +30,8 @@ namespace Edelstein.Network
 
         public async Task Run()
         {
-            var bossGroup = new MultithreadEventLoopGroup();
-            var workerGroup = new MultithreadEventLoopGroup();
+            bossGroup = new MultithreadEventLoopGroup();
+            workerGroup = new MultithreadEventLoopGroup();
 
             this.Channel = await new ServerBootstrap()
                 .Group(bossGroup, workerGroup)

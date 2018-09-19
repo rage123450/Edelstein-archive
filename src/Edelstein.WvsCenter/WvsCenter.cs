@@ -26,8 +26,6 @@ namespace Edelstein.WvsCenter
 
             await this.InteropServer.Run();
             Logger.Info($"Bounded WvsCenter on {this.InteropServer.Channel.LocalAddress}");
-
-            await this.InteropServer.Channel.CloseCompletion;
         }
     }
 }

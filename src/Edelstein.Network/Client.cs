@@ -10,6 +10,7 @@ namespace Edelstein.Network
     public class Client<T>
         where T : Socket
     {
+        public IEventLoopGroup WorkerGroup { get; set; }
         public IChannel Channel { get; private set; }
         private readonly ClientOptions _options;
         private readonly ISocketFactory<T> _socketFactory;
@@ -25,9 +26,9 @@ namespace Edelstein.Network
 
         public async Task Run()
         {
-            var worker = new MultithreadEventLoopGroup();
+            WorkerGroup = new MultithreadEventLoopGroup();
             this.Channel = await new Bootstrap()
-                .Group(worker)
+                .Group(WorkerGroup)
                 .Channel<TcpSocketChannel>()
                 .Option(ChannelOption.TcpNodelay, true)
                 .Handler(new ActionChannelInitializer<IChannel>(ch =>
