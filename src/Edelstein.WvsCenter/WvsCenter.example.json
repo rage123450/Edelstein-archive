@@ -1,6 +1,6 @@
 {
     "InteropServerOptions": {
-      "Host": "192.168.2.250",
+      "Host": "127.0.0.1",
       "Port": 9000
     }
-  }
+}
