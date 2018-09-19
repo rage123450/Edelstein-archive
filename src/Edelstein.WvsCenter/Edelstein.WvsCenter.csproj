@@ -19,4 +19,10 @@
         <PackageReference Include="Serilog.Sinks.Console" Version="3.1.2-dev-00777" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Content Include="*.example.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
 </Project>

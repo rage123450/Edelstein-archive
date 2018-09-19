@@ -20,9 +20,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10">
-        <HintPath>..\..\..\..\.nuget\packages\serilog\2.7.1\lib\netstandard1.3\Serilog.dll</HintPath>
-      </Reference>
+        <Content Include="*.example.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
 </Project>
