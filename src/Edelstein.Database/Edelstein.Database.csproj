@@ -17,4 +17,10 @@
         <Folder Include="Entities\Social" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Content Include="*.example.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
 </Project>
