@@ -1,4 +1,4 @@
-namespace Edelstein.WvsLogin.Sockets
+namespace Edelstein.WvsLogin.Packets
 {
     public enum LoginSendOperations
     {

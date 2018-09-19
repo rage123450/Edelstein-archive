@@ -7,5 +7,6 @@ namespace Edelstein.WvsLogin
         public string ServerName { get; set; }
         public ClientOptions InteropClientOptions { get; set; }
         public ServerOptions GameServerOptions { get; set; }
+        public string ConnectionString { get; set; }
     }
 }
