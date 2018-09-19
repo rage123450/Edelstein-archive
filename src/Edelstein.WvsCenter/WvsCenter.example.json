@@ -1,6 +1,7 @@
 {
-    "InteropServerOptions": {
-      "Host": "127.0.0.1",
-      "Port": 9000
-    }
+  "InteropServerOptions": {
+    "Host": "127.0.0.1",
+    "Port": 9000
+  },
+  "ConnectionString": "Server=localhost;Uid=root;Database=Edelstein;"
 }
