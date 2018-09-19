@@ -1,5 +1,7 @@
 using System.Threading.Tasks;
 using Edelstein.Network;
+using Edelstein.Network.Interop;
+using Edelstein.Network.Packets;
 using Edelstein.WvsLogin.Logging;
 using Edelstein.WvsLogin.Sockets;
 using Lamar;
@@ -37,6 +39,15 @@ namespace Edelstein.WvsLogin
 
             await this.GameServer.Run();
             Logger.Info($"Bounded WvsLogin on {this.GameServer.Channel.LocalAddress}");
+
+            using (var p = new OutPacket())
+            {
+                p.Encode<short>((short) InteropRecvOperations.RegisterServer);
+                p.Encode<byte>((byte) ServerType.Login);
+                p.Encode<string>(options.ServerName);
+
+                await this.InteropClient.Channel.WriteAndFlushAsync(p);
+            }
         }
     }
 }

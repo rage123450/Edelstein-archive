@@ -2,8 +2,9 @@ namespace Edelstein.Network.Interop
 {
     public enum ServerType
     {
-        LOGIN = 0x1,
-        GAME = 0x2,
-        SHOP = 0x3
+        Undefined = 0x0,
+        Login = 0x1,
+        Game = 0x2,
+        Shop = 0x3
     }
 }
