@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using DotNetty.Transport.Channels;
 using Edelstein.Database;
+using Edelstein.Database.Entities;
 using Edelstein.Network;
 using Edelstein.Network.Packets;
 using Edelstein.WvsLogin.Logging;
@@ -15,6 +16,8 @@ namespace Edelstein.WvsLogin.Sockets
         private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
         private IContainer _container;
         private WvsLogin _wvsLogin;
+
+        private Account _account;
 
         public LoginClientSocket(IContainer container, IChannel channel, uint seqSend, uint seqRecv)
             : base(channel, seqSend, seqRecv)
@@ -40,8 +43,10 @@ namespace Edelstein.WvsLogin.Sockets
                     this.OnWorldInfoRequest(packet);
                     break;
                 case LoginRecvOperations.SelectWorld:
+                    this.OnSelectWorld(packet);
                     break;
                 case LoginRecvOperations.CheckUserLimit:
+                    this.OnCheckUserLimit(packet);
                     break;
                 case LoginRecvOperations.ConfirmEULA:
                     break;
@@ -144,6 +149,8 @@ namespace Edelstein.WvsLogin.Sockets
 
                     if (result == 0x0)
                     {
+                        this._account = account;
+
                         p.Encode<int>(account.ID); // pBlockReason
                         p.Encode<byte>(0); // pBlockReasonIter
                         p.Encode<byte>(0); // nGradeCode
@@ -168,11 +175,13 @@ namespace Edelstein.WvsLogin.Sockets
 
         private void OnWorldInfoRequest(InPacket packet)
         {
-            // TODO: Multi-worlds
+            var latestConnectedWorld = 0;
+
             this._wvsLogin.InteropClients.ForEach(c =>
             {
                 var worldInformation = c.Socket.WorldInformation;
-                
+
+                latestConnectedWorld = worldInformation.ID;
                 using (var p = new OutPacket(LoginSendOperations.WorldInformation))
                 {
                     worldInformation.Encode(p);
@@ -187,9 +196,35 @@ namespace Edelstein.WvsLogin.Sockets
                 SendPacket(p);
             }
 
+            // TODO: Proper latest connected world
             using (var p = new OutPacket(LoginSendOperations.LatestConnectedWorld))
             {
-                p.Encode<int>(0);
+                p.Encode<int>(latestConnectedWorld);
+                SendPacket(p);
+            }
+        }
+
+        private void OnCheckUserLimit(InPacket packet)
+        {
+            using (var p = new OutPacket(LoginSendOperations.CheckUserLimitResult))
+            {
+                p.Encode<byte>(0); // bOverUserLimit
+                p.Encode<byte>(0); // bPopulateLevel
+
+                SendPacket(p);
+            }
+        }
+        
+        private void OnSelectWorld(InPacket packet)
+        {
+            using (var p = new OutPacket(LoginSendOperations.SelectWorldResult))
+            {
+                p.Encode<byte>(0);
+                p.Encode<byte>(0);
+                p.Encode<byte>(2); // bLoginOpt
+                p.Encode<int>(3); // nSlotCount
+                p.Encode<int>(0); // nBuyCharCount
+                
                 SendPacket(p);
             }
         }
