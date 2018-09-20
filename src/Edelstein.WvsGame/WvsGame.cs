@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Edelstein.Network;
 using Edelstein.Network.Interop;
+using Edelstein.Network.Interop.Game;
 using Edelstein.Network.Packets;
 using Edelstein.WvsGame.Logging;
 using Edelstein.WvsGame.Sockets;
@@ -15,6 +16,8 @@ namespace Edelstein.WvsGame
         private readonly IContainer _container;
         public Client<CenterServerSocket> InteropClient;
 
+        public ChannelInformation ChannelInformation { get; set; }
+
         public WvsGame(IContainer container)
         {
             this._container = container;
@@ -23,6 +26,15 @@ namespace Edelstein.WvsGame
         public async Task Run()
         {
             var options = this._container.GetInstance<WvsGameOptions>();
+            var info = options.GameInfo;
+
+            this.ChannelInformation = new ChannelInformation
+            {
+                ID = info.ID,
+                Name = info.Name,
+                UserNo = 0,
+                AdultChannel = info.AdultChannel
+            };
 
             this.InteropClient = new Client<CenterServerSocket>(
                 options.InteropClientOptions,
@@ -30,12 +42,12 @@ namespace Edelstein.WvsGame
             );
 
             await this.InteropClient.Run();
-            Logger.Info($"Connected to WvsCenter on {this.InteropClient.Channel.RemoteAddress}");
+            Logger.Info($"Connected to interoperability server on {this.InteropClient.Channel.RemoteAddress}");
 
             using (var p = new OutPacket(InteropRecvOperations.RegisterServer))
             {
                 p.Encode<byte>((byte) ServerType.Game);
-                p.Encode<string>(options.ServerName);
+                p.Encode<string>(options.GameInfo.Name);
 
                 await this.InteropClient.Socket.SendPacket(p);
             }

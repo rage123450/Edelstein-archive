@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Lamar;
+﻿using Lamar;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 

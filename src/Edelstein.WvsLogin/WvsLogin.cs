@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Edelstein.Network;
 using Edelstein.Network.Interop;
+using Edelstein.Network.Interop.Game;
 using Edelstein.Network.Packets;
 using Edelstein.WvsLogin.Logging;
 using Edelstein.WvsLogin.Sockets;
@@ -16,6 +17,8 @@ namespace Edelstein.WvsLogin
         public Client<CenterServerSocket> InteropClient;
         public Server<LoginClientSocket> GameServer;
 
+        public LoginInformation LoginInformation { get; set; }
+
         public WvsLogin(IContainer container)
         {
             this._container = container;
@@ -24,6 +27,12 @@ namespace Edelstein.WvsLogin
         public async Task Run()
         {
             var options = this._container.GetInstance<WvsLoginOptions>();
+            var info = options.LoginInfo;
+
+            this.LoginInformation = new LoginInformation
+            {
+                Name = info.Name
+            };
 
             this.InteropClient = new Client<CenterServerSocket>(
                 options.InteropClientOptions,
@@ -35,15 +44,15 @@ namespace Edelstein.WvsLogin
             );
 
             await this.InteropClient.Run();
-            Logger.Info($"Connected to WvsCenter on {this.InteropClient.Channel.RemoteAddress}");
+            Logger.Info($"Connected to interoperability server on {this.InteropClient.Channel.RemoteAddress}");
 
             await this.GameServer.Run();
-            Logger.Info($"Bounded WvsLogin on {this.GameServer.Channel.LocalAddress}");
+            Logger.Info($"Bounded {this.LoginInformation.Name} on {this.GameServer.Channel.LocalAddress}");
 
             using (var p = new OutPacket(InteropRecvOperations.RegisterServer))
             {
                 p.Encode<byte>((byte) ServerType.Login);
-                p.Encode<string>(options.ServerName);
+                p.Encode<string>(info.Name);
 
                 await this.InteropClient.Socket.SendPacket(p);
             }

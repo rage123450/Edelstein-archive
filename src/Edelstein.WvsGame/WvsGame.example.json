@@ -1,5 +1,9 @@
 {
-  "ServerName": "Scania-1",
+  "GameInfo": {
+    "ID": 0,
+    "Name": "Scania-1",
+    "AdultChannel": false
+  },
   "InteropClientOptions": {
     "TargetHost": "127.0.0.1",
     "TargetPort": 9000

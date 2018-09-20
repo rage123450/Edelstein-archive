@@ -1,16 +1,8 @@
-using Edelstein.Network;
+using System.Collections.Generic;
 
-namespace Edelstein.WvsCenter
+namespace Edelstein.Network.Interop.Game
 {
-    public class WvsCenterOptions
-    {
-        public CenterInfo CenterInfo { get; set; }
-
-        public ServerOptions InteropServerOptions { get; set; }
-        public string ConnectionString { get; set; }
-    }
-
-    public class CenterInfo
+    public class WorldInformation
     {
         public byte ID { get; set; }
         public string Name { get; set; }
@@ -19,5 +11,7 @@ namespace Edelstein.WvsCenter
         public short EventEXP { get; set; }
         public short EventDrop { get; set; }
         public bool BlockCharCreation { get; set; }
+
+        public ICollection<ChannelInformation> Channels { get; set; }
     }
 }

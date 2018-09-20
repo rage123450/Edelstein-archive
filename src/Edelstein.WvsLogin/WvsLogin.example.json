@@ -1,5 +1,7 @@
 {
-  "ServerName": "Login-0",
+  "LoginInfo": {
+    "Name": "Login-0"
+  },
   "InteropClientOptions": {
     "TargetHost": "127.0.0.1",
     "TargetPort": 9000
