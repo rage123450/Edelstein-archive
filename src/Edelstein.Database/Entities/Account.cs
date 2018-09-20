@@ -13,6 +13,7 @@ namespace Edelstein.Database.Entities
         [MaxLength(13)] public string Username { get; set; }
         [MaxLength(128)] public string Password { get; set; }
 
+        public ICollection<AccountData> Data { get; set; }
         public ICollection<Character> Characters { get; set; }
     }
 }

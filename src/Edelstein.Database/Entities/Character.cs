@@ -12,6 +12,7 @@ namespace Edelstein.Database.Entities
         public int ID { get; set; }
 
         public Account Account { get; set; }
+        public byte WorldID { get; set; }
 
         [MaxLength(13)] public string Name { get; set; }
 

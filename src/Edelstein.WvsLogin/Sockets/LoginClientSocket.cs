@@ -4,10 +4,12 @@ using DotNetty.Transport.Channels;
 using Edelstein.Database;
 using Edelstein.Database.Entities;
 using Edelstein.Network;
+using Edelstein.Network.Interop.Game;
 using Edelstein.Network.Packets;
 using Edelstein.WvsLogin.Logging;
 using Edelstein.WvsLogin.Packets;
 using Lamar;
+using Microsoft.EntityFrameworkCore;
 
 namespace Edelstein.WvsLogin.Sockets
 {
@@ -18,6 +20,8 @@ namespace Edelstein.WvsLogin.Sockets
         private WvsLogin _wvsLogin;
 
         private Account _account;
+        private WorldInformation _selectedWorld;
+        private ChannelInformation _selectedChannel;
 
         public LoginClientSocket(IContainer container, IChannel channel, uint seqSend, uint seqRecv)
             : base(channel, seqSend, seqRecv)
@@ -134,7 +138,10 @@ namespace Edelstein.WvsLogin.Sockets
             {
                 using (var db = this._container.GetInstance<DataContext>())
                 {
-                    var account = db.Accounts.SingleOrDefault(a => a.Username.Equals(username));
+                    var account = db.Accounts
+                        .Include(a => a.Data)
+                        .Include(a => a.Characters)
+                        .SingleOrDefault(a => a.Username.Equals(username));
                     byte result = 0x0;
 
                     if (account == null) result = 0x5;
@@ -214,17 +221,56 @@ namespace Edelstein.WvsLogin.Sockets
                 SendPacket(p);
             }
         }
-        
+
         private void OnSelectWorld(InPacket packet)
         {
+            packet.Decode<byte>();
+
+            var worldID = packet.Decode<byte>();
+            var channelID = packet.Decode<byte>() + 1;
+
             using (var p = new OutPacket(LoginSendOperations.SelectWorldResult))
             {
-                p.Encode<byte>(0);
-                p.Encode<byte>(0);
-                p.Encode<byte>(2); // bLoginOpt
-                p.Encode<int>(3); // nSlotCount
-                p.Encode<int>(0); // nBuyCharCount
-                
+                byte result = 0x0;
+                var world = this._wvsLogin.InteropClients
+                    .Select(c => c.Socket.WorldInformation)
+                    .SingleOrDefault(w => w.ID == worldID);
+                var channel = world?.Channels.SingleOrDefault(c => c.ID == channelID);
+
+                if (world == null) result = 0x1;
+                if (channel == null) result = 0x1;
+
+                p.Encode<byte>(result);
+
+                if (result == 0)
+                {
+                    this._selectedWorld = world;
+                    this._selectedChannel = channel;
+
+                    using (var db = this._container.GetInstance<DataContext>())
+                    {
+                        var data = _account.Data.SingleOrDefault(d => d.WorldID == worldID);
+
+                        if (data == null)
+                        {
+                            data = new AccountData
+                            {
+                                WorldID = worldID,
+                                SlotCount = 3
+                            };
+
+                            _account.Data.Add(data);
+                            db.Update(_account);
+                            db.SaveChanges();
+                        }
+
+                        p.Encode<byte>(0); // Character count
+                        p.Encode<byte>(2); // bLoginOpt
+                        p.Encode<int>(data.SlotCount); // nSlotCount
+                        p.Encode<int>(0); // nBuyCharCount
+                    }
+                }
+
                 SendPacket(p);
             }
         }
