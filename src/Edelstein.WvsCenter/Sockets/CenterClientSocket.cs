@@ -2,6 +2,7 @@ using System;
 using DotNetty.Transport.Channels;
 using Edelstein.Network;
 using Edelstein.Network.Interop;
+using Edelstein.Network.Interop.Game;
 using Edelstein.Network.Packets;
 using Edelstein.WvsCenter.Logging;
 using Lamar;
@@ -42,22 +43,44 @@ namespace Edelstein.WvsCenter
         private void OnRegisterServer(InPacket packet)
         {
             var serverType = (ServerType) packet.Decode<byte>();
-
-            if (!Enum.IsDefined(typeof(ServerType), serverType)
-                && serverType != ServerType.Undefined
-                || this.ServerType != ServerType.Undefined)
-            {
-                using (var p = new OutPacket(InteropSendOperations.RegisterServerResult))
-                {
-                    p.Encode<byte>(1);
-                    SendPacket(p);
-                }
-                return;
-            }
+            string serverName;
 
             this.ServerType = serverType;
-            this.ServerName = packet.Decode<string>();
-            Logger.Info($"Registered {Enum.GetName(typeof(ServerType), serverType)} server, {ServerName}");
+
+            switch (serverType)
+            {
+                case ServerType.Login:
+                    var loginInformation = new LoginInformation();
+
+                    loginInformation.Decode(packet);
+                    serverName = loginInformation.Name;
+                    break;
+                case ServerType.Game:
+                    var channelInformation = new ChannelInformation();
+
+                    channelInformation.Decode(packet);
+                    this._wvsCenter.WorldInformation.Channels.Add(channelInformation);
+                    serverName = channelInformation.Name;
+                    break;
+                default:
+                    using (var p = new OutPacket(InteropSendOperations.RegisterServerResult))
+                    {
+                        p.Encode<bool>(true);
+                        SendPacket(p);
+                    }
+
+                    return;
+            }
+
+            using (var p = new OutPacket(InteropSendOperations.RegisterServerResult))
+            {
+                p.Encode<bool>(false);
+                this._wvsCenter.WorldInformation.Encode(p);
+
+                SendPacket(p);
+            }
+
+            Logger.Info($"Registered {Enum.GetName(typeof(ServerType), serverType)} server, {serverName}");
         }
     }
 }

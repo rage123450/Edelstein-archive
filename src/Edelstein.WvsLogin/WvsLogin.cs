@@ -52,7 +52,7 @@ namespace Edelstein.WvsLogin
             using (var p = new OutPacket(InteropRecvOperations.RegisterServer))
             {
                 p.Encode<byte>((byte) ServerType.Login);
-                p.Encode<string>(info.Name);
+                LoginInformation.Encode(p);
 
                 await this.InteropClient.Socket.SendPacket(p);
             }

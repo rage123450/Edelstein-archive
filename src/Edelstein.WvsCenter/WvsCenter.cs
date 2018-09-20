@@ -34,8 +34,7 @@ namespace Edelstein.WvsCenter
                 EventDesc = info.EventDesc,
                 EventEXP = info.EventEXP,
                 EventDrop = info.EventDrop,
-                BlockCharCreation = info.BlockCharCreation,
-                Channels = new List<ChannelInformation>()
+                BlockCharCreation = info.BlockCharCreation
             };
 
             this.InteropServer = new Server<CenterClientSocket>(

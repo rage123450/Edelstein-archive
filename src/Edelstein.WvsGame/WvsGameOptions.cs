@@ -13,6 +13,7 @@ namespace Edelstein.WvsGame
     public class GameInfo
     {
         public byte ID { get; set; }
+        public byte WorldID { get; set; }
         public string Name { get; set; }
         public bool AdultChannel { get; set; }
     }

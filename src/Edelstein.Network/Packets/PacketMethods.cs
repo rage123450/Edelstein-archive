@@ -13,6 +13,7 @@ namespace Edelstein.Network.Packets
             new Dictionary<Type, Func<IByteBuffer, object>>
             {
                 {typeof(byte), buffer => buffer.ReadByte()},
+                {typeof(bool), buffer => buffer.ReadByte() > 0},
                 {typeof(short), buffer => buffer.ReadShortLE()},
                 {typeof(ushort), buffer => buffer.ReadUnsignedShortLE()},
                 {typeof(int), buffer => buffer.ReadIntLE()},
@@ -25,6 +26,7 @@ namespace Edelstein.Network.Packets
             new Dictionary<Type, Action<IByteBuffer, object>>
             {
                 {typeof(byte), (buffer, value) => buffer.WriteByte((byte) value)},
+                {typeof(bool), (buffer, value) => buffer.WriteByte((bool) value ? 1 : 0)},
                 {typeof(short), (buffer, value) => buffer.WriteShortLE((short) value)},
                 {typeof(int), (buffer, value) => buffer.WriteIntLE((int) value)},
                 {typeof(long), (buffer, value) => buffer.WriteLongLE((long) value)},

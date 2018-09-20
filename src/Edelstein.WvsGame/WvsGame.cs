@@ -31,6 +31,7 @@ namespace Edelstein.WvsGame
             this.ChannelInformation = new ChannelInformation
             {
                 ID = info.ID,
+                WorldID = info.WorldID,
                 Name = info.Name,
                 UserNo = 0,
                 AdultChannel = info.AdultChannel
@@ -47,7 +48,7 @@ namespace Edelstein.WvsGame
             using (var p = new OutPacket(InteropRecvOperations.RegisterServer))
             {
                 p.Encode<byte>((byte) ServerType.Game);
-                p.Encode<string>(options.GameInfo.Name);
+                ChannelInformation.Encode(p);
 
                 await this.InteropClient.Socket.SendPacket(p);
             }
