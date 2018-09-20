@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Edelstein.Network;
 using Edelstein.Network.Interop;
@@ -14,7 +15,7 @@ namespace Edelstein.WvsLogin
         private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
 
         private readonly IContainer _container;
-        public Client<CenterServerSocket> InteropClient;
+        public List<Client<CenterServerSocket>> InteropClients;
         public Server<LoginClientSocket> GameServer;
 
         public LoginInformation LoginInformation { get; set; }
@@ -22,6 +23,7 @@ namespace Edelstein.WvsLogin
         public WvsLogin(IContainer container)
         {
             this._container = container;
+            this.InteropClients = new List<Client<CenterServerSocket>>();
         }
 
         public async Task Run()
@@ -34,28 +36,36 @@ namespace Edelstein.WvsLogin
                 Name = info.Name
             };
 
-            this.InteropClient = new Client<CenterServerSocket>(
-                options.InteropClientOptions,
-                this._container.GetInstance<CenterServerSocketFactory>()
-            );
+            foreach (var clientOptions in options.InteropClientOptions)
+            {
+                var client = new Client<CenterServerSocket>(
+                    clientOptions,
+                    this._container.GetInstance<CenterServerSocketFactory>()
+                );
+
+                this.InteropClients.Add(client);
+                await client.Run();
+                Logger.Info($"Connected to interoperability server on {client.Channel.RemoteAddress}");
+            }
+
             this.GameServer = new Server<LoginClientSocket>(
                 options.GameServerOptions,
                 this._container.GetInstance<LoginClientSocketFactory>()
             );
 
-            await this.InteropClient.Run();
-            Logger.Info($"Connected to interoperability server on {this.InteropClient.Channel.RemoteAddress}");
-
             await this.GameServer.Run();
             Logger.Info($"Bounded {this.LoginInformation.Name} on {this.GameServer.Channel.LocalAddress}");
-
-            using (var p = new OutPacket(InteropRecvOperations.RegisterServer))
+            
+            InteropClients.ForEach(c =>
             {
-                p.Encode<byte>((byte) ServerType.Login);
-                LoginInformation.Encode(p);
+                using (var p = new OutPacket(InteropRecvOperations.RegisterServer))
+                {
+                    p.Encode<byte>((byte) ServerType.Login);
+                    LoginInformation.Encode(p);
 
-                await this.InteropClient.Socket.SendPacket(p);
-            }
+                    c.Socket.SendPacket(p);
+                }
+            });
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Edelstein.Database;
 using Lamar;
 using Serilog;
@@ -20,15 +21,12 @@ namespace Edelstein.WvsLogin
 
             wvsLogin.Run().Wait();
 
-            wvsLogin.InteropClient.Channel.CloseCompletion.ContinueWith(t =>
-            {
-                wvsLogin.GameServer.Channel.CloseAsync();
-            });
-
             Task.WhenAll(
-                wvsLogin.InteropClient.Channel.CloseCompletion,
-                wvsLogin.GameServer.Channel.CloseCompletion
+                wvsLogin.InteropClients.Select(c => c.Channel.CloseCompletion)
             ).Wait();
+            
+            wvsLogin.GameServer.Channel.CloseAsync();
+            wvsLogin.GameServer.Channel.CloseCompletion.Wait();
         }
     }
 }

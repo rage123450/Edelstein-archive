@@ -169,15 +169,17 @@ namespace Edelstein.WvsLogin.Sockets
         private void OnWorldInfoRequest(InPacket packet)
         {
             // TODO: Multi-worlds
-
-            var worldInformation = this._wvsLogin.InteropClient.Socket.WorldInformation;
-
-            using (var p = new OutPacket(LoginSendOperations.WorldInformation))
+            this._wvsLogin.InteropClients.ForEach(c =>
             {
-                worldInformation.Encode(p);
-                p.Encode<short>(0); // nBalloonCount
-                SendPacket(p);
-            }
+                var worldInformation = c.Socket.WorldInformation;
+                
+                using (var p = new OutPacket(LoginSendOperations.WorldInformation))
+                {
+                    worldInformation.Encode(p);
+                    p.Encode<short>(0); // nBalloonCount
+                    SendPacket(p);
+                }
+            });
 
             using (var p = new OutPacket(LoginSendOperations.WorldInformation))
             {
