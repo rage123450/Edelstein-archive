@@ -65,6 +65,9 @@ namespace Edelstein.Network
 
         public override void ChannelInactive(IChannelHandlerContext context)
         {
+            var socket = (T) context.Channel.GetAttribute(Socket.SocketKey).Get();
+
+            socket?.OnDisconnect();
             base.ChannelInactive(context);
 
             Logger.Debug($"Released connection from {context.Channel.RemoteAddress}");

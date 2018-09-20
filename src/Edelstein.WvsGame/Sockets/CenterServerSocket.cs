@@ -35,6 +35,11 @@ namespace Edelstein.WvsGame.Sockets
             }
         }
 
+        public override void OnDisconnect()
+        {
+            throw new NotImplementedException();
+        }
+
         private void OnRegisterServerResult(InPacket packet)
         {
             if (packet.Decode<bool>()) return; // TODO: disconnect?

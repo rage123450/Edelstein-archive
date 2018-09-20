@@ -113,6 +113,11 @@ namespace Edelstein.WvsLogin.Sockets
             Logger.Debug($"Received packet operation {Enum.GetName(typeof(LoginRecvOperations), operation)}");
         }
 
+        public override void OnDisconnect()
+        {
+            throw new NotImplementedException();
+        }
+
         private void OnCheckPassword(InPacket packet)
         {
             var password = packet.Decode<string>();

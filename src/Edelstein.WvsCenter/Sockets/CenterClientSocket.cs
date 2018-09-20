@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using DotNetty.Transport.Channels;
 using Edelstein.Network;
 using Edelstein.Network.Interop;
@@ -18,7 +19,7 @@ namespace Edelstein.WvsCenter.Sockets
         private WvsCenterOptions _options;
 
         public ServerType ServerType { get; set; } = ServerType.Undefined;
-        public string ServerName { get; set; }
+        public byte ServerID { get; set; }
 
         public CenterClientSocket(IContainer container, IChannel channel, uint seqSend, uint seqRecv)
             : base(channel, seqSend, seqRecv)
@@ -41,6 +42,33 @@ namespace Edelstein.WvsCenter.Sockets
             }
         }
 
+        public override void OnDisconnect()
+        {
+            if (ServerType == ServerType.Undefined) return;
+
+            switch (ServerType)
+            {
+                case ServerType.Game:
+                    var channelInformation =
+                        this._wvsCenter.WorldInformation.Channels.SingleOrDefault(c => c.ID == ServerID);
+
+                    if (channelInformation != null)
+                    {
+                        this._wvsCenter.WorldInformation.Channels.Remove(channelInformation);
+                        Logger.Info(
+                            $"Removed {Enum.GetName(typeof(ServerType), ServerType)} server, {channelInformation.Name}");
+                    }
+
+                    break;
+            }
+
+            using (var p = new OutPacket(InteropSendOperations.UpdateWorldInformation))
+            {
+                this._wvsCenter.WorldInformation.Encode(p);
+                this._wvsCenter.InteropServer.ChannelGroup.WriteAndFlushAsync(p, new EveryOneBut(Channel.Id));
+            }
+        }
+
         private void OnRegisterServer(InPacket packet)
         {
             var serverType = (ServerType) packet.Decode<byte>();
@@ -54,6 +82,7 @@ namespace Edelstein.WvsCenter.Sockets
                     var loginInformation = new LoginInformation();
 
                     loginInformation.Decode(packet);
+                    ServerID = loginInformation.ID;
                     serverName = loginInformation.Name;
                     break;
                 case ServerType.Game:
@@ -61,6 +90,7 @@ namespace Edelstein.WvsCenter.Sockets
 
                     channelInformation.Decode(packet);
                     this._wvsCenter.WorldInformation.Channels.Add(channelInformation);
+                    ServerID = channelInformation.ID;
                     serverName = channelInformation.Name;
                     break;
                 default:
