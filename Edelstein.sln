@@ -16,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shared", "shared", "{00046B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edelstein.Database", "src\Edelstein.Database\Edelstein.Database.csproj", "{AF2076D8-59C4-44CD-985E-EABA3A37ED12}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edelstein.WvsGame", "src\Edelstein.WvsGame\Edelstein.WvsGame.csproj", "{F963C31D-4E31-4DFC-B94F-45B6BA92FA54}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,7 @@ Global
 		{7B602ABE-41BE-4BAB-BA0C-95456286211C} = {99EA493C-0C72-4DDB-8DAE-31F31B0BC492}
 		{1AB37B9C-17DB-44E2-B213-22C7FE6BB254} = {62E36AAC-3027-4C1C-8BC8-3C3E76913573}
 		{AF2076D8-59C4-44CD-985E-EABA3A37ED12} = {62E36AAC-3027-4C1C-8BC8-3C3E76913573}
+		{F963C31D-4E31-4DFC-B94F-45B6BA92FA54} = {62E36AAC-3027-4C1C-8BC8-3C3E76913573}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{D19EFF6D-9F25-47FE-BACA-ECF4059F23F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -49,5 +52,9 @@ Global
 		{AF2076D8-59C4-44CD-985E-EABA3A37ED12}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF2076D8-59C4-44CD-985E-EABA3A37ED12}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF2076D8-59C4-44CD-985E-EABA3A37ED12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F963C31D-4E31-4DFC-B94F-45B6BA92FA54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F963C31D-4E31-4DFC-B94F-45B6BA92FA54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F963C31D-4E31-4DFC-B94F-45B6BA92FA54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F963C31D-4E31-4DFC-B94F-45B6BA92FA54}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

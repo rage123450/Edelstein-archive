@@ -1,0 +1,8 @@
+{
+  "ServerName": "Scania-1",
+  "InteropClientOptions": {
+    "TargetHost": "127.0.0.1",
+    "TargetPort": 9000
+  },
+  "ConnectionString": "Server=localhost;Uid=root;Database=Edelstein;"
+}

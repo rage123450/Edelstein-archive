@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp2.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Edelstein.Database\Edelstein.Database.csproj" />
+        <ProjectReference Include="..\Edelstein.Network\Edelstein.Network.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Lamar" Version="1.1.2" />
+        <PackageReference Include="LibLog" Version="5.0.2" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0-preview2-35157" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.2.0-preview2-35157" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.2.0-preview2-35157" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0-preview2-35157" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="3.1.2-dev-00777" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="*.example.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+</Project>
