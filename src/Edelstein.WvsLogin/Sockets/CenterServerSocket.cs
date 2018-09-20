@@ -12,6 +12,8 @@ namespace Edelstein.WvsLogin.Sockets
     public class CenterServerSocket : Socket
     {
         private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
+        
+        public WorldInformation WorldInformation { get; set; }
 
         public CenterServerSocket(IContainer container, IChannel channel, uint seqSend, uint seqRecv)
             : base(channel, seqSend, seqRecv)
@@ -47,6 +49,7 @@ namespace Edelstein.WvsLogin.Sockets
             var worldInformation = new WorldInformation();
 
             worldInformation.Decode(packet);
+            this.WorldInformation = worldInformation;
             Logger.Info($"Registered Center server, {worldInformation.Name}");
         }
 
@@ -55,6 +58,7 @@ namespace Edelstein.WvsLogin.Sockets
             var worldInformation = new WorldInformation();
 
             worldInformation.Decode(packet);
+            this.WorldInformation = worldInformation;
             Logger.Info($"Updated {worldInformation.Name} server information");
         }
     }

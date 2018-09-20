@@ -37,6 +37,7 @@ namespace Edelstein.WvsLogin.Sockets
                 case LoginRecvOperations.AccountInfoRequest:
                     break;
                 case LoginRecvOperations.WorldInfoRequest:
+                    this.OnWorldInfoRequest(packet);
                     break;
                 case LoginRecvOperations.SelectWorld:
                     break;
@@ -51,6 +52,7 @@ namespace Edelstein.WvsLogin.Sockets
                 case LoginRecvOperations.UpdatePinCode:
                     break;
                 case LoginRecvOperations.WorldRequest:
+                    this.OnWorldInfoRequest(packet);
                     break;
                 case LoginRecvOperations.LogoutWorld:
                     break;
@@ -161,6 +163,32 @@ namespace Edelstein.WvsLogin.Sockets
 
                     SendPacket(p);
                 }
+            }
+        }
+
+        private void OnWorldInfoRequest(InPacket packet)
+        {
+            // TODO: Multi-worlds
+
+            var worldInformation = this._wvsLogin.InteropClient.Socket.WorldInformation;
+
+            using (var p = new OutPacket(LoginSendOperations.WorldInformation))
+            {
+                worldInformation.Encode(p);
+                p.Encode<short>(0); // nBalloonCount
+                SendPacket(p);
+            }
+
+            using (var p = new OutPacket(LoginSendOperations.WorldInformation))
+            {
+                p.Encode<byte>(0xFF);
+                SendPacket(p);
+            }
+
+            using (var p = new OutPacket(LoginSendOperations.LatestConnectedWorld))
+            {
+                p.Encode<int>(0);
+                SendPacket(p);
             }
         }
     }
