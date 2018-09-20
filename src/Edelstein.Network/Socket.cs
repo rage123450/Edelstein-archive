@@ -10,7 +10,7 @@ namespace Edelstein.Network
     {
         public static readonly AttributeKey<Socket> SocketKey = AttributeKey<Socket>.ValueOf("Socket");
 
-        private readonly IChannel _channel;
+        public IChannel Channel;
         public uint SeqSend { get; set; }
         public uint SeqRecv { get; set; }
         public bool EncryptData { get; set; } = true;
@@ -20,15 +20,15 @@ namespace Edelstein.Network
 
         public Socket(IChannel channel, uint seqSend, uint seqRecv)
         {
-            this._channel = channel;
+            this.Channel = channel;
             this.SeqSend = seqSend;
             this.SeqRecv = seqRecv;
         }
 
         public abstract void OnPacket(InPacket packet);
 
-        public Task SendPacket(OutPacket packet) => this._channel.WriteAndFlushAsync(packet);
+        public Task SendPacket(OutPacket packet) => this.Channel.WriteAndFlushAsync(packet);
 
-        public void Dispose() => this._channel.CloseAsync();
+        public void Dispose() => this.Channel.CloseAsync();
     }
 }

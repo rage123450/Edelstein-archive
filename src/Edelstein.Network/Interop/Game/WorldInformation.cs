@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Edelstein.Network.Packets;
 
@@ -45,7 +46,8 @@ namespace Edelstein.Network.Interop.Game
             EventDrop = packet.Decode<short>();
             BlockCharCreation = packet.Decode<bool>();
 
-            for (var i = 0; i < packet.Decode<byte>(); i++)
+            var channelCount = packet.Decode<byte>();
+            for (var i = 0; i < channelCount; i++)
             {
                 var channelInformation = new ChannelInformation();
 

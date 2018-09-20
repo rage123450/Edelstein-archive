@@ -3,11 +3,12 @@ using DotNetty.Transport.Channels;
 using Edelstein.Network;
 using Edelstein.Network.Interop;
 using Edelstein.Network.Interop.Game;
+using Edelstein.Network.Matchers;
 using Edelstein.Network.Packets;
 using Edelstein.WvsCenter.Logging;
 using Lamar;
 
-namespace Edelstein.WvsCenter
+namespace Edelstein.WvsCenter.Sockets
 {
     public class CenterClientSocket : Socket
     {
@@ -76,8 +77,13 @@ namespace Edelstein.WvsCenter
             {
                 p.Encode<bool>(false);
                 this._wvsCenter.WorldInformation.Encode(p);
-
                 SendPacket(p);
+            }
+
+            using (var p = new OutPacket(InteropSendOperations.UpdateWorldInformation))
+            {
+                this._wvsCenter.WorldInformation.Encode(p);
+                this._wvsCenter.InteropServer.ChannelGroup.WriteAndFlushAsync(p, new EveryOneBut(Channel.Id));
             }
 
             Logger.Info($"Registered {Enum.GetName(typeof(ServerType), serverType)} server, {serverName}");

@@ -21,11 +21,14 @@ namespace Edelstein.WvsLogin.Sockets
         public override void OnPacket(InPacket packet)
         {
             var operation = (InteropSendOperations) packet.Decode<short>();
-
+            
             switch (operation)
             {
                 case InteropSendOperations.RegisterServerResult:
                     this.OnRegisterServerResult(packet);
+                    break;
+                case InteropSendOperations.UpdateWorldInformation:
+                    this.OnUpdateWorldInformation(packet);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -34,12 +37,20 @@ namespace Edelstein.WvsLogin.Sockets
 
         private void OnRegisterServerResult(InPacket packet)
         {
-            if (packet.Decode<byte>() > 0) return; // TODO: disconnect?
+            if (packet.Decode<bool>()) return; // TODO: disconnect?
 
             var worldInformation = new WorldInformation();
 
             worldInformation.Decode(packet);
             Logger.Info($"Registered Center server, {worldInformation.Name}");
+        }
+
+        private void OnUpdateWorldInformation(InPacket packet)
+        {
+            var worldInformation = new WorldInformation();
+
+            worldInformation.Decode(packet);
+            Logger.Info($"Updated {worldInformation.Name} server information");
         }
     }
 }

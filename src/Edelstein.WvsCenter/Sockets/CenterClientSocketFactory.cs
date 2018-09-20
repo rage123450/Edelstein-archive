@@ -2,7 +2,7 @@ using DotNetty.Transport.Channels;
 using Edelstein.Network;
 using Lamar;
 
-namespace Edelstein.WvsCenter
+namespace Edelstein.WvsCenter.Sockets
 {
     public class CenterClientSocketFactory : ISocketFactory<CenterClientSocket>
     {

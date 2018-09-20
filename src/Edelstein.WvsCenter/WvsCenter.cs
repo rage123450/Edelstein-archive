@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Edelstein.Network;
 using Edelstein.Network.Interop.Game;
 using Edelstein.WvsCenter.Logging;
+using Edelstein.WvsCenter.Sockets;
 using Lamar;
 
 namespace Edelstein.WvsCenter
