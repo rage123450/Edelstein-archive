@@ -40,11 +40,11 @@ namespace Edelstein.Database.Entities
 
         public int Money { get; set; }
 
-        public ItemInventory<ItemSlotEquip> InventoryEquipped { get; set; } = new ItemInventory<ItemSlotEquip>(60);
-        public ItemInventory<ItemSlotEquip> InventoryEquippedCash { get; set; } = new ItemInventory<ItemSlotEquip>(60);
-        public ItemInventory<ItemSlotBundle> InventoryConsume { get; set; } = new ItemInventory<ItemSlotBundle>(24);
-        public ItemInventory<ItemSlotBundle> InventoryInstall { get; set; } = new ItemInventory<ItemSlotBundle>(24);
-        public ItemInventory<ItemSlotBundle> InventoryEtc { get; set; } = new ItemInventory<ItemSlotBundle>(24);
-        public ItemInventory<ItemSlotBundle> InventoryCash { get; set; } = new ItemInventory<ItemSlotBundle>(48);
+        public ItemInventory InventoryEquipped { get; set; } = new ItemInventory(60);
+        public ItemInventory InventoryEquippedCash { get; set; } = new ItemInventory(60);
+        public ItemInventory InventoryConsume { get; set; } = new ItemInventory(24);
+        public ItemInventory InventoryInstall { get; set; } = new ItemInventory(24);
+        public ItemInventory InventoryEtc { get; set; } = new ItemInventory(24);
+        public ItemInventory InventoryCash { get; set; } = new ItemInventory(48);
     }
 }
