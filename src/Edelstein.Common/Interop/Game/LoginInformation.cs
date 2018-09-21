@@ -1,6 +1,6 @@
 using Edelstein.Network.Packets;
 
-namespace Edelstein.Network.Interop.Game
+namespace Edelstein.Common.Interop.Game
 {
     public class LoginInformation : IEncodable, IDecodable
     {

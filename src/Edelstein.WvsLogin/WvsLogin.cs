@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Edelstein.Common.Interop;
+using Edelstein.Common.Interop.Game;
 using Edelstein.Network;
-using Edelstein.Network.Interop;
-using Edelstein.Network.Interop.Game;
 using Edelstein.Network.Packets;
 using Edelstein.WvsLogin.Logging;
 using Edelstein.WvsLogin.Sockets;

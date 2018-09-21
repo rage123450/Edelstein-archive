@@ -1,4 +1,4 @@
-namespace Edelstein.Network.Interop
+namespace Edelstein.Common.Interop
 {
     public enum ServerType
     {

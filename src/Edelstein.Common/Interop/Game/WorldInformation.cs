@@ -1,8 +1,7 @@
-using System;
 using System.Collections.Generic;
 using Edelstein.Network.Packets;
 
-namespace Edelstein.Network.Interop.Game
+namespace Edelstein.Common.Interop.Game
 {
     public class WorldInformation : IEncodable, IDecodable
     {

@@ -27,5 +27,16 @@ namespace Edelstein.Network.Packets
 
             return this;
         }
+
+        public virtual OutPacket EncodeFixedString(string value, int length)
+        {
+            for (var i = 0; i < length; i++)
+            {
+                if (i < value.Length) Encode<byte>((byte) value[i]);
+                else Encode<byte>(0);
+            }
+
+            return this;
+        }
     }
 }

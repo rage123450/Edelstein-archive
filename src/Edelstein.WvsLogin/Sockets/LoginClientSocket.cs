@@ -1,10 +1,11 @@
 using System;
 using System.Linq;
 using DotNetty.Transport.Channels;
+using Edelstein.Common.Interop.Game;
+using Edelstein.Common.Packets;
 using Edelstein.Database;
 using Edelstein.Database.Entities;
 using Edelstein.Network;
-using Edelstein.Network.Interop.Game;
 using Edelstein.Network.Packets;
 using Edelstein.WvsLogin.Logging;
 using Edelstein.WvsLogin.Packets;
@@ -264,7 +265,18 @@ namespace Edelstein.WvsLogin.Sockets
                             db.SaveChanges();
                         }
 
-                        p.Encode<byte>(0); // Character count
+                        var characters = _account.Characters.Where(c => c.WorldID == worldID).ToList();
+
+                        p.Encode<byte>((byte) characters.Count);
+                        characters.ForEach(c =>
+                        {
+                            c.EncodeStats(p);
+                            c.EncodeLook(p);
+
+                            p.Encode<bool>(false);
+                            p.Encode<bool>(false);
+                        });
+
                         p.Encode<byte>(2); // bLoginOpt
                         p.Encode<int>(data.SlotCount); // nSlotCount
                         p.Encode<int>(0); // nBuyCharCount

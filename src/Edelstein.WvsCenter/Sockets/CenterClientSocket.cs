@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
 using DotNetty.Transport.Channels;
+using Edelstein.Common.Interop;
+using Edelstein.Common.Interop.Game;
 using Edelstein.Network;
-using Edelstein.Network.Interop;
-using Edelstein.Network.Interop.Game;
 using Edelstein.Network.Matchers;
 using Edelstein.Network.Packets;
 using Edelstein.WvsCenter.Logging;
