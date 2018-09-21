@@ -93,6 +93,7 @@ namespace Edelstein.WvsLogin.Sockets
                 case LoginRecvOperations.CreateNewCharacterInCS:
                     break;
                 case LoginRecvOperations.DeleteCharacter:
+                    this.OnDeleteCharacter(packet);
                     break;
                 case LoginRecvOperations.AliveAck:
                     break;
@@ -475,6 +476,36 @@ namespace Edelstein.WvsLogin.Sockets
                         SendPacket(p);
                     }
                 });
+            }
+        }
+
+        private void OnDeleteCharacter(InPacket packet)
+        {
+            var spw = packet.Decode<string>();
+            var characterID = packet.Decode<int>();
+
+            byte result = 0x0;
+
+            if (!BCrypt.Net.BCrypt.Verify(spw, _account.SPW)) result = 0x14;
+
+            if (result == 0x0)
+            {
+                using (var db = this._container.GetInstance<DataContext>())
+                {
+                    var character = _account.Characters.Single(c => c.ID == characterID);
+
+                    _account.Characters.Remove(character);
+                    db.Characters.Remove(character);
+                    db.Update(_account);
+                    db.SaveChanges();
+                }
+            }
+
+            using (var p = new OutPacket(LoginSendOperations.DeleteCharacterResult))
+            {
+                p.Encode<int>(characterID);
+                p.Encode<byte>(result);
+                SendPacket(p);
             }
         }
     }
