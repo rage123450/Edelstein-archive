@@ -1,4 +1,7 @@
+using System;
+using System.Collections.Generic;
 using Edelstein.Database.Entities;
+using Edelstein.Database.Entities.Inventory;
 using Edelstein.Network.Packets;
 
 namespace Edelstein.Common.Packets

@@ -5,6 +5,7 @@ using Edelstein.Common.Interop.Game;
 using Edelstein.Common.Packets;
 using Edelstein.Database;
 using Edelstein.Database.Entities;
+using Edelstein.Database.Entities.Inventory;
 using Edelstein.Network;
 using Edelstein.Network.Packets;
 using Edelstein.WvsLogin.Logging;
@@ -83,8 +84,10 @@ namespace Edelstein.WvsLogin.Sockets
                 case LoginRecvOperations.MigrateIn:
                     break;
                 case LoginRecvOperations.CheckDuplicatedID:
+                    this.OnCheckDuplicateID(packet);
                     break;
                 case LoginRecvOperations.CreateNewCharacter:
+                    this.OnCreateNewCharacter(packet);
                     break;
                 case LoginRecvOperations.CreateNewCharacterInCS:
                     break;
@@ -142,6 +145,11 @@ namespace Edelstein.WvsLogin.Sockets
                     var account = db.Accounts
                         .Include(a => a.Data)
                         .Include(a => a.Characters)
+                        .ThenInclude(c => c.InventoryEquipped)
+                        .ThenInclude(i => i.Items)
+                        .Include(c => c.Characters)
+                        .ThenInclude(c => c.InventoryEquippedCash)
+                        .ThenInclude(i => i.Items)
                         .SingleOrDefault(a => a.Username.Equals(username));
                     byte result = 0x0;
 
@@ -284,6 +292,88 @@ namespace Edelstein.WvsLogin.Sockets
                 }
 
                 SendPacket(p);
+            }
+        }
+
+        private void OnCheckDuplicateID(InPacket packet)
+        {
+            var name = packet.Decode<string>();
+
+            using (var db = this._container.GetInstance<DataContext>())
+            {
+                var isDuplicatedID = db.Characters.Any(c => c.Name.Equals(name));
+
+                using (var p = new OutPacket(LoginSendOperations.CheckDuplicatedIDResult))
+                {
+                    p.Encode<string>(name);
+                    p.Encode<bool>(isDuplicatedID);
+
+                    SendPacket(p);
+                }
+            }
+        }
+
+        private void OnCreateNewCharacter(InPacket packet)
+        {
+            var name = packet.Decode<string>();
+            var job = packet.Decode<int>();
+            var subJob = packet.Decode<short>();
+            var face = packet.Decode<int>();
+            var hair = packet.Decode<int>() + packet.Decode<int>();
+            var skin = packet.Decode<int>();
+            var top = packet.Decode<int>();
+            var bottom = packet.Decode<int>();
+            var shoes = packet.Decode<int>();
+            var weapon = packet.Decode<int>();
+            var gender = packet.Decode<byte>();
+
+            using (var db = this._container.GetInstance<DataContext>())
+            {
+                var character = new Character
+                {
+                    Name = name,
+                    WorldID = _selectedWorld.ID,
+                    Job = 0,
+                    Face = face,
+                    Hair = hair,
+                    Skin = (byte) skin,
+                    Gender = gender
+                };
+
+                // TODO: Inventory management
+                var equipped = character.InventoryEquipped.Items;
+                var topItem = new ItemSlotEquip();
+                var bottomItem = new ItemSlotEquip();
+                var shoesItem = new ItemSlotEquip();
+                var weaponItem = new ItemSlotEquip();
+
+                topItem.Slot = 5;
+                topItem.TemplateID = top;
+                bottomItem.Slot = 6;
+                bottomItem.TemplateID = bottom;
+                shoesItem.Slot = 7;
+                shoesItem.TemplateID = shoes;
+                weaponItem.Slot = 11;
+                weaponItem.TemplateID = weapon;
+                
+                equipped.Add(topItem);
+                equipped.Add(bottomItem);
+                equipped.Add(shoesItem);
+                equipped.Add(weaponItem);
+
+                _account.Characters.Add(character);
+                db.Update(_account);
+                db.SaveChanges();
+
+                using (var p = new OutPacket(LoginSendOperations.CreateNewCharacterResult))
+                {
+                    p.Encode<bool>(false);
+                    character.EncodeStats(p);
+                    character.EncodeLook(p);
+                    p.Encode<bool>(false);
+                    p.Encode<bool>(false);
+                    SendPacket(p);
+                }
             }
         }
     }
