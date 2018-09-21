@@ -68,6 +68,7 @@ namespace Edelstein.WvsLogin.Sockets
                 case LoginRecvOperations.LogoutWorld:
                     break;
                 case LoginRecvOperations.ViewAllChar:
+                    this.OnViewAllChar(packet);
                     break;
                 case LoginRecvOperations.SelectCharacterByVAC:
                     break;
@@ -100,12 +101,16 @@ namespace Edelstein.WvsLogin.Sockets
                 case LoginRecvOperations.SecurityPacket:
                     break;
                 case LoginRecvOperations.EnableSPWRequest:
+                    this.OnEnableSPWRequest(packet);
                     break;
                 case LoginRecvOperations.CheckSPWRequest:
+                    this.OnCheckSPWRequest(packet);
                     break;
                 case LoginRecvOperations.EnableSPWRequestByACV:
+                    this.OnEnableSPWRequest(packet);
                     break;
                 case LoginRecvOperations.CheckSPWRequestByACV:
+                    this.OnCheckSPWRequest(packet);
                     break;
                 case LoginRecvOperations.CheckOTPRequest:
                     break;
@@ -285,7 +290,7 @@ namespace Edelstein.WvsLogin.Sockets
                             p.Encode<bool>(false);
                         });
 
-                        p.Encode<byte>(2); // bLoginOpt
+                        p.Encode<bool>(!string.IsNullOrEmpty(_account.SPW)); // bLoginOpt TODO: proper bLoginOpt stuff
                         p.Encode<int>(data.SlotCount); // nSlotCount
                         p.Encode<int>(0); // nBuyCharCount
                     }
@@ -355,7 +360,7 @@ namespace Edelstein.WvsLogin.Sockets
                 shoesItem.TemplateID = shoes;
                 weaponItem.Slot = 11;
                 weaponItem.TemplateID = weapon;
-                
+
                 equipped.Add(topItem);
                 equipped.Add(bottomItem);
                 equipped.Add(shoesItem);
@@ -374,6 +379,94 @@ namespace Edelstein.WvsLogin.Sockets
                     p.Encode<bool>(false);
                     SendPacket(p);
                 }
+            }
+        }
+
+        private void OnEnableSPWRequest(InPacket packet)
+        {
+            packet.Decode<bool>(); // ?
+            packet.Decode<int>(); // dwCharacterID
+            packet.Decode<string>(); // sMacAddress
+            packet.Decode<string>(); // sMacAddressWithHDDSerial
+            var spw = packet.Decode<string>();
+
+            if (!string.IsNullOrEmpty(_account.SPW)) return;
+            if (BCrypt.Net.BCrypt.Verify(spw, _account.Password))
+            {
+                using (var p = new OutPacket(LoginSendOperations.EnableSPWResult))
+                {
+                    p.Encode<bool>(false);
+                    p.Encode<byte>(0x16);
+                    SendPacket(p);
+                }
+
+                return;
+            }
+
+            using (var db = this._container.GetInstance<DataContext>())
+            {
+                _account.SPW = BCrypt.Net.BCrypt.HashPassword(spw);
+                db.Update(_account);
+                db.SaveChanges();
+            }
+        }
+
+        private void OnCheckSPWRequest(InPacket packet)
+        {
+            var spw = packet.Decode<string>();
+            var characterID = packet.Decode<int>();
+            packet.Decode<string>(); // sMacAddress
+            packet.Decode<string>(); // sMacAddressWithHDDSerial
+
+            if (string.IsNullOrEmpty(_account.SPW)) return;
+            if (!BCrypt.Net.BCrypt.Verify(spw, _account.SPW))
+            {
+                using (var p = new OutPacket(LoginSendOperations.CheckSPWResult))
+                {
+                    p.Encode<bool>(false); // Unused byte
+                    SendPacket(p);
+                }
+
+                return;
+            }
+        }
+
+        private void OnViewAllChar(InPacket packet)
+        {
+            var worlds = this._wvsLogin.InteropClients.Select(c => c.Socket.WorldInformation).ToList();
+            var allCharacters = this._account.Characters.Where(c => worlds.Any(w => c.WorldID == w.ID)).ToList();
+
+            using (var p = new OutPacket(LoginSendOperations.ViewAllCharResult))
+            {
+                p.Encode<byte>(0x1);
+                p.Encode<int>(worlds.Count);
+                p.Encode<int>(allCharacters.Count);
+                SendPacket(p);
+            }
+            
+            if (worlds.Any() && allCharacters.Any())
+            {
+                worlds.ForEach(w =>
+                {
+                    var characters = allCharacters.Where(c => c.WorldID == w.ID).ToList();
+
+                    using (var p = new OutPacket(LoginSendOperations.ViewAllCharResult))
+                    {
+                        p.Encode<byte>(0x0);
+                        p.Encode<byte>(w.ID);
+                        p.Encode<byte>((byte) characters.Count);
+
+                        characters.ForEach(c =>
+                        {
+                            c.EncodeStats(p);
+                            c.EncodeLook(p);
+                            p.Encode<bool>(false);
+                        });
+
+                        p.Encode<bool>(!string.IsNullOrEmpty(_account.SPW));
+                        SendPacket(p);
+                    }
+                });
             }
         }
     }
