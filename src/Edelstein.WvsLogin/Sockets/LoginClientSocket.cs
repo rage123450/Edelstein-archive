@@ -101,13 +101,13 @@ namespace Edelstein.WvsLogin.Sockets
                 case LoginRecvOperations.SecurityPacket:
                     break;
                 case LoginRecvOperations.EnableSPWRequest:
-                    this.OnEnableSPWRequest(packet);
+                    this.OnEnableSPWRequest(packet, false);
                     break;
                 case LoginRecvOperations.CheckSPWRequest:
                     this.OnCheckSPWRequest(packet);
                     break;
                 case LoginRecvOperations.EnableSPWRequestByACV:
-                    this.OnEnableSPWRequest(packet);
+                    this.OnEnableSPWRequest(packet, true);
                     break;
                 case LoginRecvOperations.CheckSPWRequestByACV:
                     this.OnCheckSPWRequest(packet);
@@ -382,13 +382,18 @@ namespace Edelstein.WvsLogin.Sockets
             }
         }
 
-        private void OnEnableSPWRequest(InPacket packet)
+        private void OnEnableSPWRequest(InPacket packet, bool vac)
         {
             packet.Decode<bool>(); // ?
             packet.Decode<int>(); // dwCharacterID
+
+            if (vac) packet.Decode<int>(); // Unknown
+
             packet.Decode<string>(); // sMacAddress
             packet.Decode<string>(); // sMacAddressWithHDDSerial
             var spw = packet.Decode<string>();
+
+            Console.WriteLine(spw);
 
             if (!string.IsNullOrEmpty(_account.SPW)) return;
             if (BCrypt.Net.BCrypt.Verify(spw, _account.Password))
@@ -418,6 +423,9 @@ namespace Edelstein.WvsLogin.Sockets
             packet.Decode<string>(); // sMacAddress
             packet.Decode<string>(); // sMacAddressWithHDDSerial
 
+            Console.WriteLine(string.Join(", ", packet.Buffer.Array));
+            Console.WriteLine(spw);
+
             if (string.IsNullOrEmpty(_account.SPW)) return;
             if (!BCrypt.Net.BCrypt.Verify(spw, _account.SPW))
             {
@@ -443,7 +451,7 @@ namespace Edelstein.WvsLogin.Sockets
                 p.Encode<int>(allCharacters.Count);
                 SendPacket(p);
             }
-            
+
             if (worlds.Any() && allCharacters.Any())
             {
                 worlds.ForEach(w =>
