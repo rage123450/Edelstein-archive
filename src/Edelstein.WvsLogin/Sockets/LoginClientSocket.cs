@@ -394,8 +394,6 @@ namespace Edelstein.WvsLogin.Sockets
             packet.Decode<string>(); // sMacAddressWithHDDSerial
             var spw = packet.Decode<string>();
 
-            Console.WriteLine(spw);
-
             if (!string.IsNullOrEmpty(_account.SPW)) return;
             if (BCrypt.Net.BCrypt.Verify(spw, _account.Password))
             {
@@ -423,9 +421,6 @@ namespace Edelstein.WvsLogin.Sockets
             var characterID = packet.Decode<int>();
             packet.Decode<string>(); // sMacAddress
             packet.Decode<string>(); // sMacAddressWithHDDSerial
-
-            Console.WriteLine(string.Join(", ", packet.Buffer.Array));
-            Console.WriteLine(spw);
 
             if (string.IsNullOrEmpty(_account.SPW)) return;
             if (!BCrypt.Net.BCrypt.Verify(spw, _account.SPW))
