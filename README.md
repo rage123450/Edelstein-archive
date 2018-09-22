@@ -10,6 +10,11 @@ A MapleStory Global v.95 server emulator written in C#.
 ### Build with your favourite tool/ide
 1. On Visual Studio and Rider it should be pretty straightfoward
 2. Use ```dotnet build``` if not using an ide
+### Running database migrations
+1. ```cd src/Edelstein.Database```
+2. ```cp Database.Example.json Database.json```
+3. Edit database.json to the appropriate connection string
+4. ```dotnet ef database update```
 
 ## ⭐️ Acknowledgements
 * [Rebirth](https://github.com/RajanGrewal/Rebirth) - lot's of referencing from here.
