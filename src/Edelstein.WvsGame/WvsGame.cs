@@ -15,6 +15,7 @@ namespace Edelstein.WvsGame
 
         private readonly IContainer _container;
         public Client<CenterServerSocket> InteropClient;
+        public Server<GameClientSocket> GameServer;
 
         public ChannelInformation ChannelInformation { get; set; }
 
@@ -42,8 +43,16 @@ namespace Edelstein.WvsGame
                 this._container.GetInstance<CenterServerSocketFactory>()
             );
 
+            this.GameServer = new Server<GameClientSocket>(
+                options.GameServerOptions,
+                this._container.GetInstance<GameClientSocketFactory>()
+            );
+
             await this.InteropClient.Run();
             Logger.Info($"Connected to interoperability server on {this.InteropClient.Channel.RemoteAddress}");
+
+            await this.GameServer.Run();
+            Logger.Info($"Bounded {this.ChannelInformation.Name} on {this.GameServer.Channel.LocalAddress}");
 
             using (var p = new OutPacket(InteropRecvOperations.RegisterServer))
             {

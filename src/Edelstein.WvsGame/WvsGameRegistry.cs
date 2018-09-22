@@ -33,6 +33,7 @@ namespace Edelstein.WvsGame
             });
 
             For<CenterServerSocketFactory>().Use<CenterServerSocketFactory>();
+            For<GameClientSocketFactory>().Use<GameClientSocketFactory>();
 
             For<WvsGame>().Use<WvsGame>().Singleton();
         }

@@ -9,5 +9,9 @@
     "TargetHost": "127.0.0.1",
     "TargetPort": 9000
   },
+  "GameServerOptions": {
+    "Host": "127.0.0.1",
+    "Port": 7575
+  },
   "ConnectionString": "Server=localhost;Uid=root;Database=Edelstein;"
 }
