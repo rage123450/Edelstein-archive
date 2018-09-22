@@ -1,7 +1,15 @@
-# Edelstein
+# Edelstein [![CircleCI](https://circleci.com/gh/Kaioru/Edelstein.svg?style=svg)](https://circleci.com/gh/Kaioru/Edelstein)
 A MapleStory Global v.95 server emulator written in C#.
 
 **btw, this project is nowhere near complete.**
+
+## 🔨 Building and Running
+### Clone the repo
+1. ```git clone https://github.com/Kaioru/Edelstein && cd Edelstein```
+2. ```git submodule update --init --recursive```
+### Build with your favourite tool/ide
+1. On Visual Studio and Rider it should be pretty straightfoward
+2. Use ```dotnet build``` if not using an ide
 
 ## ⭐️ Acknowledgements
 * [Rebirth](https://github.com/RajanGrewal/Rebirth) - lot's of referencing from here.
