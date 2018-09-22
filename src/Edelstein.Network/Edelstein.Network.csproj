@@ -13,10 +13,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="DotNetty.Buffers" Version="0.5.0" />
-        <PackageReference Include="DotNetty.Codecs" Version="0.5.0" />
-        <PackageReference Include="DotNetty.Common" Version="0.5.0" />
-        <PackageReference Include="LibLog" Version="5.0.2" />
+        <PackageReference Include="DotNetty.Buffers" Version="0.5.0"/>
+        <PackageReference Include="DotNetty.Codecs" Version="0.5.0"/>
+        <PackageReference Include="DotNetty.Common" Version="0.5.0"/>
+        <PackageReference Include="LibLog" Version="5.0.2"/>
     </ItemGroup>
 
 </Project>
