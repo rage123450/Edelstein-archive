@@ -34,8 +34,14 @@ namespace Edelstein.WvsCenter.Sockets
 
             switch (operation)
             {
-                case InteropRecvOperations.RegisterServer:
+                case InteropRecvOperations.ServerRegister:
                     this.OnRegisterServer(packet);
+                    break;
+                case InteropRecvOperations.MigrationRequest:
+                    this.OnMigrationRequest(packet);
+                    break;
+                case InteropRecvOperations.MigrationRegisterResult:
+                    this.OnMigrationRegisterResult(packet);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -62,10 +68,10 @@ namespace Edelstein.WvsCenter.Sockets
                     break;
             }
 
-            using (var p = new OutPacket(InteropSendOperations.UpdateWorldInformation))
+            using (var p = new OutPacket(InteropSendOperations.ServerInformation))
             {
                 this._wvsCenter.WorldInformation.Encode(p);
-                this._wvsCenter.InteropServer.ChannelGroup.WriteAndFlushAsync(p, new EveryOneBut(Channel.Id));
+                this._wvsCenter.InteropServer.BroadcastPacket(p, new EveryOneBut(Channel.Id));
             }
         }
 
@@ -94,7 +100,7 @@ namespace Edelstein.WvsCenter.Sockets
                     serverName = channelInformation.Name;
                     break;
                 default:
-                    using (var p = new OutPacket(InteropSendOperations.RegisterServerResult))
+                    using (var p = new OutPacket(InteropSendOperations.ServerRegisterResult))
                     {
                         p.Encode<bool>(true);
                         SendPacket(p);
@@ -103,20 +109,65 @@ namespace Edelstein.WvsCenter.Sockets
                     return;
             }
 
-            using (var p = new OutPacket(InteropSendOperations.RegisterServerResult))
+            using (var p = new OutPacket(InteropSendOperations.ServerRegisterResult))
             {
                 p.Encode<bool>(false);
                 this._wvsCenter.WorldInformation.Encode(p);
                 SendPacket(p);
             }
 
-            using (var p = new OutPacket(InteropSendOperations.UpdateWorldInformation))
+            using (var p = new OutPacket(InteropSendOperations.ServerInformation))
             {
                 this._wvsCenter.WorldInformation.Encode(p);
-                this._wvsCenter.InteropServer.ChannelGroup.WriteAndFlushAsync(p, new EveryOneBut(Channel.Id));
+                this._wvsCenter.InteropServer.BroadcastPacket(p, new EveryOneBut(Channel.Id));
             }
 
             Logger.Info($"Registered {Enum.GetName(typeof(ServerType), serverType)} server, {serverName}");
+        }
+
+        private void OnMigrationRequest(InPacket packet)
+        {
+            var serverType = (ServerType) packet.Decode<byte>();
+            var serverID = packet.Decode<byte>();
+
+            var server = _wvsCenter.InteropServer.Sockets
+                .Single(s => s.ServerType == serverType &&
+                             s.ServerID == serverID);
+
+            using (var p = new OutPacket(InteropSendOperations.MigrationRegistryRequest))
+            {
+                p.Encode<string>(SessionKey);
+                p.Encode<string>(packet.Decode<string>());
+                p.Encode<int>(packet.Decode<int>());
+                server.SendPacket(p);
+            }
+        }
+
+        private void OnMigrationRegisterResult(InPacket packet)
+        {
+            var sessionKey = packet.Decode<string>();
+            var server = _wvsCenter.InteropServer.Sockets.Single(s => s.SessionKey == sessionKey);
+
+            using (var p = new OutPacket(InteropSendOperations.MigrationResult))
+            {
+                p.Encode<string>(packet.Decode<string>());
+
+                var result = packet.Decode<bool>();
+
+                p.Encode<bool>(result);
+
+                if (!result) return;
+
+                p.Encode<byte>(192);
+                p.Encode<byte>(168);
+                p.Encode<byte>(2);
+                p.Encode<byte>(250);
+                p.Encode<short>(7575);
+
+                server.SendPacket(p);
+
+                Console.WriteLine(server.ServerType);
+            }
         }
     }
 }

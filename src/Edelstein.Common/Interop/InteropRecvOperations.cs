@@ -2,7 +2,10 @@ namespace Edelstein.Common.Interop
 {
     public enum InteropRecvOperations
     {
-        RegisterServer = 0x0,
-        UpdateServerInformation = 0x1
+        ServerRegister = 0x0,
+        ServerUpdate = 0x1,
+        
+        MigrationRequest = 0x5,
+        MigrationRegisterResult = 0x6
     }
 }

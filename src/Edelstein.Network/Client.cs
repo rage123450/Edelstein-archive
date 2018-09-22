@@ -4,6 +4,7 @@ using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 using Edelstein.Network.Codecs;
+using Edelstein.Network.Packets;
 
 namespace Edelstein.Network
 {
@@ -42,5 +43,7 @@ namespace Edelstein.Network
                 }))
                 .ConnectAsync(IPAddress.Parse(this._options.TargetHost), this._options.TargetPort);
         }
+
+        public Task SendPacket(OutPacket packet) => this.Socket.SendPacket(packet);
     }
 }

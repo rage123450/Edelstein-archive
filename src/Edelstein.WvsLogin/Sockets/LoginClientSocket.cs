@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using DotNetty.Transport.Channels;
+using Edelstein.Common.Interop;
 using Edelstein.Common.Interop.Game;
 using Edelstein.Common.Packets;
 using Edelstein.Database;
@@ -432,6 +433,17 @@ namespace Edelstein.WvsLogin.Sockets
                 }
 
                 return;
+            }
+
+            var world = this._wvsLogin.InteropClients.Single(c => c.Socket.WorldInformation.ID == _selectedWorld.ID);
+
+            using (var p = new OutPacket(InteropRecvOperations.MigrationRequest))
+            {
+                p.Encode<byte>((byte) ServerType.Game);
+                p.Encode<byte>(_selectedChannel.ID);
+                p.Encode<string>(SessionKey);
+                p.Encode<int>(characterID);
+                world.Socket.SendPacket(p);
             }
         }
 

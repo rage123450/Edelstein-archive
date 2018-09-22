@@ -1,10 +1,12 @@
 using System;
+using System.Linq;
 using DotNetty.Transport.Channels;
 using Edelstein.Common.Interop;
 using Edelstein.Common.Interop.Game;
 using Edelstein.Network;
 using Edelstein.Network.Packets;
 using Edelstein.WvsLogin.Logging;
+using Edelstein.WvsLogin.Packets;
 using Lamar;
 
 namespace Edelstein.WvsLogin.Sockets
@@ -12,25 +14,33 @@ namespace Edelstein.WvsLogin.Sockets
     public class CenterServerSocket : Socket
     {
         private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
-        
+
+        private IContainer _container;
+        private WvsLogin _wvsLogin;
+
         public WorldInformation WorldInformation { get; set; }
 
         public CenterServerSocket(IContainer container, IChannel channel, uint seqSend, uint seqRecv)
             : base(channel, seqSend, seqRecv)
         {
+            this._container = container;
+            this._wvsLogin = container.GetInstance<WvsLogin>();
         }
 
         public override void OnPacket(InPacket packet)
         {
             var operation = (InteropSendOperations) packet.Decode<short>();
-            
+
             switch (operation)
             {
-                case InteropSendOperations.RegisterServerResult:
-                    this.OnRegisterServerResult(packet);
+                case InteropSendOperations.ServerRegisterResult:
+                    this.OnServerRegisterResult(packet);
                     break;
-                case InteropSendOperations.UpdateWorldInformation:
-                    this.OnUpdateWorldInformation(packet);
+                case InteropSendOperations.ServerInformation:
+                    this.OnServerInformation(packet);
+                    break;
+                case InteropSendOperations.MigrationResult:
+                    this.OnMigrationResult(packet);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -42,7 +52,7 @@ namespace Edelstein.WvsLogin.Sockets
             throw new NotImplementedException();
         }
 
-        private void OnRegisterServerResult(InPacket packet)
+        private void OnServerRegisterResult(InPacket packet)
         {
             if (packet.Decode<bool>()) return; // TODO: disconnect?
 
@@ -53,13 +63,39 @@ namespace Edelstein.WvsLogin.Sockets
             Logger.Info($"Registered Center server, {worldInformation.Name}");
         }
 
-        private void OnUpdateWorldInformation(InPacket packet)
+        private void OnServerInformation(InPacket packet)
         {
             var worldInformation = new WorldInformation();
 
             worldInformation.Decode(packet);
             this.WorldInformation = worldInformation;
             Logger.Info($"Updated {worldInformation.Name} server information");
+        }
+
+        private void OnMigrationResult(InPacket packet)
+        {
+            var sessionKey = packet.Decode<string>();
+            var client = _wvsLogin.GameServer.Sockets.Single(s => s.SessionKey == sessionKey);
+
+            if (!packet.Decode<bool>()) return;
+
+            using (var p = new OutPacket(LoginSendOperations.SelectCharacterResult))
+            {
+                p.Encode<byte>(0);
+                p.Encode<byte>(0);
+
+                p.Encode<byte>(packet.Decode<byte>());
+                p.Encode<byte>(packet.Decode<byte>());
+                p.Encode<byte>(packet.Decode<byte>());
+                p.Encode<byte>(packet.Decode<byte>());
+                p.Encode<short>(packet.Decode<short>());
+
+                p.Encode<int>(0);
+                p.Encode<byte>(0);
+                p.Encode<int>(0);
+
+                client.SendPacket(p);
+            }
         }
     }
 }

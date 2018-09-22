@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Edelstein.Network.Codecs;
@@ -5,6 +7,7 @@ using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Groups;
 using DotNetty.Transport.Channels.Sockets;
+using Edelstein.Network.Packets;
 
 namespace Edelstein.Network
 {
@@ -14,8 +17,8 @@ namespace Edelstein.Network
         public IEventLoopGroup bossGroup { get; set; }
         public IEventLoopGroup workerGroup { get; set; }
         public IChannel Channel { get; private set; }
-        public IChannelGroup ChannelGroup { get; set; }
-        
+        public ICollection<T> Sockets { get; set; }
+
         private readonly ServerOptions _options;
         private readonly ISocketFactory<T> _socketFactory;
 
@@ -24,6 +27,7 @@ namespace Edelstein.Network
             ISocketFactory<T> socketFactory
         )
         {
+            this.Sockets = new List<T>();
             this._options = options;
             this._socketFactory = socketFactory;
         }
@@ -46,6 +50,22 @@ namespace Edelstein.Network
                     );
                 }))
                 .BindAsync(IPAddress.Parse(this._options.Host), this._options.Port);
+        }
+
+
+        public Task BroadcastPacket(OutPacket packet)
+        {
+            return Task.WhenAll(Sockets
+                .Select(s => s.SendPacket(packet))
+            );
+        }
+
+        public Task BroadcastPacket(OutPacket packet, IChannelMatcher matcher)
+        {
+            return Task.WhenAll(Sockets
+                .Where(s => matcher.Matches(s.Channel))
+                .Select(s => s.SendPacket(packet))
+            );
         }
     }
 }

@@ -58,7 +58,7 @@ namespace Edelstein.WvsLogin
             
             InteropClients.ForEach(c =>
             {
-                using (var p = new OutPacket(InteropRecvOperations.RegisterServer))
+                using (var p = new OutPacket(InteropRecvOperations.ServerRegister))
                 {
                     p.Encode<byte>((byte) ServerType.Login);
                     LoginInformation.Encode(p);

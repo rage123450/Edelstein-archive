@@ -1,6 +1,5 @@
 using System;
 using DotNetty.Transport.Channels;
-using DotNetty.Transport.Channels.Groups;
 using Edelstein.Network.Crypto;
 using Edelstein.Network.Logging;
 using Edelstein.Network.Packets;
@@ -26,18 +25,6 @@ namespace Edelstein.Network
 
         public override void ChannelActive(IChannelHandlerContext context)
         {
-            IChannelGroup group;
-
-            lock (this._server)
-            {
-                if (this._server.ChannelGroup == null)
-                {
-                    this._server.ChannelGroup = new DefaultChannelGroup(context.Executor);
-                }
-
-                group = this._server.ChannelGroup;
-            }
-
             var random = new Random();
             var socket = this._socketFactory.Build(
                 context.Channel,
@@ -58,7 +45,7 @@ namespace Edelstein.Network
             }
 
             context.Channel.GetAttribute(Socket.SocketKey).Set(socket);
-            group?.Add(context.Channel);
+            _server.Sockets.Add(socket);
 
             Logger.Debug($"Accepted connection from {context.Channel.RemoteAddress}");
         }
@@ -68,6 +55,7 @@ namespace Edelstein.Network
             var socket = (T) context.Channel.GetAttribute(Socket.SocketKey).Get();
 
             socket?.OnDisconnect();
+            _server.Sockets.Remove(socket);
             base.ChannelInactive(context);
 
             Logger.Debug($"Released connection from {context.Channel.RemoteAddress}");

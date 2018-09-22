@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Edelstein.Common.Interop;
 using Edelstein.Common.Interop.Game;
@@ -18,10 +19,12 @@ namespace Edelstein.WvsGame
         public Server<GameClientSocket> GameServer;
 
         public ChannelInformation ChannelInformation { get; set; }
+        public ICollection<int> PendingMigrations { get; set; }
 
         public WvsGame(IContainer container)
         {
             this._container = container;
+            this.PendingMigrations = new List<int>();
         }
 
         public async Task Run()
@@ -54,7 +57,7 @@ namespace Edelstein.WvsGame
             await this.GameServer.Run();
             Logger.Info($"Bounded {this.ChannelInformation.Name} on {this.GameServer.Channel.LocalAddress}");
 
-            using (var p = new OutPacket(InteropRecvOperations.RegisterServer))
+            using (var p = new OutPacket(InteropRecvOperations.ServerRegister))
             {
                 p.Encode<byte>((byte) ServerType.Game);
                 ChannelInformation.Encode(p);

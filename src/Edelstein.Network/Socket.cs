@@ -14,6 +14,7 @@ namespace Edelstein.Network
         public uint SeqSend { get; set; }
         public uint SeqRecv { get; set; }
         public bool EncryptData { get; set; } = true;
+        public string SessionKey => Channel.Id.AsLongText();
 
         public readonly object LockSend = new object();
         public readonly object LockRecv = new object();

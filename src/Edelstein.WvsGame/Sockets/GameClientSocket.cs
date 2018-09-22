@@ -1,3 +1,4 @@
+using System;
 using DotNetty.Transport.Channels;
 using Edelstein.Network;
 using Edelstein.Network.Packets;
@@ -21,7 +22,9 @@ namespace Edelstein.WvsGame.Sockets
 
         public override void OnPacket(InPacket packet)
         {
-            throw new System.NotImplementedException();
+            var operation = packet.Decode<short>();
+
+            Console.WriteLine(operation);
         }
 
         public override void OnDisconnect()
