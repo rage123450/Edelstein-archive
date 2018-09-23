@@ -1,4 +1,5 @@
 # --- Application specific ignores --- #
+**/*.aes
 **/*.json
 !**/*.example.json
 

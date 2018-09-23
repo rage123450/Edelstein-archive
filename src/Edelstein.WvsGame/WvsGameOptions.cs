@@ -9,6 +9,7 @@ namespace Edelstein.WvsGame
         public ClientOptions InteropClientOptions { get; set; }
         public ServerOptions GameServerOptions { get; set; }
         public string ConnectionString { get; set; }
+        public string BaseWZPath { get; set; }
     }
 
     public class GameInfo

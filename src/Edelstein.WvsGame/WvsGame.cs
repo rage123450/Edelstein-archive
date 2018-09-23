@@ -1,12 +1,17 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Edelstein.Common.Interop;
 using Edelstein.Common.Interop.Game;
 using Edelstein.Network;
 using Edelstein.Network.Packets;
+using Edelstein.Provider.Fields;
 using Edelstein.WvsGame.Logging;
 using Edelstein.WvsGame.Sockets;
 using Lamar;
+using MoreLinq.Extensions;
+using PKG1;
 
 namespace Edelstein.WvsGame
 {
@@ -31,6 +36,14 @@ namespace Edelstein.WvsGame
         {
             var options = this._container.GetInstance<WvsGameOptions>();
             var info = options.GameInfo;
+            
+            // Testing
+            
+            WZReader.InitializeKeys();
+            var collection = new PackageCollection(options.BaseWZPath);
+            var field = FieldTemplate.Parse(0, collection);
+            
+            // End Testing
 
             this.ChannelInformation = new ChannelInformation
             {
