@@ -158,6 +158,8 @@ namespace Edelstein.WvsCenter.Sockets
 
                 if (!result) return;
 
+                p.Encode<int>(packet.Decode<int>());
+
                 p.Encode<byte>(192);
                 p.Encode<byte>(168);
                 p.Encode<byte>(2);

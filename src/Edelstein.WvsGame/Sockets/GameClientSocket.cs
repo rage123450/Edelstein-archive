@@ -34,9 +34,7 @@ namespace Edelstein.WvsGame.Sockets
             switch (operation)
             {
                 case GameRecvOperations.MigrateIn:
-                    var characterID = 2;
-
-                    Console.WriteLine(string.Join(", ", packet.Buffer.Array));
+                    var characterID = packet.Decode<int>();
 
                     using (var db = _container.GetInstance<DataContext>())
                     {

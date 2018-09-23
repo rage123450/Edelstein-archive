@@ -81,6 +81,7 @@ namespace Edelstein.WvsLogin.Sockets
 
             using (var p = new OutPacket(LoginSendOperations.SelectCharacterResult))
             {
+                var characterID = packet.Decode<int>();
                 p.Encode<byte>(0);
                 p.Encode<byte>(0);
 
@@ -90,7 +91,7 @@ namespace Edelstein.WvsLogin.Sockets
                 p.Encode<byte>(packet.Decode<byte>());
                 p.Encode<short>(packet.Decode<short>());
 
-                p.Encode<int>(0);
+                p.Encode<int>(characterID);
                 p.Encode<byte>(0);
                 p.Encode<int>(0);
 

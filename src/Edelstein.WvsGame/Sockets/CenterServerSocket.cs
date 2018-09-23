@@ -77,6 +77,7 @@ namespace Edelstein.WvsGame.Sockets
 
                 _wvsGame.PendingMigrations.Add(characterID);
                 p.Encode<bool>(true);
+                p.Encode<int>(characterID);
 
                 SendPacket(p);
             }
