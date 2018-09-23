@@ -13,6 +13,8 @@ namespace Edelstein.WvsGame.Sockets
         private IContainer _container;
         private WvsGame _wvsGame;
 
+        public bool IsInstantiated { get; set; } = false;
+
         public GameClientSocket(IContainer container, IChannel channel, uint seqSend, uint seqRecv)
             : base(channel, seqSend, seqRecv)
         {

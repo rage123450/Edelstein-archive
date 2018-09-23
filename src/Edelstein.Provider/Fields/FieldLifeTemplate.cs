@@ -18,7 +18,9 @@ namespace Edelstein.Provider.Fields
             var res = new FieldLifeTemplate
             {
                 TemplateID = p.ResolveFor<int>("id") ?? -1,
-                Type = p.ResolveForOrNull<string>("type").ToLower() == "n" ? FieldLifeType.NPC : FieldLifeType.Monster,
+                Type = p.ResolveForOrNull<string>("type").ToLower() == "n"
+                    ? FieldLifeType.NPC
+                    : FieldLifeType.Monster,
                 X = p.ResolveFor<int>("x") ?? int.MinValue,
                 Y = p.ResolveFor<int>("y") ?? int.MinValue,
                 RX0 = p.ResolveFor<int>("rx0") ?? int.MinValue,

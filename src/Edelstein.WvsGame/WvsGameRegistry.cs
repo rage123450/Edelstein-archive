@@ -1,9 +1,13 @@
 using System.IO;
 using Edelstein.Database;
+using Edelstein.Provider;
+using Edelstein.Provider.Fields;
+using Edelstein.WvsGame.Fields;
 using Edelstein.WvsGame.Sockets;
 using Lamar;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using PKG1;
 
 namespace Edelstein.WvsGame
 {
@@ -31,6 +35,13 @@ namespace Edelstein.WvsGame
                 optionsBuilder.UseMySql(c.GetInstance<WvsGameOptions>().ConnectionString);
                 return new DataContext(optionsBuilder.Options);
             });
+
+            For<PackageCollection>().Use(c =>
+            {
+                WZReader.InitializeKeys();
+                return new PackageCollection(c.GetInstance<WvsGameOptions>().BaseWZPath);
+            }).Singleton();
+            For<ITemplateManager<FieldTemplate>>().Use<FieldTemplateManager>().Singleton();
 
             For<CenterServerSocketFactory>().Use<CenterServerSocketFactory>();
             For<GameClientSocketFactory>().Use<GameClientSocketFactory>();
