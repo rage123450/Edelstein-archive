@@ -10,13 +10,15 @@ namespace Edelstein.WvsGame.Fields
 {
     public class Field
     {
+        public int ID { get; set; }
         public FieldTemplate Template { get; }
         private int _runningObjectID;
         private readonly List<FieldObject> _objects;
         public IEnumerable<FieldObject> Objects => _objects.AsReadOnly();
 
-        public Field(FieldTemplate template)
+        public Field(int id, FieldTemplate template)
         {
+            this.ID = id;
             this.Template = template;
             this._objects = new List<FieldObject>();
         }
@@ -32,8 +34,10 @@ namespace Edelstein.WvsGame.Fields
             {
                 user.SendPacket(user.GetSetFieldPacket());
                 BroadcastPacket(user, user.GetEnterFieldPacket());
+
+                if (!user.Socket.IsInstantiated) user.Socket.IsInstantiated = true;
             }
-            else BroadcastPacket(obj.GetLeaveFieldPacket());
+            else BroadcastPacket(obj.GetEnterFieldPacket());
 
             this._objects.Add(obj);
         }

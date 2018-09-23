@@ -1,9 +1,14 @@
 using System;
+using System.Linq;
 using DotNetty.Transport.Channels;
+using Edelstein.Database;
 using Edelstein.Network;
 using Edelstein.Network.Packets;
+using Edelstein.WvsGame.Fields.Users;
 using Edelstein.WvsGame.Logging;
+using Edelstein.WvsGame.Packets;
 using Lamar;
+using Microsoft.EntityFrameworkCore;
 
 namespace Edelstein.WvsGame.Sockets
 {
@@ -24,9 +29,49 @@ namespace Edelstein.WvsGame.Sockets
 
         public override void OnPacket(InPacket packet)
         {
-            var operation = packet.Decode<short>();
+            var operation = (GameRecvOperations) packet.Decode<short>();
 
-            Console.WriteLine(operation);
+            switch (operation)
+            {
+                case GameRecvOperations.MigrateIn:
+                    var characterID = 2;
+
+                    Console.WriteLine(string.Join(", ", packet.Buffer.Array));
+
+                    using (var db = _container.GetInstance<DataContext>())
+                    {
+                        var character = db.Characters
+                            .Include(c => c.InventoryEquipped)
+                            .ThenInclude(c => c.Items)
+                            .Include(c => c.InventoryEquippedCash)
+                            .ThenInclude(c => c.Items)
+                            .Include(c => c.InventoryEquip)
+                            .ThenInclude(c => c.Items)
+                            .Include(c => c.InventoryConsume)
+                            .ThenInclude(c => c.Items)
+                            .Include(c => c.InventoryInstall)
+                            .ThenInclude(c => c.Items)
+                            .Include(c => c.InventoryEtc)
+                            .ThenInclude(c => c.Items)
+                            .Include(c => c.InventoryCash)
+                            .ThenInclude(c => c.Items)
+                            .Single(c => c.ID == characterID);
+                        var field = _wvsGame.FieldFactory.Get(100000000);
+                        var fieldUser = new FieldUser(this, character);
+
+                        field.Enter(fieldUser);
+                    }
+
+                    break;
+                case GameRecvOperations.ClientDumpLog:
+                    var callType = packet.Decode<short>();
+                    var errorCode = packet.Decode<int>();
+                    var backupBufferSize = packet.Decode<short>();
+                    var rawSeq = packet.Decode<int>();
+                    var type = packet.Decode<short>();
+                    Console.WriteLine(type.ToString("X"));
+                    break;
+            }
         }
 
         public override void OnDisconnect()

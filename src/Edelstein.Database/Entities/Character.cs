@@ -42,6 +42,7 @@ namespace Edelstein.Database.Entities
 
         public ItemInventory InventoryEquipped { get; set; } = new ItemInventory(60);
         public ItemInventory InventoryEquippedCash { get; set; } = new ItemInventory(60);
+        public ItemInventory InventoryEquip { get; set; } = new ItemInventory(24);
         public ItemInventory InventoryConsume { get; set; } = new ItemInventory(24);
         public ItemInventory InventoryInstall { get; set; } = new ItemInventory(24);
         public ItemInventory InventoryEtc { get; set; } = new ItemInventory(24);
