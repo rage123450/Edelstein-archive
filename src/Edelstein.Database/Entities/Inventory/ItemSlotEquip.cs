@@ -4,7 +4,7 @@ namespace Edelstein.Database.Entities.Inventory
     {
         public byte RUC { get; set; }
         public byte CUC { get; set; }
-        
+
         public short STR { get; set; }
         public short DEX { get; set; }
         public short INT { get; set; }
@@ -17,19 +17,20 @@ namespace Edelstein.Database.Entities.Inventory
         public short MDD { get; set; }
         public short ACC { get; set; }
         public short EVA { get; set; }
-        
+
         public short Craft { get; set; }
         public short Speed { get; set; }
         public short Jump { get; set; }
-        
+
+        public string Title { get; set; }
         public short Attribute { get; set; }
         public byte LevelUpType { get; set; }
         public byte Level { get; set; }
         public int EXP { get; set; }
         public int Durability { get; set; }
-        
+
         public int IUC { get; set; }
-        
+
         public byte Grade { get; set; }
         public byte CHUC { get; set; }
 

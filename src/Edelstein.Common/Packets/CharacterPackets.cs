@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Edelstein.Database.Entities;
+using Edelstein.Database.Entities.Inventory;
 using Edelstein.Network.Packets;
 
 namespace Edelstein.Common.Packets
@@ -9,7 +12,7 @@ namespace Edelstein.Common.Packets
         public static void EncodeData(this Character c, OutPacket p)
         {
             long flag = -1;
-            p.Encode<long>(-1);
+            p.Encode<long>(flag);
             p.Encode<byte>(0);
             p.Encode<byte>(0);
 
@@ -23,7 +26,6 @@ namespace Edelstein.Common.Packets
             if ((flag & 0x2) != 0) p.Encode<int>(0); // Money
             if ((flag & 0x80) != 0)
             {
-                Console.WriteLine(c.InventoryEquip.SlotMax);
                 if ((flag & 0x4) != 0) p.Encode<byte>(c.InventoryEquip.SlotMax);
                 if ((flag & 0x8) != 0) p.Encode<byte>(c.InventoryConsume.SlotMax);
                 if ((flag & 0x10) != 0) p.Encode<byte>(c.InventoryInstall.SlotMax);
@@ -39,30 +41,58 @@ namespace Edelstein.Common.Packets
 
             if ((flag & 0x4) != 0)
             {
-                p.Encode<short>(0); // c.InventoryEquipped
-                p.Encode<short>(0); // c.InventoryEquippedCash
-                p.Encode<short>(0); // c.InventoryEquip
+                void EncodeEquips(IEnumerable<ItemSlot> items)
+                {
+                    foreach (var i in items)
+                    {
+                        p.Encode<short>(i.Slot);
+                        (i as ItemSlotEquip).Encode(p);
+                    }
+                }
+
+                EncodeEquips(c.InventoryEquipped.Items);
+                p.Encode<short>(0);
+
+                EncodeEquips(c.InventoryEquippedCash.Items);
+                p.Encode<short>(0);
+
+                EncodeEquips(c.InventoryEquip.Items);
+                p.Encode<short>(0);
+
                 p.Encode<short>(0); // Evan
                 p.Encode<short>(0); // Mechanic
             }
 
+            void EncodeBundles(IEnumerable<ItemSlot> items)
+            {
+                foreach (var i in items)
+                {
+                    p.Encode<byte>((byte) i.Slot);
+                    (i as ItemSlotBundle).Encode(p);
+                }
+            }
+
             if ((flag & 0x8) != 0)
             {
+                EncodeBundles(c.InventoryConsume.Items);
                 p.Encode<byte>(0);
             }
 
             if ((flag & 0x10) != 0)
             {
+                EncodeBundles(c.InventoryInstall.Items);
                 p.Encode<byte>(0);
             }
 
             if ((flag & 0x20) != 0)
             {
+                EncodeBundles(c.InventoryEtc.Items);
                 p.Encode<byte>(0);
             }
 
             if ((flag & 0x40) != 0)
             {
+                EncodeBundles(c.InventoryCash.Items);
                 p.Encode<byte>(0);
             }
 
@@ -103,7 +133,7 @@ namespace Edelstein.Common.Packets
                 for (var i = 0; i < 5; i++) p.Encode<int>(0);
                 for (var i = 0; i < 10; i++) p.Encode<int>(0);
             }
-            
+
             if ((flag & 0x40000) != 0)
             {
                 p.Encode<short>(0); // New Year Card Record

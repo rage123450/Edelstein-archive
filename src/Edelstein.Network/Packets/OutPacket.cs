@@ -22,6 +22,8 @@ namespace Edelstein.Network.Packets
         {
             var type = typeof(T);
 
+            if (value == null) value = default(T);
+
             if (PacketMethods.EncodeMethods.ContainsKey(type))
                 PacketMethods.EncodeMethods[type](this.Buffer, value);
 

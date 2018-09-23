@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using DotNetty.Buffers;
 
@@ -33,7 +34,8 @@ namespace Edelstein.Network.Packets
                 {
                     typeof(string), (buffer, value) =>
                     {
-                        var str = (string) value;
+                        var str = (string) value ?? string.Empty;
+
                         buffer.WriteShortLE(str.Length);
                         buffer.WriteBytes(StringEncoding.GetBytes(str));
                     }
