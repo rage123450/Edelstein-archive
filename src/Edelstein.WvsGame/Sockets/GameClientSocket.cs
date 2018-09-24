@@ -36,6 +36,12 @@ namespace Edelstein.WvsGame.Sockets
                 case GameRecvOperations.MigrateIn:
                     var characterID = packet.Decode<int>();
 
+                    if (!_wvsGame.PendingMigrations.Remove(characterID))
+                    {
+                        Channel.CloseAsync();
+                        return;
+                    }
+
                     using (var db = _container.GetInstance<DataContext>())
                     {
                         var character = db.Characters
