@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using System.Linq;
 using DotNetty.Transport.Channels;
 using Edelstein.Database;
@@ -105,10 +106,13 @@ namespace Edelstein.WvsGame.Sockets
 
             using (var p = new OutPacket(GameSendOperations.UserMove))
             {
-                p.Encode(FieldUser.ID);
+                var fieldUser = FieldUser;
+
+                p.Encode(fieldUser.ID);
                 movementPath.Encode(p);
 
-                FieldUser.Field.BroadcastPacket(FieldUser, p);
+                fieldUser.Position = new Point(movementPath.X, movementPath.Y);
+                fieldUser.Field.BroadcastPacket(fieldUser, p);
             }
         }
 
