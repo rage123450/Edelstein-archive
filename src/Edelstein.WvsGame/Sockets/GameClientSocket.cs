@@ -18,7 +18,8 @@ namespace Edelstein.WvsGame.Sockets
         private IContainer _container;
         private WvsGame _wvsGame;
 
-        public bool IsInstantiated { get; set; } = false;
+        public FieldUser FieldUser { get; set; }
+        public bool IsInstantiated { get; set; }
 
         public GameClientSocket(IContainer container, IChannel channel, uint seqSend, uint seqRecv)
             : base(channel, seqSend, seqRecv)
@@ -60,9 +61,10 @@ namespace Edelstein.WvsGame.Sockets
                             .Include(c => c.InventoryCash)
                             .ThenInclude(c => c.Items)
                             .Single(c => c.ID == characterID);
-                        var field = _wvsGame.FieldFactory.Get(100000000);
+                        var field = _wvsGame.FieldFactory.Get(character.FieldID);
                         var fieldUser = new FieldUser(this, character);
 
+                        FieldUser = fieldUser;
                         field.Enter(fieldUser);
                     }
 
@@ -75,7 +77,8 @@ namespace Edelstein.WvsGame.Sockets
 
         public override void OnDisconnect()
         {
-            throw new System.NotImplementedException();
+            var fieldUser = FieldUser;
+            fieldUser?.Field?.Leave(fieldUser);
         }
     }
 }

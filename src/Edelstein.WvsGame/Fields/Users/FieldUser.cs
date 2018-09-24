@@ -59,12 +59,70 @@ namespace Edelstein.WvsGame.Fields.Users
 
         public override OutPacket GetEnterFieldPacket()
         {
-            throw new System.NotImplementedException();
+            using (var p = new OutPacket(GameSendOperations.UserEnterField))
+            {
+                p.Encode<int>(ID);
+
+                p.Encode<byte>(Character.Level);
+                p.Encode<string>(Character.Name);
+
+                // Guild
+                p.Encode<string>("");
+                p.Encode<short>(0);
+                p.Encode<byte>(0);
+                p.Encode<short>(0);
+                p.Encode<byte>(0);
+
+                p.Encode<long>(0);
+                p.Encode<long>(0);
+                p.Encode<byte>(0);
+                p.Encode<byte>(0);
+
+                p.Encode<short>(Character.Job);
+                Character.EncodeLook(p);
+
+                p.Encode<int>(0);
+                p.Encode<int>(0);
+                p.Encode<int>(0);
+                p.Encode<int>(0);
+                p.Encode<int>(0);
+                p.Encode<int>(0);
+
+                p.Encode<short>(0);
+
+                p.Encode<short>(0);
+                p.Encode<byte>(0);
+                p.Encode<short>(0);
+                p.Encode<byte>(0);
+
+                p.Encode<byte>(0);
+
+                p.Encode<int>(0);
+                p.Encode<int>(0);
+                p.Encode<int>(0);
+
+                p.Encode<byte>(0);
+
+                p.Encode<byte>(0);
+                p.Encode<byte>(0);
+                p.Encode<byte>(0);
+                p.Encode<byte>(0);
+
+                p.Encode<byte>(0);
+
+                p.Encode<byte>(0);
+                p.Encode<int>(0);
+                return p;
+            }
         }
 
         public override OutPacket GetLeaveFieldPacket()
         {
-            throw new System.NotImplementedException();
+            using (var p = new OutPacket(GameSendOperations.UserLeaveField))
+            {
+                p.Encode<int>(ID);
+                return p;
+            }
         }
 
         public Task SendPacket(OutPacket packet) => this.Socket.SendPacket(packet);
