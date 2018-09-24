@@ -273,6 +273,8 @@ namespace Edelstein.WvsGame.Fields.Movements
                         m.FH = 0;
                         break;
                 }
+
+                _path.Add(m);
             }
         }
     }
