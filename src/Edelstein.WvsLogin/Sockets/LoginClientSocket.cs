@@ -129,7 +129,8 @@ namespace Edelstein.WvsLogin.Sockets
                 case LoginRecvOperations.CreateNewCharacter_Ex:
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    Logger.Warn($"Unhandled packet operation {operation}");
+                    break;
             }
 
             Logger.Debug($"Received packet operation {Enum.GetName(typeof(LoginRecvOperations), operation)}");

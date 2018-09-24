@@ -39,7 +39,8 @@ namespace Edelstein.WvsGame.Sockets
                     this.OnMigrationRegistryRequest(packet);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    Logger.Warn($"Unhandled packet operation {operation}");
+                    break;
             }
         }
 

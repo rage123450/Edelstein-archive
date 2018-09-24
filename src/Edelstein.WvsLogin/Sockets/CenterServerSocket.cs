@@ -43,7 +43,8 @@ namespace Edelstein.WvsLogin.Sockets
                     this.OnMigrationResult(packet);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    Logger.Warn($"Unhandled packet operation {operation}");
+                    break;
             }
         }
 

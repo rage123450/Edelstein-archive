@@ -67,13 +67,8 @@ namespace Edelstein.WvsGame.Sockets
                     }
 
                     break;
-                case GameRecvOperations.ClientDumpLog:
-                    var callType = packet.Decode<short>();
-                    var errorCode = packet.Decode<int>();
-                    var backupBufferSize = packet.Decode<short>();
-                    var rawSeq = packet.Decode<int>();
-                    var type = packet.Decode<short>();
-                    Console.WriteLine(type.ToString("X"));
+                default:
+                    Logger.Warn($"Unhandled packet operation {operation}");
                     break;
             }
         }
