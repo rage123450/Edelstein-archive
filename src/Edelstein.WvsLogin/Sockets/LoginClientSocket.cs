@@ -132,8 +132,6 @@ namespace Edelstein.WvsLogin.Sockets
                     Logger.Warn($"Unhandled packet operation {operation}");
                     break;
             }
-
-            Logger.Debug($"Received packet operation {Enum.GetName(typeof(LoginRecvOperations), operation)}");
         }
 
         public override void OnDisconnect()
