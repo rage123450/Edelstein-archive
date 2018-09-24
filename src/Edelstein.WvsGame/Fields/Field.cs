@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -5,6 +6,7 @@ using System.Threading.Tasks;
 using Edelstein.Network.Packets;
 using Edelstein.Provider.Fields;
 using Edelstein.WvsGame.Fields.Users;
+using MoreLinq.Extensions;
 
 namespace Edelstein.WvsGame.Fields
 {
@@ -12,7 +14,7 @@ namespace Edelstein.WvsGame.Fields
     {
         public int ID { get; set; }
         public FieldTemplate Template { get; }
-        private int _runningObjectID;
+        private int _runningObjectID = 1;
         private readonly List<FieldObject> _objects;
         public IEnumerable<FieldObject> Objects => _objects.AsReadOnly();
 
@@ -36,6 +38,10 @@ namespace Edelstein.WvsGame.Fields
                 BroadcastPacket(user, user.GetEnterFieldPacket());
 
                 if (!user.Socket.IsInstantiated) user.Socket.IsInstantiated = true;
+
+                this._objects
+                    .Where(o => !o.Equals(obj))
+                    .ForEach(o => user.SendPacket(o.GetEnterFieldPacket()));
             }
             else BroadcastPacket(obj.GetEnterFieldPacket());
 
