@@ -196,11 +196,11 @@ namespace Edelstein.Common.Packets
             p.Encode<int>(c.EXP);
             p.Encode<short>(c.POP);
 
-            p.Encode<int>(0);
-            p.Encode<int>(100000000);
-            p.Encode<byte>(0);
-            p.Encode<int>(0);
-            p.Encode<short>(0);
+            p.Encode<int>(c.TempEXP);
+            p.Encode<int>(c.FieldID);
+            p.Encode<byte>(c.FieldPortal);
+            p.Encode<int>(c.PlayTime);
+            p.Encode<short>(c.SubJob);
         }
 
         public static void EncodeLook(this Character c, OutPacket p)

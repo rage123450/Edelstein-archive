@@ -39,6 +39,14 @@ namespace Edelstein.Database.Entities
         public short POP { get; set; }
 
         public int Money { get; set; }
+        public int TempEXP { get; set; }
+
+        public int FieldID { get; set; }
+        public byte FieldPortal { get; set; }
+
+        public int PlayTime { get; set; }
+
+        public short SubJob { get; set; }
 
         public ItemInventory InventoryEquipped { get; set; } = new ItemInventory(60);
         public ItemInventory InventoryEquippedCash { get; set; } = new ItemInventory(60);
