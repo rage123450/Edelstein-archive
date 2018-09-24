@@ -8,7 +8,7 @@ namespace Edelstein.WvsGame.Fields.Movements
         public short VX { get; set; }
         public short VY { get; set; }
         
-        public bool MoveAction { get; set; }
+        public byte MoveAction { get; set; }
         
         public short FH { get; set; }
         public short FHFallStart { get; set; }

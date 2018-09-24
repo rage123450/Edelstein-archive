@@ -5,6 +5,7 @@ using Edelstein.Database;
 using Edelstein.Database.Entities.Types;
 using Edelstein.Network;
 using Edelstein.Network.Packets;
+using Edelstein.WvsGame.Fields.Movements;
 using Edelstein.WvsGame.Fields.Users;
 using Edelstein.WvsGame.Logging;
 using Edelstein.WvsGame.Packets;
@@ -36,49 +37,78 @@ namespace Edelstein.WvsGame.Sockets
             switch (operation)
             {
                 case GameRecvOperations.MigrateIn:
-                    var characterID = packet.Decode<int>();
-
-                    if (!_wvsGame.PendingMigrations.Remove(characterID))
-                    {
-                        Channel.CloseAsync();
-                        return;
-                    }
-
-                    using (var db = _container.GetInstance<DataContext>())
-                    {
-                        var character = db.Characters
-                            .Include(c => c.Account)
-                            .Include(c => c.InventoryEquipped)
-                            .ThenInclude(c => c.Items)
-                            .Include(c => c.InventoryEquippedCash)
-                            .ThenInclude(c => c.Items)
-                            .Include(c => c.InventoryEquip)
-                            .ThenInclude(c => c.Items)
-                            .Include(c => c.InventoryConsume)
-                            .ThenInclude(c => c.Items)
-                            .Include(c => c.InventoryInstall)
-                            .ThenInclude(c => c.Items)
-                            .Include(c => c.InventoryEtc)
-                            .ThenInclude(c => c.Items)
-                            .Include(c => c.InventoryCash)
-                            .ThenInclude(c => c.Items)
-                            .Single(c => c.ID == characterID);
-
-                        character.Account.State = AccountState.LoggedIn;
-                        db.Update(character);
-                        db.SaveChanges();
-
-                        var field = _wvsGame.FieldFactory.Get(character.FieldID);
-                        var fieldUser = new FieldUser(this, character);
-
-                        FieldUser = fieldUser;
-                        field.Enter(fieldUser);
-                    }
-
+                    this.OnMigrateIn(packet);
+                    break;
+                case GameRecvOperations.UserMove:
+                    this.OnUserMove(packet);
                     break;
                 default:
                     Logger.Warn($"Unhandled packet operation {operation}");
                     break;
+            }
+        }
+
+        private void OnMigrateIn(InPacket packet)
+        {
+            var characterID = packet.Decode<int>();
+
+            if (!_wvsGame.PendingMigrations.Remove(characterID))
+            {
+                Channel.CloseAsync();
+                return;
+            }
+
+            using (var db = _container.GetInstance<DataContext>())
+            {
+                var character = db.Characters
+                    .Include(c => c.Account)
+                    .Include(c => c.InventoryEquipped)
+                    .ThenInclude(c => c.Items)
+                    .Include(c => c.InventoryEquippedCash)
+                    .ThenInclude(c => c.Items)
+                    .Include(c => c.InventoryEquip)
+                    .ThenInclude(c => c.Items)
+                    .Include(c => c.InventoryConsume)
+                    .ThenInclude(c => c.Items)
+                    .Include(c => c.InventoryInstall)
+                    .ThenInclude(c => c.Items)
+                    .Include(c => c.InventoryEtc)
+                    .ThenInclude(c => c.Items)
+                    .Include(c => c.InventoryCash)
+                    .ThenInclude(c => c.Items)
+                    .Single(c => c.ID == characterID);
+
+                character.Account.State = AccountState.LoggedIn;
+                db.Update(character);
+                db.SaveChanges();
+
+                var field = _wvsGame.FieldFactory.Get(character.FieldID);
+                var fieldUser = new FieldUser(this, character);
+
+                FieldUser = fieldUser;
+                field.Enter(fieldUser);
+            }
+        }
+
+        private void OnUserMove(InPacket packet)
+        {
+            packet.Decode<long>();
+            packet.Decode<byte>();
+            packet.Decode<long>();
+            packet.Decode<int>();
+            packet.Decode<int>();
+            packet.Decode<int>();
+
+            var movementPath = new MovementPath();
+
+            movementPath.Decode(packet);
+
+            using (var p = new OutPacket(GameSendOperations.UserMove))
+            {
+                p.Encode(FieldUser.ID);
+                movementPath.Encode(p);
+
+                FieldUser.Field.BroadcastPacket(FieldUser, p);
             }
         }
 
