@@ -8,7 +8,7 @@ A MapleStory Global v.95 server emulator written in C#.
 1. ```git clone https://github.com/Kaioru/Edelstein && cd Edelstein```
 2. ```git submodule update --init --recursive```
 ### Build with your favourite tool/ide
-1. On Visual Studio and Rider it should be pretty straightfoward
+1. On Visual Studio and Rider it should be pretty straightforward
 2. Use ```dotnet build``` if not using an ide
 ### Running database migrations
 1. ```cd src/Edelstein.Database```
