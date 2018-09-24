@@ -26,17 +26,16 @@ namespace Edelstein.Network.Codecs
 
                 if (input.ReadableBytes >= 4)
                 {
-                    var dataLen = input.ReadShortLE();
                     var rawSeq = input.ReadShortLE();
+                    var dataLen = input.ReadShortLE();
 
                     if (socket.EncryptData) dataLen ^= rawSeq;
                     //if (((seqRecv >> 16) ^ rawSeq) != AESCipher.Version) return;
-                    if (dataLen > 0x10000) return;
-
                     length = dataLen;
                 }
 
                 if (length < 2) return;
+                if (length > 0x10000) return;
                 if (input.ReadableBytes < length) return;
 
                 var buffer = new byte[length];
