@@ -30,8 +30,6 @@ namespace Edelstein.Network
             if (socket != null) socket.OnPacket(p);
             else
             {
-                p.Decode<short>();
-
                 var version = p.Decode<short>();
 
                 p.Decode<string>();

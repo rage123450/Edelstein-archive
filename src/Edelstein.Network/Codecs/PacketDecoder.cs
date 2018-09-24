@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using DotNetty.Buffers;
 using DotNetty.Codecs;
@@ -7,49 +8,80 @@ using Edelstein.Network.Packets;
 
 namespace Edelstein.Network.Codecs
 {
-    public class PacketDecoder : ByteToMessageDecoder
+    public class PacketDecoder : ReplayingDecoder<PacketDecoder.PacketState>
     {
+        public enum PacketState
+        {
+            Header,
+            Payload
+        }
+
+        private short _sequence;
+        private short _length;
+
+        public PacketDecoder() : base(PacketState.Header)
+        {
+        }
+
         protected override void Decode(IChannelHandlerContext context, IByteBuffer input, List<object> output)
         {
             var socket = context.Channel.GetAttribute(Socket.SocketKey).Get();
 
-            if (socket == null)
+            try
             {
-                output.Add(new InPacket(Unpooled.CopiedBuffer(input)));
-                return;
+                switch (State)
+                {
+                    case PacketState.Header:
+                        if (socket != null)
+                        {
+                            var sequence = input.ReadShortLE();
+                            var length = input.ReadShortLE();
+
+                            if (socket.EncryptData) length ^= sequence;
+
+                            _sequence = sequence;
+                            _length = length;
+                        }
+                        else _length = input.ReadShortLE();
+
+                        Checkpoint(PacketState.Payload);
+                        return;
+                    case PacketState.Payload:
+                        var buffer = new byte[_length];
+
+                        input.ReadBytes(buffer);
+                        Checkpoint(PacketState.Header);
+
+                        if (_length < 0x2) return;
+                        if (_length > 0x10000) return;
+
+                        if (socket != null)
+                        {
+                            lock (socket.LockRecv)
+                            {
+                                var seqRecv = socket.SeqRecv;
+                                var version = (short) (seqRecv >> 16) ^ _sequence;
+                                
+                                if (!(version == -(AESCipher.Version + 1) ||
+                                      version == AESCipher.Version)) return;
+
+                                if (socket.EncryptData)
+                                {
+                                    buffer = AESCipher.Transform(buffer, seqRecv);
+                                    buffer = ShandaCipher.DecryptTransform(buffer);
+                                }
+
+                                socket.SeqRecv = CIGCipher.InnoHash(seqRecv, 4, 0);
+                            }
+                        }
+
+                        output.Add(new InPacket(Unpooled.CopiedBuffer(buffer)));
+                        return;
+                }
             }
-
-            lock (socket.LockRecv)
+            catch (IndexOutOfRangeException)
             {
-                var length = 0;
-                var seqRecv = socket.SeqRecv;
-
-                if (input.ReadableBytes >= 4)
-                {
-                    var rawSeq = input.ReadShortLE();
-                    var dataLen = input.ReadShortLE();
-
-                    if (socket.EncryptData) dataLen ^= rawSeq;
-                    //if (((seqRecv >> 16) ^ rawSeq) != AESCipher.Version) return;
-                    length = dataLen;
-                }
-
-                if (length < 2) return;
-                if (length > 0x10000) return;
-                if (input.ReadableBytes < length) return;
-
-                var buffer = new byte[length];
-
-                input.ReadBytes(buffer);
-
-                if (socket.EncryptData)
-                {
-                    buffer = AESCipher.Transform(buffer, seqRecv);
-                    buffer = ShandaCipher.DecryptTransform(buffer);
-                }
-
-                socket.SeqRecv = CIGCipher.InnoHash(seqRecv, 4, 0);
-                output.Add(new InPacket(Unpooled.CopiedBuffer(buffer)));
+                RequestReplay();
             }
         }
     }

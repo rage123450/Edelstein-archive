@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using DotNetty.Buffers;
 using DotNetty.Codecs;
 using DotNetty.Transport.Channels;
@@ -40,7 +42,12 @@ namespace Edelstein.Network.Codecs
             }
             else
             {
-                output.WriteBytes(message.Buffer);
+                var length = message.Length;
+                var buffer = new byte[length];
+
+                message.Buffer.ReadBytes(buffer);
+                output.WriteShortLE(length);
+                output.WriteBytes(buffer);
             }
         }
     }
