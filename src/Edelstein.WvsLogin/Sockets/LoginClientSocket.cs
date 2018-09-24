@@ -7,6 +7,7 @@ using Edelstein.Common.Packets;
 using Edelstein.Database;
 using Edelstein.Database.Entities;
 using Edelstein.Database.Entities.Inventory;
+using Edelstein.Database.Entities.Types;
 using Edelstein.Network;
 using Edelstein.Network.Packets;
 using Edelstein.WvsLogin.Logging;
@@ -22,7 +23,7 @@ namespace Edelstein.WvsLogin.Sockets
         private IContainer _container;
         private WvsLogin _wvsLogin;
 
-        private Account _account;
+        public Account Account { get; set; }
         private WorldInformation _selectedWorld;
         private ChannelInformation _selectedChannel;
 
@@ -162,6 +163,7 @@ namespace Edelstein.WvsLogin.Sockets
                     if (account == null) result = 0x5;
                     else
                     {
+                        if (account.State != AccountState.LoggedOut) result = 0x7;
                         if (!BCrypt.Net.BCrypt.Verify(password, account.Password)) result = 0x4;
                     }
 
@@ -171,7 +173,11 @@ namespace Edelstein.WvsLogin.Sockets
 
                     if (result == 0x0)
                     {
-                        this._account = account;
+                        this.Account = account;
+
+                        account.State = AccountState.LoggingIn;
+                        db.Update(account);
+                        db.SaveChanges();
 
                         p.Encode<int>(account.ID); // pBlockReason
                         p.Encode<byte>(0); // pBlockReasonIter
@@ -264,7 +270,7 @@ namespace Edelstein.WvsLogin.Sockets
 
                     using (var db = this._container.GetInstance<DataContext>())
                     {
-                        var data = _account.Data.SingleOrDefault(d => d.WorldID == worldID);
+                        var data = Account.Data.SingleOrDefault(d => d.WorldID == worldID);
 
                         if (data == null)
                         {
@@ -274,12 +280,12 @@ namespace Edelstein.WvsLogin.Sockets
                                 SlotCount = 3
                             };
 
-                            _account.Data.Add(data);
-                            db.Update(_account);
+                            Account.Data.Add(data);
+                            db.Update(Account);
                             db.SaveChanges();
                         }
 
-                        var characters = _account.Characters.Where(c => c.WorldID == worldID).ToList();
+                        var characters = Account.Characters.Where(c => c.WorldID == worldID).ToList();
 
                         p.Encode<byte>((byte) characters.Count);
                         characters.ForEach(c =>
@@ -291,7 +297,7 @@ namespace Edelstein.WvsLogin.Sockets
                             p.Encode<bool>(false);
                         });
 
-                        p.Encode<bool>(!string.IsNullOrEmpty(_account.SPW)); // bLoginOpt TODO: proper bLoginOpt stuff
+                        p.Encode<bool>(!string.IsNullOrEmpty(Account.SPW)); // bLoginOpt TODO: proper bLoginOpt stuff
                         p.Encode<int>(data.SlotCount); // nSlotCount
                         p.Encode<int>(0); // nBuyCharCount
                     }
@@ -367,8 +373,8 @@ namespace Edelstein.WvsLogin.Sockets
                 equipped.Add(shoesItem);
                 equipped.Add(weaponItem);
 
-                _account.Characters.Add(character);
-                db.Update(_account);
+                Account.Characters.Add(character);
+                db.Update(Account);
                 db.SaveChanges();
 
                 using (var p = new OutPacket(LoginSendOperations.CreateNewCharacterResult))
@@ -394,8 +400,8 @@ namespace Edelstein.WvsLogin.Sockets
             packet.Decode<string>(); // sMacAddressWithHDDSerial
             var spw = packet.Decode<string>();
 
-            if (!string.IsNullOrEmpty(_account.SPW)) return;
-            if (BCrypt.Net.BCrypt.Verify(spw, _account.Password))
+            if (!string.IsNullOrEmpty(Account.SPW)) return;
+            if (BCrypt.Net.BCrypt.Verify(spw, Account.Password))
             {
                 using (var p = new OutPacket(LoginSendOperations.EnableSPWResult))
                 {
@@ -409,8 +415,8 @@ namespace Edelstein.WvsLogin.Sockets
 
             using (var db = this._container.GetInstance<DataContext>())
             {
-                _account.SPW = BCrypt.Net.BCrypt.HashPassword(spw);
-                db.Update(_account);
+                Account.SPW = BCrypt.Net.BCrypt.HashPassword(spw);
+                db.Update(Account);
                 db.SaveChanges();
             }
         }
@@ -422,8 +428,8 @@ namespace Edelstein.WvsLogin.Sockets
             packet.Decode<string>(); // sMacAddress
             packet.Decode<string>(); // sMacAddressWithHDDSerial
 
-            if (string.IsNullOrEmpty(_account.SPW)) return;
-            if (!BCrypt.Net.BCrypt.Verify(spw, _account.SPW))
+            if (string.IsNullOrEmpty(Account.SPW)) return;
+            if (!BCrypt.Net.BCrypt.Verify(spw, Account.SPW))
             {
                 using (var p = new OutPacket(LoginSendOperations.CheckSPWResult))
                 {
@@ -449,7 +455,7 @@ namespace Edelstein.WvsLogin.Sockets
         private void OnViewAllChar(InPacket packet)
         {
             var worlds = this._wvsLogin.InteropClients.Select(c => c.Socket.WorldInformation).ToList();
-            var allCharacters = this._account.Characters.Where(c => worlds.Any(w => c.WorldID == w.ID)).ToList();
+            var allCharacters = this.Account.Characters.Where(c => worlds.Any(w => c.WorldID == w.ID)).ToList();
 
             using (var p = new OutPacket(LoginSendOperations.ViewAllCharResult))
             {
@@ -478,7 +484,7 @@ namespace Edelstein.WvsLogin.Sockets
                             p.Encode<bool>(false);
                         });
 
-                        p.Encode<bool>(!string.IsNullOrEmpty(_account.SPW));
+                        p.Encode<bool>(!string.IsNullOrEmpty(Account.SPW));
                         SendPacket(p);
                     }
                 });
@@ -492,17 +498,17 @@ namespace Edelstein.WvsLogin.Sockets
 
             byte result = 0x0;
 
-            if (!BCrypt.Net.BCrypt.Verify(spw, _account.SPW)) result = 0x14;
+            if (!BCrypt.Net.BCrypt.Verify(spw, Account.SPW)) result = 0x14;
 
             if (result == 0x0)
             {
                 using (var db = this._container.GetInstance<DataContext>())
                 {
-                    var character = _account.Characters.Single(c => c.ID == characterID);
+                    var character = Account.Characters.Single(c => c.ID == characterID);
 
-                    _account.Characters.Remove(character);
+                    Account.Characters.Remove(character);
                     db.Characters.Remove(character);
-                    db.Update(_account);
+                    db.Update(Account);
                     db.SaveChanges();
                 }
             }

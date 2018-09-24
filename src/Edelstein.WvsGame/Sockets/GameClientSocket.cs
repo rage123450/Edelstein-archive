@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using DotNetty.Transport.Channels;
 using Edelstein.Database;
+using Edelstein.Database.Entities.Types;
 using Edelstein.Network;
 using Edelstein.Network.Packets;
 using Edelstein.WvsGame.Fields.Users;
@@ -46,6 +47,7 @@ namespace Edelstein.WvsGame.Sockets
                     using (var db = _container.GetInstance<DataContext>())
                     {
                         var character = db.Characters
+                            .Include(c => c.Account)
                             .Include(c => c.InventoryEquipped)
                             .ThenInclude(c => c.Items)
                             .Include(c => c.InventoryEquippedCash)
@@ -61,6 +63,11 @@ namespace Edelstein.WvsGame.Sockets
                             .Include(c => c.InventoryCash)
                             .ThenInclude(c => c.Items)
                             .Single(c => c.ID == characterID);
+
+                        character.Account.State = AccountState.LoggedIn;
+                        db.Update(character);
+                        db.SaveChanges();
+
                         var field = _wvsGame.FieldFactory.Get(character.FieldID);
                         var fieldUser = new FieldUser(this, character);
 
@@ -78,6 +85,21 @@ namespace Edelstein.WvsGame.Sockets
         public override void OnDisconnect()
         {
             var fieldUser = FieldUser;
+
+            if (fieldUser != null)
+            {
+                using (var db = _container.GetInstance<DataContext>())
+                {
+                    var account = fieldUser.Character.Account;
+
+                    if (account.State != AccountState.MigratingIn)
+                        account.State = AccountState.LoggedOut;
+
+                    db.Update(fieldUser.Character);
+                    db.SaveChanges();
+                }
+            }
+
             fieldUser?.Field?.Leave(fieldUser);
         }
     }

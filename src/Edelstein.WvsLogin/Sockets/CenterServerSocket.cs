@@ -3,6 +3,8 @@ using System.Linq;
 using DotNetty.Transport.Channels;
 using Edelstein.Common.Interop;
 using Edelstein.Common.Interop.Game;
+using Edelstein.Database;
+using Edelstein.Database.Entities.Types;
 using Edelstein.Network;
 using Edelstein.Network.Packets;
 using Edelstein.WvsLogin.Logging;
@@ -79,6 +81,13 @@ namespace Edelstein.WvsLogin.Sockets
             var client = _wvsLogin.GameServer.Sockets.Single(s => s.SessionKey == sessionKey);
 
             if (!packet.Decode<bool>()) return;
+
+            using (var db = _container.GetInstance<DataContext>())
+            {
+                client.Account.State = AccountState.MigratingIn;
+                db.Update(client.Account);
+                db.SaveChanges();
+            }
 
             using (var p = new OutPacket(LoginSendOperations.SelectCharacterResult))
             {
