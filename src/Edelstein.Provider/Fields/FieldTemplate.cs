@@ -9,7 +9,7 @@ namespace Edelstein.Provider.Fields
     {
         public int TemplateID { get; set; }
         public IDictionary<int, FieldFootholdTemplate> Footholds;
-        public ICollection<FieldPortalTemplate> Portals;
+        public IDictionary<int, FieldPortalTemplate> Portals;
         public ICollection<FieldLifeTemplate> Life;
 
         public static FieldTemplate Parse(int templateId, PackageCollection collection)
@@ -34,7 +34,8 @@ namespace Edelstein.Provider.Fields
                     .ToDictionary(x => x.ID, x => x),
                 Portals = p.Resolve("portal").Children
                     .Select(FieldPortalTemplate.Parse)
-                    .ToList(),
+                    .DistinctBy(x => x.ID)
+                    .ToDictionary(x => x.ID, x => x),
                 Life = p.Resolve("life").Children
                     .Select(FieldLifeTemplate.Parse)
                     .ToList()

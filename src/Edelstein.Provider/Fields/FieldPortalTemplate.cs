@@ -1,9 +1,11 @@
+using System;
 using PKG1;
 
 namespace Edelstein.Provider.Fields
 {
     public class FieldPortalTemplate
     {
+        public int ID { get; set; }
         public string Name { get; set; }
         public FieldPortalType Type { get; set; }
 
@@ -19,6 +21,7 @@ namespace Edelstein.Provider.Fields
         {
             var res = new FieldPortalTemplate
             {
+                ID = Convert.ToInt32(p.Name),
                 Name = p.ResolveForOrNull<string>("pn"),
                 Type = (FieldPortalType) (p.ResolveFor<int>("pt") ?? 0),
                 Script = p.ResolveForOrNull<string>("script"),

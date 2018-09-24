@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,6 +35,10 @@ namespace Edelstein.WvsGame.Fields
 
             if (obj is FieldUser user)
             {
+                var portal = Template.Portals[user.Character.FieldPortal] ??
+                             Template.Portals.Values.First(p => p.Type == FieldPortalType.Spawn);
+
+                user.Position = new Point(portal.X, portal.Y);
                 user.SendPacket(user.GetSetFieldPacket());
                 BroadcastPacket(user, user.GetEnterFieldPacket());
 
