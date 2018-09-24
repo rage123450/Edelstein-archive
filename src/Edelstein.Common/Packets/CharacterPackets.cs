@@ -23,7 +23,7 @@ namespace Edelstein.Common.Packets
                 p.Encode<bool>(false);
             }
 
-            if ((flag & 0x2) != 0) p.Encode<int>(0); // Money
+            if ((flag & 0x2) != 0) p.Encode<int>(c.Money);
             if ((flag & 0x80) != 0)
             {
                 if ((flag & 0x4) != 0) p.Encode<byte>(c.InventoryEquip.SlotMax);
