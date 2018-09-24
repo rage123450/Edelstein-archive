@@ -15,7 +15,7 @@ namespace Edelstein.WvsGame.Fields
     {
         public int ID { get; set; }
         public FieldTemplate Template { get; }
-        private int _runningObjectID = 1;
+        private int _runningObjectID = 0;
         private readonly List<FieldObject> _objects;
         public IEnumerable<FieldObject> Objects => _objects.AsReadOnly();
 
@@ -28,37 +28,44 @@ namespace Edelstein.WvsGame.Fields
 
         public void Enter(FieldObject obj)
         {
-            obj.Field?.Leave(obj);
-
-            obj.ID = Interlocked.Increment(ref _runningObjectID);
-            obj.Field = this;
-
-            if (obj is FieldUser user)
+            lock (this)
             {
-                var portal = Template.Portals[user.Character.FieldPortal] ??
-                             Template.Portals.Values.First(p => p.Type == FieldPortalType.Spawn);
+                obj.Field?.Leave(obj);
 
-                user.Position = new Point(portal.X, portal.Y);
-                user.SendPacket(user.GetSetFieldPacket());
-                BroadcastPacket(user, user.GetEnterFieldPacket());
+                obj.ID = Interlocked.Increment(ref _runningObjectID);
+                Console.WriteLine(obj.ID);
+                obj.Field = this;
 
-                if (!user.Socket.IsInstantiated) user.Socket.IsInstantiated = true;
+                if (obj is FieldUser user)
+                {
+                    var portal = Template.Portals[user.Character.FieldPortal] ??
+                                 Template.Portals.Values.First(p => p.Type == FieldPortalType.Spawn);
 
-                this._objects
-                    .Where(o => !o.Equals(obj))
-                    .ForEach(o => user.SendPacket(o.GetEnterFieldPacket()));
+                    user.Position = new Point(portal.X, portal.Y);
+                    user.SendPacket(user.GetSetFieldPacket());
+                    BroadcastPacket(user, user.GetEnterFieldPacket());
+
+                    if (!user.Socket.IsInstantiated) user.Socket.IsInstantiated = true;
+
+                    this._objects
+                        .Where(o => !o.Equals(obj))
+                        .ForEach(o => user.SendPacket(o.GetEnterFieldPacket()));
+                }
+                else BroadcastPacket(obj.GetEnterFieldPacket());
+
+                this._objects.Add(obj);
             }
-            else BroadcastPacket(obj.GetEnterFieldPacket());
-
-            this._objects.Add(obj);
         }
 
         public void Leave(FieldObject obj)
         {
-            if (obj is FieldUser user) BroadcastPacket(user, user.GetLeaveFieldPacket());
-            else BroadcastPacket(obj.GetLeaveFieldPacket());
+            lock (this)
+            {
+                if (obj is FieldUser user) BroadcastPacket(user, user.GetLeaveFieldPacket());
+                else BroadcastPacket(obj.GetLeaveFieldPacket());
 
-            this._objects.Remove(obj);
+                this._objects.Remove(obj);
+            }
         }
 
         public Task BroadcastPacket(FieldObject source, OutPacket packet)

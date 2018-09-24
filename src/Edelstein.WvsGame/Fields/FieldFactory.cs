@@ -17,10 +17,13 @@ namespace Edelstein.WvsGame.Fields
 
         public Field Get(int templateId)
         {
-            if (_fields.ContainsKey(templateId)) return _fields[templateId];
-            var field = new Field(templateId, _templateManager.Get(templateId));
-            _fields[templateId] = field;
-            return field;
+            lock (this)
+            {
+                if (_fields.ContainsKey(templateId)) return _fields[templateId];
+                var field = new Field(templateId, _templateManager.Get(templateId));
+                _fields[templateId] = field;
+                return field;
+            }
         }
     }
 }
