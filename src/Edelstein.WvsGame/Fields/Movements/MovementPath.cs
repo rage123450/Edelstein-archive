@@ -66,10 +66,7 @@ namespace Edelstein.WvsGame.Fields.Movements
                     case 0x22:
                         packet.Encode<short>(m.VX);
                         packet.Encode<short>(m.VY);
-
-                        packet.Encode<bool>(m.MoveAction);
-                        packet.Encode<short>(m.Elapse);
-                        break;
+                        goto default;
                     case 0x14:
                     case 0x15:
                     case 0x16:
@@ -81,9 +78,7 @@ namespace Edelstein.WvsGame.Fields.Movements
                     case 0x1C:
                     case 0x1D:
                     case 0x1E:
-                        packet.Encode<bool>(m.MoveAction);
-                        packet.Encode<short>(m.Elapse);
-                        break;
+                        goto default;
                     case 0x3:
                     case 0x4:
                     case 0x6:
@@ -93,28 +88,19 @@ namespace Edelstein.WvsGame.Fields.Movements
                         packet.Encode<short>(m.X);
                         packet.Encode<short>(m.Y);
                         packet.Encode<short>(m.FH);
-
-                        packet.Encode<bool>(m.MoveAction);
-                        packet.Encode<short>(m.Elapse);
-                        break;
+                        goto default;
                     case 0xB:
                         packet.Encode<short>(m.VX);
                         packet.Encode<short>(m.VY);
 
                         packet.Encode<short>(m.FHFallStart);
-
-                        packet.Encode<bool>(m.MoveAction);
-                        packet.Encode<short>(m.Elapse);
-                        break;
+                        goto default;
                     case 0x11:
                         packet.Encode<short>(m.X);
                         packet.Encode<short>(m.Y);
                         packet.Encode<short>(m.VX);
                         packet.Encode<short>(m.VY);
-
-                        packet.Encode<bool>(m.MoveAction);
-                        packet.Encode<short>(m.Elapse);
-                        break;
+                        goto default;
                     case 0x9:
                         packet.Encode<bool>(m.Stat);
                         break;
@@ -162,6 +148,11 @@ namespace Edelstein.WvsGame.Fields.Movements
                     default:
                         m.MoveAction = packet.Decode<bool>();
                         m.Elapse = packet.Decode<short>();
+
+                        X = m.X;
+                        Y = m.Y;
+                        VX = m.VX;
+                        VY = m.VY;
                         break;
                     case 0x1:
                     case 0x2:
@@ -178,15 +169,7 @@ namespace Edelstein.WvsGame.Fields.Movements
 
                         m.VX = packet.Decode<short>();
                         m.VY = packet.Decode<short>();
-
-                        m.MoveAction = packet.Decode<bool>();
-                        m.Elapse = packet.Decode<short>();
-
-                        X = m.X;
-                        Y = m.Y;
-                        VX = m.VX;
-                        VY = m.VY;
-                        break;
+                        goto default;
                     case 0x14:
                     case 0x15:
                     case 0x16:
@@ -202,10 +185,7 @@ namespace Edelstein.WvsGame.Fields.Movements
                         m.Y = Y;
                         m.VX = VX;
                         m.VY = VY;
-
-                        m.MoveAction = packet.Decode<bool>();
-                        m.Elapse = packet.Decode<short>();
-                        break;
+                        goto default;
                     case 0x3:
                     case 0x4:
                     case 0x6:
@@ -220,15 +200,7 @@ namespace Edelstein.WvsGame.Fields.Movements
 
                         m.VY = 0;
                         m.VX = 0;
-
-                        m.MoveAction = packet.Decode<bool>();
-                        m.Elapse = packet.Decode<short>();
-
-                        X = m.X;
-                        Y = m.Y;
-                        VX = m.VX;
-                        VY = m.VY;
-                        break;
+                        goto default;
                     case 0xB:
                         m.X = X;
                         m.Y = Y;
@@ -238,29 +210,13 @@ namespace Edelstein.WvsGame.Fields.Movements
                         m.VY = packet.Decode<short>();
 
                         m.FHFallStart = packet.Decode<short>();
-
-                        m.MoveAction = packet.Decode<bool>();
-                        m.Elapse = packet.Decode<short>();
-
-                        X = m.X;
-                        Y = m.Y;
-                        VX = m.VX;
-                        VY = m.VY;
-                        break;
+                        goto default;
                     case 0x11:
                         m.X = packet.Decode<short>();
                         m.Y = packet.Decode<short>();
                         m.VX = packet.Decode<short>();
                         m.VY = packet.Decode<short>();
-
-                        m.MoveAction = packet.Decode<bool>();
-                        m.Elapse = packet.Decode<short>();
-
-                        X = m.X;
-                        Y = m.Y;
-                        VX = m.VX;
-                        VY = m.VY;
-                        break;
+                        goto default;
                     case 0x9:
                         m.Stat = packet.Decode<bool>();
                         m.VY = 0;
