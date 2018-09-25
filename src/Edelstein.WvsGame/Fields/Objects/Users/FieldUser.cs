@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using Edelstein.Common.Packets;
 using Edelstein.Database.Entities;
@@ -6,7 +5,7 @@ using Edelstein.Network.Packets;
 using Edelstein.WvsGame.Packets;
 using Edelstein.WvsGame.Sockets;
 
-namespace Edelstein.WvsGame.Fields.Users
+namespace Edelstein.WvsGame.Fields.Objects.Users
 {
     public class FieldUser : FieldObject
     {

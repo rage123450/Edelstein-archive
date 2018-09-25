@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Edelstein.Network.Packets;
 using Edelstein.Provider.Fields;
-using Edelstein.WvsGame.Fields.Users;
+using Edelstein.WvsGame.Fields.Objects.Users;
 using MoreLinq.Extensions;
 
 namespace Edelstein.WvsGame.Fields
@@ -15,7 +15,7 @@ namespace Edelstein.WvsGame.Fields
     {
         public int ID { get; set; }
         public FieldTemplate Template { get; }
-        private int _runningObjectID = 0;
+        private int _runningObjectID = 1;
         private readonly List<FieldObject> _objects;
         public IEnumerable<FieldObject> Objects => _objects.AsReadOnly();
 

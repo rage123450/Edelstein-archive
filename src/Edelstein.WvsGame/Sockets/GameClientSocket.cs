@@ -7,7 +7,7 @@ using Edelstein.Database.Entities.Types;
 using Edelstein.Network;
 using Edelstein.Network.Packets;
 using Edelstein.WvsGame.Fields.Movements;
-using Edelstein.WvsGame.Fields.Users;
+using Edelstein.WvsGame.Fields.Objects.Users;
 using Edelstein.WvsGame.Logging;
 using Edelstein.WvsGame.Packets;
 using Lamar;

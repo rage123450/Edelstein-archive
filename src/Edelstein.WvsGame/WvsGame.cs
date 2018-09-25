@@ -7,6 +7,7 @@ using Edelstein.Network;
 using Edelstein.Network.Packets;
 using Edelstein.Provider;
 using Edelstein.Provider.Fields;
+using Edelstein.Provider.NPC;
 using Edelstein.WvsGame.Fields;
 using Edelstein.WvsGame.Logging;
 using Edelstein.WvsGame.Sockets;
@@ -27,6 +28,7 @@ namespace Edelstein.WvsGame
         public ICollection<int> PendingMigrations { get; set; }
 
         public ITemplateManager<FieldTemplate> FieldTemplates { get; set; }
+        public ITemplateManager<NPCTemplate> NPCTemplates { get; set; }
         public FieldFactory FieldFactory { get; set; }
 
         public WvsGame(IContainer container)
@@ -50,8 +52,9 @@ namespace Edelstein.WvsGame
             };
 
             this.FieldTemplates = this._container.GetInstance<ITemplateManager<FieldTemplate>>();
-            this.FieldFactory = new FieldFactory(FieldTemplates);
-            
+            this.NPCTemplates = this._container.GetInstance<ITemplateManager<NPCTemplate>>();
+            this.FieldFactory = new FieldFactory(FieldTemplates, NPCTemplates);
+
             this.InteropClient = new Client<CenterServerSocket>(
                 options.InteropClientOptions,
                 this._container.GetInstance<CenterServerSocketFactory>()
