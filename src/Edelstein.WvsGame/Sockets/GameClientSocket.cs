@@ -1,5 +1,3 @@
-using System;
-using System.Drawing;
 using System.Linq;
 using DotNetty.Transport.Channels;
 using Edelstein.Database;
@@ -8,7 +6,6 @@ using Edelstein.Network;
 using Edelstein.Network.Packets;
 using Edelstein.WvsGame.Fields.Movements;
 using Edelstein.WvsGame.Fields.Objects.Users;
-using Edelstein.WvsGame.Logging;
 using Edelstein.WvsGame.Packets;
 using Lamar;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +14,6 @@ namespace Edelstein.WvsGame.Sockets
 {
     public class GameClientSocket : Socket
     {
-        private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
         private IContainer _container;
         private WvsGame _wvsGame;
 
@@ -40,11 +36,8 @@ namespace Edelstein.WvsGame.Sockets
                 case GameRecvOperations.MigrateIn:
                     this.OnMigrateIn(packet);
                     break;
-                case GameRecvOperations.UserMove:
-                    this.OnUserMove(packet);
-                    break;
                 default:
-                    Logger.Warn($"Unhandled packet operation {operation}");
+                    FieldUser?.OnPacket(operation, packet);
                     break;
             }
         }
@@ -88,34 +81,6 @@ namespace Edelstein.WvsGame.Sockets
 
                 FieldUser = fieldUser;
                 field.Enter(fieldUser);
-            }
-        }
-
-        private void OnUserMove(InPacket packet)
-        {
-            packet.Decode<long>();
-            packet.Decode<byte>();
-            packet.Decode<long>();
-            packet.Decode<int>();
-            packet.Decode<int>();
-            packet.Decode<int>();
-
-            var movementPath = new MovementPath();
-
-            movementPath.Decode(packet);
-
-            using (var p = new OutPacket(GameSendOperations.UserMove))
-            {
-                var fieldUser = FieldUser;
-
-                p.Encode(fieldUser.ID);
-                movementPath.Encode(p);
-
-                fieldUser.X = movementPath.X;
-                fieldUser.Y = movementPath.Y;
-                fieldUser.MoveAction = movementPath.MoveActionLast;
-                fieldUser.Foothold = movementPath.FHLast;
-                fieldUser.Field.BroadcastPacket(fieldUser, p);
             }
         }
 

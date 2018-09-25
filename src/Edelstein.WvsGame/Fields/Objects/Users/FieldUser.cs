@@ -2,6 +2,8 @@ using System.Threading.Tasks;
 using Edelstein.Common.Packets;
 using Edelstein.Database.Entities;
 using Edelstein.Network.Packets;
+using Edelstein.WvsGame.Fields.Movements;
+using Edelstein.WvsGame.Logging;
 using Edelstein.WvsGame.Packets;
 using Edelstein.WvsGame.Sockets;
 
@@ -9,6 +11,8 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 {
     public class FieldUser : FieldObject
     {
+        private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
+
         public GameClientSocket Socket { get; set; }
         public Character Character { get; set; }
 
@@ -16,6 +20,45 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
         {
             Socket = socket;
             Character = character;
+        }
+
+        public void OnPacket(GameRecvOperations operation, InPacket packet)
+        {
+            switch (operation)
+            {
+                case GameRecvOperations.UserMove:
+                    this.OnUserMove(packet);
+                    break;
+                default:
+                    Logger.Warn($"Unhandled packet operation {operation}");
+                    break;
+            }
+        }
+
+        private void OnUserMove(InPacket packet)
+        {
+            packet.Decode<long>();
+            packet.Decode<byte>();
+            packet.Decode<long>();
+            packet.Decode<int>();
+            packet.Decode<int>();
+            packet.Decode<int>();
+
+            var movementPath = new MovementPath();
+
+            movementPath.Decode(packet);
+
+            using (var p = new OutPacket(GameSendOperations.UserMove))
+            {
+                p.Encode(ID);
+                movementPath.Encode(p);
+
+                X = movementPath.X;
+                Y = movementPath.Y;
+                MoveAction = movementPath.MoveActionLast;
+                Foothold = movementPath.FHLast;
+                Field.BroadcastPacket(this, p);
+            }
         }
 
         public OutPacket GetSetFieldPacket()
