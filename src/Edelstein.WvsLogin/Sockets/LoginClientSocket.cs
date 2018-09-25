@@ -349,8 +349,23 @@ namespace Edelstein.WvsLogin.Sockets
                     Face = face,
                     Hair = hair,
                     Skin = (byte) skin,
-                    Gender = gender
+                    Gender = gender,
+                    FieldID = 310000000,
+                    FieldPortal = 0,
+                    Level = 1,
+                    HP = 50,
+                    MaxHP = 50,
+                    MP = 50,
+                    MaxMP = 50
                 };
+
+                character.InventoryEquipped = new ItemInventory(60);
+                character.InventoryEquippedCash = new ItemInventory(60);
+                character.InventoryEquip = new ItemInventory(24);
+                character.InventoryConsume = new ItemInventory(24);
+                character.InventoryInstall = new ItemInventory(24);
+                character.InventoryEtc = new ItemInventory(24);
+                character.InventoryCash = new ItemInventory(24);
 
                 // TODO: Inventory management
                 var equipped = character.InventoryEquipped.Items;
@@ -360,12 +375,20 @@ namespace Edelstein.WvsLogin.Sockets
                 var weaponItem = new ItemSlotEquip();
 
                 topItem.Slot = 5;
+                topItem.Durability = 100;
                 topItem.TemplateID = top;
-                bottomItem.Slot = 6;
-                bottomItem.TemplateID = bottom;
+
+                if (job != 0) // Resistance Overalls
+                {
+                    bottomItem.Slot = 6;
+                    bottomItem.Durability = 100;
+                    bottomItem.TemplateID = bottom;
+                }
                 shoesItem.Slot = 7;
+                shoesItem.Durability = 100;
                 shoesItem.TemplateID = shoes;
                 weaponItem.Slot = 11;
+                weaponItem.Durability = 100;
                 weaponItem.TemplateID = weapon;
 
                 equipped.Add(topItem);
