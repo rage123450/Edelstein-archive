@@ -23,7 +23,7 @@ namespace Edelstein.Network.Codecs
                     var dataLen = (short) message.Length;
                     var buffer = new byte[dataLen];
 
-                    message.Buffer.ReadBytes(buffer);
+                    Unpooled.CopiedBuffer(message.Buffer).ReadBytes(buffer);
 
                     if (socket.EncryptData)
                     {
