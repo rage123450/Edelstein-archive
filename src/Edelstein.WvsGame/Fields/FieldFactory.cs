@@ -54,9 +54,6 @@ namespace Edelstein.WvsGame.Fields
                             break;
                     }
                 });
-
-                Console.WriteLine("Poop");
-
                 return field;
             }
         }

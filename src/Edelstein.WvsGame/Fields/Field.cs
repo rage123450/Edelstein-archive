@@ -33,7 +33,6 @@ namespace Edelstein.WvsGame.Fields
                 obj.Field?.Leave(obj);
 
                 obj.ID = Interlocked.Increment(ref _runningObjectID);
-                Console.WriteLine(obj.ID);
                 obj.Field = this;
 
                 if (obj is FieldUser user)
