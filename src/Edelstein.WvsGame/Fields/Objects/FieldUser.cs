@@ -3,16 +3,13 @@ using Edelstein.Common.Packets;
 using Edelstein.Database.Entities;
 using Edelstein.Network.Packets;
 using Edelstein.WvsGame.Fields.Movements;
-using Edelstein.WvsGame.Logging;
 using Edelstein.WvsGame.Packets;
 using Edelstein.WvsGame.Sockets;
 
-namespace Edelstein.WvsGame.Fields.Objects.Users
+namespace Edelstein.WvsGame.Fields.Objects
 {
     public class FieldUser : FieldObject
     {
-        private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
-
         public GameClientSocket Socket { get; set; }
         public Character Character { get; set; }
 
@@ -22,7 +19,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             Character = character;
         }
 
-        public void OnPacket(GameRecvOperations operation, InPacket packet)
+        public bool OnPacket(GameRecvOperations operation, InPacket packet)
         {
             switch (operation)
             {
@@ -33,9 +30,10 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                     this.OnUserChat(packet);
                     break;
                 default:
-                    Logger.Warn($"Unhandled packet operation {operation}");
-                    break;
+                    return false;
             }
+
+            return true;
         }
 
         private void OnUserMove(InPacket packet)

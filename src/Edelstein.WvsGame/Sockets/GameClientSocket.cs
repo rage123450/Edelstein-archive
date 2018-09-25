@@ -4,8 +4,8 @@ using Edelstein.Database;
 using Edelstein.Database.Entities.Types;
 using Edelstein.Network;
 using Edelstein.Network.Packets;
-using Edelstein.WvsGame.Fields.Movements;
-using Edelstein.WvsGame.Fields.Objects.Users;
+using Edelstein.WvsGame.Fields.Objects;
+using Edelstein.WvsGame.Logging;
 using Edelstein.WvsGame.Packets;
 using Lamar;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +14,8 @@ namespace Edelstein.WvsGame.Sockets
 {
     public class GameClientSocket : Socket
     {
+        private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
+
         private IContainer _container;
         private WvsGame _wvsGame;
 
@@ -37,7 +39,8 @@ namespace Edelstein.WvsGame.Sockets
                     this.OnMigrateIn(packet);
                     break;
                 default:
-                    FieldUser?.OnPacket(operation, packet);
+                    if (!FieldUser?.OnPacket(operation, packet) ?? false)
+                        Logger.Warn($"Unhandled packet operation {operation}");
                     break;
             }
         }

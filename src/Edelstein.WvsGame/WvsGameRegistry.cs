@@ -3,7 +3,6 @@ using Edelstein.Database;
 using Edelstein.Provider;
 using Edelstein.Provider.Fields;
 using Edelstein.Provider.NPC;
-using Edelstein.WvsGame.Fields;
 using Edelstein.WvsGame.Sockets;
 using Lamar;
 using Microsoft.EntityFrameworkCore;

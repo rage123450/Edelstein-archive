@@ -1,4 +1,3 @@
-using System.Drawing;
 using Edelstein.Network.Packets;
 
 namespace Edelstein.WvsGame.Fields

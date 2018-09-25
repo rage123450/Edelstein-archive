@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using DotNetty.Transport.Channels;
 using Edelstein.Common.Interop;

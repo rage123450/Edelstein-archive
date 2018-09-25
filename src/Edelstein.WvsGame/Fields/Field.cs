@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Edelstein.Network.Packets;
 using Edelstein.Provider.Fields;
-using Edelstein.WvsGame.Fields.Objects.Users;
+using Edelstein.WvsGame.Fields.Objects;
 using MoreLinq.Extensions;
 
 namespace Edelstein.WvsGame.Fields
