@@ -29,6 +29,9 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 case GameRecvOperations.UserMove:
                     this.OnUserMove(packet);
                     break;
+                case GameRecvOperations.UserChat:
+                    this.OnUserChat(packet);
+                    break;
                 default:
                     Logger.Warn($"Unhandled packet operation {operation}");
                     break;
@@ -58,6 +61,23 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 MoveAction = movementPath.MoveActionLast;
                 Foothold = movementPath.FHLast;
                 Field.BroadcastPacket(this, p);
+            }
+        }
+
+        private void OnUserChat(InPacket packet)
+        {
+            packet.Decode<int>();
+
+            var message = packet.Decode<string>();
+            var onlyBalloon = packet.Decode<bool>();
+
+            using (var p = new OutPacket(GameSendOperations.UserChat))
+            {
+                p.Encode<int>(ID);
+                p.Encode<bool>(false);
+                p.Encode<string>(message);
+                p.Encode<bool>(onlyBalloon);
+                Field.BroadcastPacket(p);
             }
         }
 

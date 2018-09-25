@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,8 +29,6 @@ namespace Edelstein.WvsGame.Fields
             lock (this)
             {
                 obj.Field?.Leave(obj);
-
-                obj.ID = Interlocked.Increment(ref _runningObjectID);
                 obj.Field = this;
 
                 if (obj is FieldUser user)
@@ -40,6 +36,7 @@ namespace Edelstein.WvsGame.Fields
                     var portal = Template.Portals[user.Character.FieldPortal] ??
                                  Template.Portals.Values.First(p => p.Type == FieldPortalType.Spawn);
 
+                    user.ID = user.Character.ID;
                     user.X = (short) portal.X;
                     user.Y = (short) portal.Y;
                     user.SendPacket(user.GetSetFieldPacket());
@@ -51,7 +48,11 @@ namespace Edelstein.WvsGame.Fields
                         .Where(o => !o.Equals(obj))
                         .ForEach(o => user.SendPacket(o.GetEnterFieldPacket()));
                 }
-                else BroadcastPacket(obj.GetEnterFieldPacket());
+                else
+                {
+                    obj.ID = Interlocked.Increment(ref _runningObjectID);
+                    BroadcastPacket(obj.GetEnterFieldPacket());
+                }
 
                 this._objects.Add(obj);
             }
