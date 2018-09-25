@@ -62,7 +62,11 @@ namespace Edelstein.WvsGame.Fields
                 }
                 else
                 {
-                    obj.ID = Interlocked.Increment(ref _runningObjectID);
+                    Interlocked.Increment(ref _runningObjectID);
+                    if (_runningObjectID == int.MinValue)
+                        Interlocked.Exchange(ref _runningObjectID, 1);
+
+                    obj.ID = _runningObjectID;
                     BroadcastPacket(obj.GetEnterFieldPacket());
                 }
 
