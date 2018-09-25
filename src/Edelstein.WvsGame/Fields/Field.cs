@@ -92,20 +92,9 @@ namespace Edelstein.WvsGame.Fields
             var controllers = Objects.OfType<FieldUser>().Shuffle().ToList();
             var controlled = Objects.OfType<FieldObjectControlled>().ToList();
 
-            controlled.ForEach(c =>
-            {
-                if (c.Controller == null)
-                {
-                    Console.WriteLine("Setting current");
-                    c.ChangeController(controllers.FirstOrDefault());
-                }
-
-                if (!controllers.Contains(c.Controller))
-                {
-                    Console.WriteLine("Changing new!");
-                    c.ChangeController(controllers.FirstOrDefault());
-                }
-            });
+            controlled
+                .Where(c => c.Controller == null || !controllers.Contains(c.Controller))
+                .ForEach(c => c.ChangeController(controllers.FirstOrDefault()));
         }
 
         public Task BroadcastPacket(FieldObject source, OutPacket packet)
