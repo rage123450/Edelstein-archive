@@ -7,6 +7,7 @@ namespace Edelstein.Provider.Fields
         public int TemplateID { get; set; }
         public FieldLifeType Type { get; set; }
 
+        public byte F { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
         public int RX0 { get; set; }
@@ -21,6 +22,7 @@ namespace Edelstein.Provider.Fields
                 Type = p.ResolveForOrNull<string>("type").ToLower() == "n"
                     ? FieldLifeType.NPC
                     : FieldLifeType.Monster,
+                F = (byte) (p.ResolveFor<bool>("f") ?? false ? 0 : 1),
                 X = p.ResolveFor<int>("x") ?? int.MinValue,
                 Y = p.ResolveFor<int>("y") ?? int.MinValue,
                 RX0 = p.ResolveFor<int>("rx0") ?? int.MinValue,

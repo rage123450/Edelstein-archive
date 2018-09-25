@@ -38,26 +38,17 @@ namespace Edelstein.WvsGame.Fields
                     switch (l.Type)
                     {
                         case FieldLifeType.NPC:
-                            Console.WriteLine(l.TemplateID);
-                            try
-                            {
-                                var npcTemplate = _npcTemplateManager.Get(l.TemplateID);
+                            var npcTemplate = _npcTemplateManager.Get(l.TemplateID);
 
-                                field.Enter(new FieldNPC(npcTemplate)
-                                {
-                                    X = (short) l.X,
-                                    Y = (short) l.Y,
-                                    MoveAction = 0,
-                                    Foothold = (short) l.FH,
-                                    RX0 = l.RX0,
-                                    RX1 = l.RX1
-                                });
-                            }
-                            catch (Exception e)
+                            field.Enter(new FieldNPC(npcTemplate)
                             {
-                                Console.WriteLine(e.ToString());
-                            }
-
+                                X = (short) l.X,
+                                Y = (short) l.Y,
+                                MoveAction = l.F,
+                                Foothold = (short) l.FH,
+                                RX0 = l.RX0,
+                                RX1 = l.RX1
+                            });
                             break;
                         case FieldLifeType.Monster:
                             break;

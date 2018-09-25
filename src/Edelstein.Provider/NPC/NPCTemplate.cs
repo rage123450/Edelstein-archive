@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using MoreLinq.Extensions;
 using PKG1;
 
 namespace Edelstein.Provider.NPC
@@ -19,8 +21,7 @@ namespace Edelstein.Provider.NPC
 
         public static NPCTemplate Parse(int templateId, PackageCollection collection)
         {
-            var npcEntry = collection.Resolve($"NPC/{templateId:D7}.img");
-
+            var npcEntry = collection.Resolve($"Npc/{templateId:D7}.img");
             return Parse(templateId, npcEntry);
         }
 
@@ -29,17 +30,14 @@ namespace Edelstein.Provider.NPC
             return new NPCTemplate
             {
                 TemplateID = templateId,
-                /*
                 TrunkPut = p.ResolveFor<int>("info/trunkPut") ?? 0,
                 TrunkGet = p.ResolveFor<int>("info/trunkGet") ?? 0,
                 StoreBank = p.ResolveFor<bool>("info/storeBank") ?? false,
-                Parcel = p.ResolveFor<bool>("info/parcel") ?? false
-                */
-                /*
-                Scripts = p.Resolve("info/script").Children
-                                .Select(NPCScriptTemplate.Parse)
-                                .ToList()
-                */
+                Parcel = p.ResolveFor<bool>("info/parcel") ?? false,
+                Scripts = p.Resolve("info/script")?.Children
+                              .Select(NPCScriptTemplate.Parse)
+                              .ToList()
+                          ?? new List<NPCScriptTemplate>()
             };
         }
     }
