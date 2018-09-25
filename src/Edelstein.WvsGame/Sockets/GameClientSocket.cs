@@ -1,5 +1,7 @@
+using System;
 using System.Linq;
 using DotNetty.Transport.Channels;
+using Edelstein.Common;
 using Edelstein.Database;
 using Edelstein.Database.Entities.Types;
 using Edelstein.Network;
@@ -19,6 +21,7 @@ namespace Edelstein.WvsGame.Sockets
         private IContainer _container;
         public WvsGame WvsGame { get; }
 
+        public Rand32 Random { get; set; }
         public FieldUser FieldUser { get; set; }
         public bool IsInstantiated { get; set; }
 
@@ -81,7 +84,8 @@ namespace Edelstein.WvsGame.Sockets
 
                 var field = WvsGame.FieldFactory.Get(character.FieldID);
                 var fieldUser = new FieldUser(this, character);
-
+                
+                Random = new Rand32(0x0, 0x0, 0x0);
                 FieldUser = fieldUser;
                 field.Enter(fieldUser);
             }

@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Edelstein.Common.Packets;
@@ -134,9 +135,9 @@ namespace Edelstein.WvsGame.Fields.Objects
 
                 if (!Socket.IsInstantiated)
                 {
-                    p.Encode<int>(0); // seed1
-                    p.Encode<int>(0); // seed2
-                    p.Encode<int>(0); // seed3
+                    p.Encode<int>((int) Socket.Random.Seed1);
+                    p.Encode<int>((int) Socket.Random.Seed2);
+                    p.Encode<int>((int) Socket.Random.Seed3);
 
                     Character.EncodeData(p);
 
