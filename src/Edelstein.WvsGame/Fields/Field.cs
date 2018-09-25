@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Edelstein.Network.Packets;
 using Edelstein.Provider.Fields;
 using Edelstein.WvsGame.Fields.Objects;
+using Edelstein.WvsGame.Packets;
 using MoreLinq.Extensions;
 
 namespace Edelstein.WvsGame.Fields
@@ -23,6 +24,23 @@ namespace Edelstein.WvsGame.Fields
             this.ID = id;
             this.Template = template;
             this._objects = new List<FieldObject>();
+        }
+
+        public bool OnPacket(FieldUser controller, GameRecvOperations operation, InPacket packet)
+        {
+            switch (operation)
+            {
+                case GameRecvOperations.NpcMove:
+                    var objectID = packet.Decode<int>();
+                    var npc = Objects
+                        .Cast<FieldNPC>()
+                        .FirstOrDefault(n => n.ID == objectID);
+                    return npc?.OnPacket(controller, operation, packet) ?? true;
+                default:
+                    return controller.OnPacket(operation, packet);
+            }
+
+            return true;
         }
 
         public void Enter(FieldObject obj)

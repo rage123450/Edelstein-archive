@@ -39,7 +39,7 @@ namespace Edelstein.WvsGame.Sockets
                     this.OnMigrateIn(packet);
                     break;
                 default:
-                    if (!FieldUser?.OnPacket(operation, packet) ?? false)
+                    if (!FieldUser?.Field.OnPacket(FieldUser, operation, packet) ?? false)
                         Logger.Warn($"Unhandled packet operation {operation}");
                     break;
             }

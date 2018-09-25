@@ -1,5 +1,7 @@
+using System;
 using Edelstein.Network.Packets;
 using Edelstein.Provider.NPC;
+using Edelstein.WvsGame.Fields.Movements;
 using Edelstein.WvsGame.Packets;
 
 namespace Edelstein.WvsGame.Fields.Objects
@@ -14,6 +16,45 @@ namespace Edelstein.WvsGame.Fields.Objects
         public FieldNPC(NPCTemplate template)
         {
             Template = template;
+        }
+
+        public bool OnPacket(FieldUser controller, GameRecvOperations operation, InPacket packet)
+        {
+            switch (operation)
+            {
+                case GameRecvOperations.NpcMove:
+                    this.OnNpcMove(packet);
+                    break;
+                default:
+                    return false;
+            }
+
+            return true;
+        }
+
+        private void OnNpcMove(InPacket packet)
+        {
+            using (var p = new OutPacket(GameSendOperations.NpcMove))
+            {
+                p.Encode<int>(ID);
+                p.Encode<byte>(packet.Decode<byte>());
+                p.Encode<byte>(packet.Decode<byte>());
+
+                if (packet.Length > 0) // m_pTemplate->bMove
+                {
+                    var movementPath = new MovementPath();
+
+                    movementPath.Decode(packet);
+
+                    X = movementPath.X;
+                    Y = movementPath.Y;
+                    MoveAction = movementPath.MoveActionLast;
+                    Foothold = movementPath.FHLast;
+                    movementPath.Encode(p);
+                }
+
+                Field.BroadcastPacket(p);
+            }
         }
 
         public override OutPacket GetEnterFieldPacket()
