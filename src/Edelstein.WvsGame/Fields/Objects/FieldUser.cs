@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Edelstein.Common.Packets;
 using Edelstein.Database.Entities;
@@ -5,6 +7,7 @@ using Edelstein.Network.Packets;
 using Edelstein.WvsGame.Fields.Movements;
 using Edelstein.WvsGame.Packets;
 using Edelstein.WvsGame.Sockets;
+using MoreLinq.Extensions;
 
 namespace Edelstein.WvsGame.Fields.Objects
 {
@@ -23,6 +26,9 @@ namespace Edelstein.WvsGame.Fields.Objects
         {
             switch (operation)
             {
+                case GameRecvOperations.UserTransferFieldRequest:
+                    this.OnUserTransferFieldRequest(packet);
+                    break;
                 case GameRecvOperations.UserMove:
                     this.OnUserMove(packet);
                     break;
@@ -37,6 +43,20 @@ namespace Edelstein.WvsGame.Fields.Objects
             }
 
             return true;
+        }
+
+        private void OnUserTransferFieldRequest(InPacket packet)
+        {
+            packet.Decode<byte>();
+            packet.Decode<int>();
+
+            var portalName = packet.Decode<string>();
+            var portal = Field.Template.Portals.Values.Single(p => p.Name.Equals(portalName));
+            var targetField = Socket.WvsGame.FieldFactory.Get(portal.ToMap);
+            var targetPortal = targetField.Template.Portals.Values.Single(p => p.Name.Equals(portal.ToName));
+            
+            Character.FieldPortal = (byte) targetPortal.ID;
+            targetField.Enter(this);
         }
 
         private void OnUserMove(InPacket packet)
@@ -125,8 +145,8 @@ namespace Edelstein.WvsGame.Fields.Objects
                 else
                 {
                     p.Encode<byte>(0);
-                    p.Encode<int>(Field.ID);
-                    p.Encode<byte>(0);
+                    p.Encode<int>(Character.FieldID);
+                    p.Encode<byte>(Character.FieldPortal);
                     p.Encode<int>(Character.HP);
                     p.Encode<bool>(false);
                 }

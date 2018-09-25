@@ -17,7 +17,7 @@ namespace Edelstein.WvsGame.Sockets
         private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
 
         private IContainer _container;
-        private WvsGame _wvsGame;
+        public WvsGame WvsGame { get; }
 
         public FieldUser FieldUser { get; set; }
         public bool IsInstantiated { get; set; }
@@ -26,7 +26,7 @@ namespace Edelstein.WvsGame.Sockets
             : base(channel, seqSend, seqRecv)
         {
             this._container = container;
-            this._wvsGame = container.GetInstance<WvsGame>();
+            this.WvsGame = container.GetInstance<WvsGame>();
         }
 
         public override void OnPacket(InPacket packet)
@@ -49,7 +49,7 @@ namespace Edelstein.WvsGame.Sockets
         {
             var characterID = packet.Decode<int>();
 
-            if (!_wvsGame.PendingMigrations.Remove(characterID))
+            if (!WvsGame.PendingMigrations.Remove(characterID))
             {
                 Channel.CloseAsync();
                 return;
@@ -79,7 +79,7 @@ namespace Edelstein.WvsGame.Sockets
                 db.Update(character);
                 db.SaveChanges();
 
-                var field = _wvsGame.FieldFactory.Get(character.FieldID);
+                var field = WvsGame.FieldFactory.Get(character.FieldID);
                 var fieldUser = new FieldUser(this, character);
 
                 FieldUser = fieldUser;

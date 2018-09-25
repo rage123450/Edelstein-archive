@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -37,8 +38,19 @@ namespace Edelstein.WvsGame.Fields
                                  Template.Portals.Values.First(p => p.Type == FieldPortalType.Spawn);
 
                     user.ID = user.Character.ID;
+                    user.Character.FieldID = ID;
                     user.X = (short) portal.X;
                     user.Y = (short) portal.Y;
+
+                    if (portal.Type != FieldPortalType.Spawn)
+                    {
+                        var foothold = Template.Footholds.Values
+                            .Where(f => f.X1 <= portal.X && f.X2 >= portal.X)
+                            .First(f => f.X1 < f.X2);
+
+                        user.Foothold = (short) foothold.ID;
+                    }
+
                     user.SendPacket(user.GetSetFieldPacket());
                     BroadcastPacket(user, user.GetEnterFieldPacket());
 
