@@ -4,10 +4,10 @@ using Edelstein.WvsGame.Packets;
 
 namespace Edelstein.WvsGame.Fields.Objects
 {
-    public class FieldNPC : FieldObject
+    public class FieldNPC : FieldObjectControlled
     {
         public NPCTemplate Template { get; set; }
-        
+
         public int RX0 { get; set; }
         public int RX1 { get; set; }
 
@@ -22,12 +22,12 @@ namespace Edelstein.WvsGame.Fields.Objects
             {
                 p.Encode<int>(ID);
                 p.Encode<int>(Template.TemplateID);
-                
+
                 p.Encode<short>(X);
                 p.Encode<short>(Y);
                 p.Encode<byte>(MoveAction);
                 p.Encode<short>(Foothold);
-                
+
                 p.Encode<short>((short) RX0);
                 p.Encode<short>((short) RX1);
 
@@ -40,6 +40,16 @@ namespace Edelstein.WvsGame.Fields.Objects
         {
             using (var p = new OutPacket(GameSendOperations.NpcLeaveField))
             {
+                p.Encode<int>(ID);
+                return p;
+            }
+        }
+
+        public override OutPacket GetChangeControllerPacket(bool setAsController)
+        {
+            using (var p = new OutPacket(GameSendOperations.NpcChangeController))
+            {
+                p.Encode<bool>(setAsController);
                 p.Encode<int>(ID);
                 return p;
             }
