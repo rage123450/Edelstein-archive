@@ -41,7 +41,8 @@ namespace Edelstein.WvsGame.Fields
                     var portal = Template.Portals[user.Character.FieldPortal] ??
                                  Template.Portals.Values.First(p => p.Type == FieldPortalType.Spawn);
 
-                    user.Position = new Point(portal.X, portal.Y);
+                    user.X = (short) portal.X;
+                    user.Y = (short) portal.Y;
                     user.SendPacket(user.GetSetFieldPacket());
                     BroadcastPacket(user, user.GetEnterFieldPacket());
 

@@ -32,7 +32,7 @@ namespace Edelstein.WvsGame.Fields
                 if (_fields.ContainsKey(templateId)) return _fields[templateId];
                 var field = new Field(templateId, _fieldTemplateManager.Get(templateId));
                 _fields[templateId] = field;
-                
+
                 field.Template.Life.ForEach(l =>
                 {
                     switch (l.Type)
@@ -42,12 +42,16 @@ namespace Edelstein.WvsGame.Fields
                             try
                             {
                                 var npcTemplate = _npcTemplateManager.Get(l.TemplateID);
-                                var npc = new FieldNPC(npcTemplate);
-                                npc.Position = new Point(l.X, l.Y);
-                                npc.RX0 = l.RX0;
-                                npc.RX1 = l.RX1;
-                                npc.FH = l.FH;
-                                field.Enter(npc);
+
+                                field.Enter(new FieldNPC(npcTemplate)
+                                {
+                                    X = (short) l.X,
+                                    Y = (short) l.Y,
+                                    MoveAction = 0,
+                                    Foothold = (short) l.FH,
+                                    RX0 = l.RX0,
+                                    RX1 = l.RX1
+                                });
                             }
                             catch (Exception e)
                             {
@@ -59,7 +63,7 @@ namespace Edelstein.WvsGame.Fields
                             break;
                     }
                 });
-                
+
                 Console.WriteLine("Poop");
 
                 return field;

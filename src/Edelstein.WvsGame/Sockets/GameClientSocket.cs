@@ -111,7 +111,10 @@ namespace Edelstein.WvsGame.Sockets
                 p.Encode(fieldUser.ID);
                 movementPath.Encode(p);
 
-                fieldUser.Position = new Point(movementPath.X, movementPath.Y);
+                fieldUser.X = movementPath.X;
+                fieldUser.Y = movementPath.Y;
+                fieldUser.MoveAction = movementPath.MoveActionLast;
+                fieldUser.Foothold = movementPath.FHLast;
                 fieldUser.Field.BroadcastPacket(fieldUser, p);
             }
         }

@@ -87,10 +87,10 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 p.Encode<int>(0);
                 p.Encode<int>(0);
 
-                p.Encode<short>((short) Position.X);
-                p.Encode<short>((short) Position.Y);
-                p.Encode<byte>(0);
-                p.Encode<short>(0);
+                p.Encode<short>(X);
+                p.Encode<short>(Y);
+                p.Encode<byte>(MoveAction);
+                p.Encode<short>(Foothold);
                 p.Encode<byte>(0);
 
                 p.Encode<byte>(0);

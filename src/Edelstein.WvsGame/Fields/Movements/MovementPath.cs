@@ -12,6 +12,7 @@ namespace Edelstein.WvsGame.Fields.Movements
         public short Y { get; set; }
         public short VX { get; set; }
         public short VY { get; set; }
+        public byte MoveActionLast { get; set; }
         public short FHLast { get; set; }
 
         public MovementPath()
@@ -149,6 +150,8 @@ namespace Edelstein.WvsGame.Fields.Movements
                         m.MoveAction = packet.Decode<byte>();
                         m.Elapse = packet.Decode<short>();
 
+                        MoveActionLast = m.MoveAction;
+
                         X = m.X;
                         Y = m.Y;
                         VX = m.VX;
@@ -224,6 +227,7 @@ namespace Edelstein.WvsGame.Fields.Movements
                         m.X = X;
                         m.Y = Y;
                         m.Elapse = 0;
+                        MoveActionLast = 0;
                         m.MoveAction = 0;
                         FHLast = 0;
                         m.FH = 0;

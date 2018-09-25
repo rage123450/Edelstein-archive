@@ -10,7 +10,6 @@ namespace Edelstein.WvsGame.Fields.Objects
         
         public int RX0 { get; set; }
         public int RX1 { get; set; }
-        public int FH { get; set; }
 
         public FieldNPC(NPCTemplate template)
         {
@@ -24,10 +23,10 @@ namespace Edelstein.WvsGame.Fields.Objects
                 p.Encode<int>(ID);
                 p.Encode<int>(Template.TemplateID);
                 
-                p.Encode<short>((short) Position.X);
-                p.Encode<short>((short) Position.Y);
-                p.Encode<byte>(0); // nMoveAction
-                p.Encode<short>((short) FH); // foothold
+                p.Encode<short>(X);
+                p.Encode<short>(Y);
+                p.Encode<byte>(MoveAction);
+                p.Encode<short>(Foothold);
                 
                 p.Encode<short>((short) RX0);
                 p.Encode<short>((short) RX1);
