@@ -21,7 +21,7 @@ namespace Edelstein.Network.Tests.Crypto
         [Fact]
         public void EncryptTransformResultIsAccurate()
         {
-            const uint data = uint.MaxValue;
+            const uint data = uint.MinValue;
 
             var result = ShandaCipher.EncryptTransform(BitConverter.GetBytes(data));
 
@@ -32,7 +32,7 @@ namespace Edelstein.Network.Tests.Crypto
         [Fact]
         public void DecryptTransformResultIsAccurate()
         {
-            const uint data = uint.MaxValue;
+            const uint data = uint.MinValue;
 
             var result = ShandaCipher.DecryptTransform(BitConverter.GetBytes(data));
 
