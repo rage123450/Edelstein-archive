@@ -29,6 +29,9 @@ namespace Edelstein.WvsGame.Fields.Objects
                 case GameRecvOperations.UserChat:
                     this.OnUserChat(packet);
                     break;
+                case GameRecvOperations.UserEmotion:
+                    this.OnUserEmotion(packet);
+                    break;
                 default:
                     return false;
             }
@@ -76,6 +79,22 @@ namespace Edelstein.WvsGame.Fields.Objects
                 p.Encode<string>(message);
                 p.Encode<bool>(onlyBalloon);
                 Field.BroadcastPacket(p);
+            }
+        }
+
+        private void OnUserEmotion(InPacket packet)
+        {
+            var emotion = packet.Decode<int>();
+            var duration = packet.Decode<int>();
+            var byItemOption = packet.Decode<bool>();
+
+            using (var p = new OutPacket(GameSendOperations.UserEmotion))
+            {
+                p.Encode<int>(ID);
+                p.Encode<int>(emotion);
+                p.Encode<int>(duration);
+                p.Encode<bool>(byItemOption);
+                Field.BroadcastPacket(this, p);
             }
         }
 
