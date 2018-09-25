@@ -115,6 +115,20 @@ namespace Edelstein.WvsGame.Fields
                 .ForEach(c => c.ChangeController(controllers.FirstOrDefault()));
         }
 
+        public FieldObject GetObject(int id)
+        {
+            return Objects
+                .Where(o => !(o is FieldUser))
+                .SingleOrDefault(o => o.ID == id);
+        }
+
+        public FieldUser GetUser(int id)
+        {
+            return Objects
+                .OfType<FieldUser>()
+                .SingleOrDefault(o => o.ID == id);
+        }
+
         public Task BroadcastPacket(FieldObject source, OutPacket packet)
         {
             return Task.WhenAll(Objects

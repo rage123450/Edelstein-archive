@@ -36,6 +36,9 @@ namespace Edelstein.WvsGame.Fields.Objects
                 case GameRecvOperations.UserEmotion:
                     this.OnUserEmotion(packet);
                     break;
+                case GameRecvOperations.UserCharacterInfoRequest:
+                    this.OnUserCharacterInfoRequest(packet);
+                    break;
                 default:
                     return false;
             }
@@ -52,7 +55,7 @@ namespace Edelstein.WvsGame.Fields.Objects
             var portal = Field.Template.Portals.Values.Single(p => p.Name.Equals(portalName));
             var targetField = Socket.WvsGame.FieldFactory.Get(portal.ToMap);
             var targetPortal = targetField.Template.Portals.Values.Single(p => p.Name.Equals(portal.ToName));
-            
+
             Character.FieldPortal = (byte) targetPortal.ID;
             targetField.Enter(this);
         }
@@ -151,6 +154,39 @@ namespace Edelstein.WvsGame.Fields.Objects
 
                 p.Encode<long>(0);
                 return p;
+            }
+        }
+
+        private void OnUserCharacterInfoRequest(InPacket packet)
+        {
+            packet.Decode<int>();
+            var user = Field.GetUser(packet.Decode<int>());
+            if (user == null) return;
+
+            using (var p = new OutPacket(GameSendOperations.CharacterInfo))
+            {
+                var c = user.Character;
+
+                p.Encode<int>(ID);
+                p.Encode<byte>(c.Level);
+                p.Encode<short>(c.Job);
+                p.Encode<short>(c.POP);
+
+                p.Encode<byte>(0);
+
+                p.Encode<string>(""); // sCommunity
+                p.Encode<string>(""); // sAlliance
+
+                p.Encode<byte>(0);
+                p.Encode<byte>(0);
+                p.Encode<byte>(0); // TamingMobInfo
+                p.Encode<byte>(0); // WishItemInfo
+
+                p.Encode<int>(0); // MedalAchievementInfo
+                p.Encode<short>(0);
+
+                p.Encode<int>(0); // ChairItemInfo
+                SendPacket(p);
             }
         }
 
