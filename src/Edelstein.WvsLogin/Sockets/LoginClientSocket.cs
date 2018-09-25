@@ -137,7 +137,17 @@ namespace Edelstein.WvsLogin.Sockets
 
         public override void OnDisconnect()
         {
-            throw new NotImplementedException();
+            if (Account != null)
+            {
+                using (var db = _container.GetInstance<DataContext>())
+                {
+                    if (Account.State != AccountState.MigratingIn)
+                        Account.State = AccountState.LoggedOut;
+
+                    db.Update(Account);
+                    db.SaveChanges();
+                }
+            }
         }
 
         private void OnCheckPassword(InPacket packet)
