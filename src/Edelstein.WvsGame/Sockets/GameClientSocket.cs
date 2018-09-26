@@ -119,7 +119,6 @@ namespace Edelstein.WvsGame.Sockets
             if (v3 > 0) return;
             var count = packet.Decode<int>();
 
-            Console.WriteLine("received " + count);
             for (var i = 0; i < count; i++)
             {
                 var key = packet.Decode<int>();
@@ -147,8 +146,6 @@ namespace Edelstein.WvsGame.Sockets
                     }
                 }
                 else functionKeys.Remove(functionKey);
-
-                Console.WriteLine("count: " + functionKeys.Count);
             }
         }
 
