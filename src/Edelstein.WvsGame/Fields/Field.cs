@@ -33,7 +33,7 @@ namespace Edelstein.WvsGame.Fields
                 case GameRecvOperations.NpcMove:
                     var objectID = packet.Decode<int>();
                     var npc = Objects
-                        .Cast<FieldNPC>()
+                        .OfType<FieldNPC>()
                         .FirstOrDefault(n => n.ID == objectID);
                     return npc?.OnPacket(controller, operation, packet) ?? true;
                 default:
