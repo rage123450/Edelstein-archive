@@ -68,6 +68,8 @@ namespace Edelstein.WvsGame
             await GameServer.Run();
             Logger.Info($"Bounded {ChannelInformation.Name} on {GameServer.Channel.LocalAddress}");
 
+            while (InteropClient.Socket == null) ;
+
             using (var p = new OutPacket(InteropRecvOperations.ServerRegister))
             {
                 p.Encode<byte>((byte) ServerType.Game);
