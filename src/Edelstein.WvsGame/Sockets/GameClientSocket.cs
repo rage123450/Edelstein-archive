@@ -7,6 +7,7 @@ using Edelstein.Database.Entities;
 using Edelstein.Database.Entities.Types;
 using Edelstein.Network;
 using Edelstein.Network.Packets;
+using Edelstein.Provider.Fields;
 using Edelstein.WvsGame.Fields.Objects;
 using Edelstein.WvsGame.Logging;
 using Edelstein.WvsGame.Packets;
@@ -139,23 +140,38 @@ namespace Edelstein.WvsGame.Sockets
 
         public override void OnDisconnect()
         {
-            var fieldUser = FieldUser;
+            var u = FieldUser;
 
-            if (fieldUser != null)
+            if (u != null)
             {
                 using (var db = _container.GetInstance<DataContext>())
                 {
-                    var account = fieldUser.Character.Account;
+                    var account = u.Character.Account;
 
                     if (account.State != AccountState.MigratingIn)
                         account.State = AccountState.LoggedOut;
 
-                    db.Update(fieldUser.Character);
+                    var character = u.Character;
+
+                    character.FieldPortal = (byte) u.Field.Template.Portals
+                        .Values
+                        .Where(p => p.Type == FieldPortalType.Spawn)
+                        .OrderBy(p =>
+                        {
+                            var xd = p.X - u.X;
+                            var yd = p.Y - u.Y;
+
+                            return xd * xd + yd * yd;
+                        })
+                        .First()
+                        .ID;
+
+                    db.Update(character);
                     db.SaveChanges();
                 }
             }
 
-            fieldUser?.Field?.Leave(fieldUser);
+            u?.Field?.Leave(u);
         }
     }
 }
