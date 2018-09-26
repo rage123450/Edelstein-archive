@@ -9,9 +9,9 @@ namespace Edelstein.Network.Matchers
 
         public EveryOneBut(IChannelId id)
         {
-            this.id = id;
+            id = id;
         }
 
-        public bool Matches(IChannel channel) => !Equals(channel.Id, this.id);
+        public bool Matches(IChannel channel) => !Equals(channel.Id, id);
     }
 }

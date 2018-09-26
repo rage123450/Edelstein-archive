@@ -15,7 +15,7 @@ namespace Edelstein.Database.Entities.Inventory
 
         public ItemInventory(byte slotMax)
         {
-            this.SlotMax = slotMax;
+            SlotMax = slotMax;
         }
     }
 }

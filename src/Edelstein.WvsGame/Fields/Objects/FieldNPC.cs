@@ -23,7 +23,7 @@ namespace Edelstein.WvsGame.Fields.Objects
             switch (operation)
             {
                 case GameRecvOperations.NpcMove:
-                    this.OnNpcMove(packet);
+                    OnNpcMove(packet);
                     break;
                 default:
                     return false;

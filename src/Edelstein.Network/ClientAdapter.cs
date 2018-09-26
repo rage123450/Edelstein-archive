@@ -18,8 +18,8 @@ namespace Edelstein.Network
             ISocketFactory<T> socketFactory
         )
         {
-            this._client = client;
-            this._socketFactory = socketFactory;
+            _client = client;
+            _socketFactory = socketFactory;
         }
 
         public override void ChannelRead(IChannelHandlerContext context, object message)
@@ -47,11 +47,11 @@ namespace Edelstein.Network
                     seqRecv
                 );
 
-                lock (this._client)
+                lock (_client)
                 {
-                    if (this._client.Socket == null)
+                    if (_client.Socket == null)
                     {
-                        this._client.Socket = newSocket;
+                        _client.Socket = newSocket;
                     }
                 }
 

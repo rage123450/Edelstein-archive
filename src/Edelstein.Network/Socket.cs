@@ -21,16 +21,16 @@ namespace Edelstein.Network
 
         public Socket(IChannel channel, uint seqSend, uint seqRecv)
         {
-            this.Channel = channel;
-            this.SeqSend = seqSend;
-            this.SeqRecv = seqRecv;
+            Channel = channel;
+            SeqSend = seqSend;
+            SeqRecv = seqRecv;
         }
 
         public abstract void OnPacket(InPacket packet);
         public abstract void OnDisconnect();
 
-        public Task SendPacket(OutPacket packet) => this.Channel.WriteAndFlushAsync(packet);
+        public Task SendPacket(OutPacket packet) => Channel.WriteAndFlushAsync(packet);
 
-        public void Dispose() => this.Channel.CloseAsync();
+        public void Dispose() => Channel.CloseAsync();
     }
 }

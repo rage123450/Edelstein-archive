@@ -8,7 +8,7 @@ namespace Edelstein.Provider.Fields
 
         public FieldTemplateManager(PackageCollection collection)
         {
-            this._collection = collection;
+            _collection = collection;
         }
 
         public FieldTemplate Get(int templateId)

@@ -19,14 +19,14 @@ namespace Edelstein.Network
             ISocketFactory<T> socketFactory
         )
         {
-            this._server = server;
-            this._socketFactory = socketFactory;
+            _server = server;
+            _socketFactory = socketFactory;
         }
 
         public override void ChannelActive(IChannelHandlerContext context)
         {
             var random = new Random();
-            var socket = this._socketFactory.Build(
+            var socket = _socketFactory.Build(
                 context.Channel,
                 (uint) random.Next(),
                 (uint) random.Next()

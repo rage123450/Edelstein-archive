@@ -18,15 +18,15 @@ namespace Edelstein.WvsCenter
 
         public WvsCenter(IContainer container)
         {
-            this._container = container;
+            _container = container;
         }
 
         public async Task Run()
         {
-            var options = this._container.GetInstance<WvsCenterOptions>();
+            var options = _container.GetInstance<WvsCenterOptions>();
             var info = options.CenterInfo;
 
-            this.WorldInformation = new WorldInformation
+            WorldInformation = new WorldInformation
             {
                 ID = info.ID,
                 Name = info.Name,
@@ -37,13 +37,13 @@ namespace Edelstein.WvsCenter
                 BlockCharCreation = info.BlockCharCreation
             };
 
-            this.InteropServer = new Server<CenterClientSocket>(
+            InteropServer = new Server<CenterClientSocket>(
                 options.InteropServerOptions,
-                this._container.GetInstance<CenterClientSocketFactory>()
+                _container.GetInstance<CenterClientSocketFactory>()
             );
 
-            await this.InteropServer.Run();
-            Logger.Info($"Bounded {this.WorldInformation.Name} on {this.InteropServer.Channel.LocalAddress}");
+            await InteropServer.Run();
+            Logger.Info($"Bounded {WorldInformation.Name} on {InteropServer.Channel.LocalAddress}");
         }
     }
 }

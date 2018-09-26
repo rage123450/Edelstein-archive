@@ -10,12 +10,12 @@ namespace Edelstein.WvsLogin.Sockets
 
         public LoginClientSocketFactory(IContainer container)
         {
-            this._container = container;
+            _container = container;
         }
 
         public LoginClientSocket Build(IChannel channel, uint seqSend, uint seqRecv)
         {
-            return new LoginClientSocket(this._container, channel, seqSend, seqRecv);
+            return new LoginClientSocket(_container, channel, seqSend, seqRecv);
         }
     }
 }

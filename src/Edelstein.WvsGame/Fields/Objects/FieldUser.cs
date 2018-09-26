@@ -26,19 +26,19 @@ namespace Edelstein.WvsGame.Fields.Objects
             switch (operation)
             {
                 case GameRecvOperations.UserTransferFieldRequest:
-                    this.OnUserTransferFieldRequest(packet);
+                    OnUserTransferFieldRequest(packet);
                     break;
                 case GameRecvOperations.UserMove:
-                    this.OnUserMove(packet);
+                    OnUserMove(packet);
                     break;
                 case GameRecvOperations.UserChat:
-                    this.OnUserChat(packet);
+                    OnUserChat(packet);
                     break;
                 case GameRecvOperations.UserEmotion:
-                    this.OnUserEmotion(packet);
+                    OnUserEmotion(packet);
                     break;
                 case GameRecvOperations.UserCharacterInfoRequest:
-                    this.OnUserCharacterInfoRequest(packet);
+                    OnUserCharacterInfoRequest(packet);
                     break;
                 default:
                     return false;
@@ -258,6 +258,6 @@ namespace Edelstein.WvsGame.Fields.Objects
             }
         }
 
-        public Task SendPacket(OutPacket packet) => this.Socket.SendPacket(packet);
+        public Task SendPacket(OutPacket packet) => Socket.SendPacket(packet);
     }
 }

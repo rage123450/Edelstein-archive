@@ -24,8 +24,8 @@ namespace Edelstein.WvsCenter.Sockets
         public CenterClientSocket(IContainer container, IChannel channel, uint seqSend, uint seqRecv)
             : base(channel, seqSend, seqRecv)
         {
-            this._wvsCenter = container.GetInstance<WvsCenter>();
-            this._options = container.GetInstance<WvsCenterOptions>();
+            _wvsCenter = container.GetInstance<WvsCenter>();
+            _options = container.GetInstance<WvsCenterOptions>();
         }
 
         public override void OnPacket(InPacket packet)
@@ -35,13 +35,13 @@ namespace Edelstein.WvsCenter.Sockets
             switch (operation)
             {
                 case InteropRecvOperations.ServerRegister:
-                    this.OnRegisterServer(packet);
+                    OnRegisterServer(packet);
                     break;
                 case InteropRecvOperations.MigrationRequest:
-                    this.OnMigrationRequest(packet);
+                    OnMigrationRequest(packet);
                     break;
                 case InteropRecvOperations.MigrationRegisterResult:
-                    this.OnMigrationRegisterResult(packet);
+                    OnMigrationRegisterResult(packet);
                     break;
                 default:
                     Logger.Warn($"Unhandled packet operation {operation}");
@@ -57,11 +57,11 @@ namespace Edelstein.WvsCenter.Sockets
             {
                 case ServerType.Game:
                     var channelInformation =
-                        this._wvsCenter.WorldInformation.Channels.SingleOrDefault(c => c.ID == ServerID);
+                        _wvsCenter.WorldInformation.Channels.SingleOrDefault(c => c.ID == ServerID);
 
                     if (channelInformation != null)
                     {
-                        this._wvsCenter.WorldInformation.Channels.Remove(channelInformation);
+                        _wvsCenter.WorldInformation.Channels.Remove(channelInformation);
                         Logger.Info(
                             $"Removed {Enum.GetName(typeof(ServerType), ServerType)} server, {channelInformation.Name}");
                     }
@@ -71,8 +71,8 @@ namespace Edelstein.WvsCenter.Sockets
 
             using (var p = new OutPacket(InteropSendOperations.ServerInformation))
             {
-                this._wvsCenter.WorldInformation.Encode(p);
-                this._wvsCenter.InteropServer.BroadcastPacket(p, new EveryOneBut(Channel.Id));
+                _wvsCenter.WorldInformation.Encode(p);
+                _wvsCenter.InteropServer.BroadcastPacket(p, new EveryOneBut(Channel.Id));
             }
         }
 
@@ -81,7 +81,7 @@ namespace Edelstein.WvsCenter.Sockets
             var serverType = (ServerType) packet.Decode<byte>();
             string serverName;
 
-            this.ServerType = serverType;
+            ServerType = serverType;
 
             switch (serverType)
             {
@@ -96,7 +96,7 @@ namespace Edelstein.WvsCenter.Sockets
                     var channelInformation = new ChannelInformation();
 
                     channelInformation.Decode(packet);
-                    this._wvsCenter.WorldInformation.Channels.Add(channelInformation);
+                    _wvsCenter.WorldInformation.Channels.Add(channelInformation);
                     ServerID = channelInformation.ID;
                     serverName = channelInformation.Name;
                     break;
@@ -113,14 +113,14 @@ namespace Edelstein.WvsCenter.Sockets
             using (var p = new OutPacket(InteropSendOperations.ServerRegisterResult))
             {
                 p.Encode<bool>(false);
-                this._wvsCenter.WorldInformation.Encode(p);
+                _wvsCenter.WorldInformation.Encode(p);
                 SendPacket(p);
             }
 
             using (var p = new OutPacket(InteropSendOperations.ServerInformation))
             {
-                this._wvsCenter.WorldInformation.Encode(p);
-                this._wvsCenter.InteropServer.BroadcastPacket(p, new EveryOneBut(Channel.Id));
+                _wvsCenter.WorldInformation.Encode(p);
+                _wvsCenter.InteropServer.BroadcastPacket(p, new EveryOneBut(Channel.Id));
             }
 
             Logger.Info($"Registered {Enum.GetName(typeof(ServerType), serverType)} server, {serverName}");

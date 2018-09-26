@@ -25,8 +25,8 @@ namespace Edelstein.WvsLogin.Sockets
         public CenterServerSocket(IContainer container, IChannel channel, uint seqSend, uint seqRecv)
             : base(channel, seqSend, seqRecv)
         {
-            this._container = container;
-            this._wvsLogin = container.GetInstance<WvsLogin>();
+            _container = container;
+            _wvsLogin = container.GetInstance<WvsLogin>();
         }
 
         public override void OnPacket(InPacket packet)
@@ -36,13 +36,13 @@ namespace Edelstein.WvsLogin.Sockets
             switch (operation)
             {
                 case InteropSendOperations.ServerRegisterResult:
-                    this.OnServerRegisterResult(packet);
+                    OnServerRegisterResult(packet);
                     break;
                 case InteropSendOperations.ServerInformation:
-                    this.OnServerInformation(packet);
+                    OnServerInformation(packet);
                     break;
                 case InteropSendOperations.MigrationResult:
-                    this.OnMigrationResult(packet);
+                    OnMigrationResult(packet);
                     break;
                 default:
                     Logger.Warn($"Unhandled packet operation {operation}");
@@ -62,7 +62,7 @@ namespace Edelstein.WvsLogin.Sockets
             var worldInformation = new WorldInformation();
 
             worldInformation.Decode(packet);
-            this.WorldInformation = worldInformation;
+            WorldInformation = worldInformation;
             Logger.Info($"Registered Center server, {worldInformation.Name}");
         }
 
@@ -71,7 +71,7 @@ namespace Edelstein.WvsLogin.Sockets
             var worldInformation = new WorldInformation();
 
             worldInformation.Decode(packet);
-            this.WorldInformation = worldInformation;
+            WorldInformation = worldInformation;
             Logger.Info($"Updated {worldInformation.Name} server information");
         }
 

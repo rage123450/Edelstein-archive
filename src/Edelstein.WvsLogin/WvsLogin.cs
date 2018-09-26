@@ -22,16 +22,16 @@ namespace Edelstein.WvsLogin
 
         public WvsLogin(IContainer container)
         {
-            this._container = container;
-            this.InteropClients = new List<Client<CenterServerSocket>>();
+            _container = container;
+            InteropClients = new List<Client<CenterServerSocket>>();
         }
 
         public async Task Run()
         {
-            var options = this._container.GetInstance<WvsLoginOptions>();
+            var options = _container.GetInstance<WvsLoginOptions>();
             var info = options.LoginInfo;
 
-            this.LoginInformation = new LoginInformation
+            LoginInformation = new LoginInformation
             {
                 Name = info.Name
             };
@@ -40,21 +40,21 @@ namespace Edelstein.WvsLogin
             {
                 var client = new Client<CenterServerSocket>(
                     clientOptions,
-                    this._container.GetInstance<CenterServerSocketFactory>()
+                    _container.GetInstance<CenterServerSocketFactory>()
                 );
 
-                this.InteropClients.Add(client);
+                InteropClients.Add(client);
                 await client.Run();
                 Logger.Info($"Connected to interoperability server on {client.Channel.RemoteAddress}");
             }
 
-            this.GameServer = new Server<LoginClientSocket>(
+            GameServer = new Server<LoginClientSocket>(
                 options.GameServerOptions,
-                this._container.GetInstance<LoginClientSocketFactory>()
+                _container.GetInstance<LoginClientSocketFactory>()
             );
 
-            await this.GameServer.Run();
-            Logger.Info($"Bounded {this.LoginInformation.Name} on {this.GameServer.Channel.LocalAddress}");
+            await GameServer.Run();
+            Logger.Info($"Bounded {LoginInformation.Name} on {GameServer.Channel.LocalAddress}");
             
             InteropClients.ForEach(c =>
             {

@@ -8,7 +8,7 @@ namespace Edelstein.Provider.NPC
 
         public NPCTemplateManager(PackageCollection collection)
         {
-            this._collection = collection;
+            _collection = collection;
         }
 
         public NPCTemplate Get(int templateId)
