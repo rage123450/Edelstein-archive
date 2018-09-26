@@ -168,8 +168,6 @@ namespace Edelstein.WvsCenter.Sockets
                 p.Encode<short>(packet.Decode<short>());
 
                 server.SendPacket(p);
-
-                Console.WriteLine(server.ServerType);
             }
         }
     }
