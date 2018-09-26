@@ -26,8 +26,6 @@ namespace Edelstein.WvsGame.Sockets
         public FieldUser FieldUser { get; set; }
         public bool IsInstantiated { get; set; }
 
-        private readonly object _functionkeyLock = new object();
-
         public GameClientSocket(IContainer container, IChannel channel, uint seqSend, uint seqRecv)
             : base(channel, seqSend, seqRecv)
         {
@@ -96,27 +94,20 @@ namespace Edelstein.WvsGame.Sockets
                 FieldUser = fieldUser;
                 field.Enter(fieldUser);
 
-                lock (_functionkeyLock)
+                using (var p = new OutPacket(GameSendOperations.FuncKeyMappedInit))
                 {
-                    using (var p = new OutPacket(GameSendOperations.FuncKeyMappedInit))
+                    var functionKeys = character.FunctionKeys;
+
+                    p.Encode<bool>(false);
+                    for (var i = 0; i < 90; i++)
                     {
-                        var functionKeys = character.FunctionKeys;
-                        var count = functionKeys.Count;
+                        var functionKey = functionKeys.SingleOrDefault(f => f.Key == i);
 
-                        p.Encode<bool>(count == 0);
-                        if (count > 0)
-                        {
-                            for (var i = 0; i < 90; i++)
-                            {
-                                var functionKey = functionKeys.SingleOrDefault(f => f.Key == i);
-
-                                p.Encode<byte>(functionKey?.Type ?? 0);
-                                p.Encode<int>(functionKey?.Action ?? 0);
-                            }
-                        }
-
-                        SendPacket(p);
+                        p.Encode<byte>(functionKey?.Type ?? 0);
+                        p.Encode<int>(functionKey?.Action ?? 0);
                     }
+
+                    SendPacket(p);
                 }
             }
         }
@@ -128,39 +119,36 @@ namespace Edelstein.WvsGame.Sockets
             if (v3 > 0) return;
             var count = packet.Decode<int>();
 
-            lock (_functionkeyLock)
+            Console.WriteLine("received " + count);
+            for (var i = 0; i < count; i++)
             {
-                Console.WriteLine("received " + count);
-                for (var i = 0; i < count; i++)
+                var key = packet.Decode<int>();
+                var type = packet.Decode<byte>();
+                var action = packet.Decode<int>();
+
+                var functionKeys = FieldUser.Character.FunctionKeys;
+                var functionKey = functionKeys.SingleOrDefault(f => f.Key == key);
+
+                if (action > 0)
                 {
-                    var key = packet.Decode<int>();
-                    var type = packet.Decode<byte>();
-                    var action = packet.Decode<int>();
-
-                    var functionKeys = FieldUser.Character.FunctionKeys;
-                    var functionKey = functionKeys.SingleOrDefault(f => f.Key == key);
-
-                    if (action > 0)
+                    if (functionKey != null)
                     {
-                        if (functionKey != null)
-                        {
-                            functionKey.Type = type;
-                            functionKey.Action = action;
-                        }
-                        else
-                        {
-                            functionKeys.Add(new FunctionKey
-                            {
-                                Key = key,
-                                Type = type,
-                                Action = action
-                            });
-                        }
+                        functionKey.Type = type;
+                        functionKey.Action = action;
                     }
-                    else functionKeys.Remove(functionKey);
-
-                    Console.WriteLine("count: " + functionKeys.Count);
+                    else
+                    {
+                        functionKeys.Add(new FunctionKey
+                        {
+                            Key = key,
+                            Type = type,
+                            Action = action
+                        });
+                    }
                 }
+                else functionKeys.Remove(functionKey);
+
+                Console.WriteLine("count: " + functionKeys.Count);
             }
         }
 

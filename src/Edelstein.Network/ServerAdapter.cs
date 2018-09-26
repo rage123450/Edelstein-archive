@@ -67,5 +67,10 @@ namespace Edelstein.Network
 
             socket?.OnPacket(p);
         }
+
+        public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
+        {
+            Logger.Error(exception.ToString);
+        }
     }
 }
