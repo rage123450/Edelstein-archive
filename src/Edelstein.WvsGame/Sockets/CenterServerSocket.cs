@@ -20,8 +20,8 @@ namespace Edelstein.WvsGame.Sockets
         public CenterServerSocket(IContainer container, IChannel channel, uint seqSend, uint seqRecv)
             : base(channel, seqSend, seqRecv)
         {
-            this._container = container;
-            this._wvsGame = container.GetInstance<WvsGame>();
+            _container = container;
+            _wvsGame = container.GetInstance<WvsGame>();
         }
 
         public override void OnPacket(InPacket packet)
@@ -31,13 +31,13 @@ namespace Edelstein.WvsGame.Sockets
             switch (operation)
             {
                 case InteropSendOperations.ServerRegisterResult:
-                    this.OnServerRegisterResult(packet);
+                    OnServerRegisterResult(packet);
                     break;
                 case InteropSendOperations.ServerInformation:
-                    this.OnServerInformation(packet);
+                    OnServerInformation(packet);
                     break;
                 case InteropSendOperations.MigrationRegistryRequest:
-                    this.OnMigrationRegistryRequest(packet);
+                    OnMigrationRegistryRequest(packet);
                     break;
                 default:
                     Logger.Warn($"Unhandled packet operation {operation}");

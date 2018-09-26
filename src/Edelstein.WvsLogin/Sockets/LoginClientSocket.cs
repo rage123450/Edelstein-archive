@@ -29,8 +29,8 @@ namespace Edelstein.WvsLogin.Sockets
         public LoginClientSocket(IContainer container, IChannel channel, uint seqSend, uint seqRecv)
             : base(channel, seqSend, seqRecv)
         {
-            this._container = container;
-            this._wvsLogin = container.GetInstance<WvsLogin>();
+            _container = container;
+            _wvsLogin = container.GetInstance<WvsLogin>();
         }
 
         public override void OnPacket(InPacket packet)
@@ -40,20 +40,20 @@ namespace Edelstein.WvsLogin.Sockets
             switch (operation)
             {
                 case LoginRecvOperations.CheckPassword:
-                    this.OnCheckPassword(packet);
+                    OnCheckPassword(packet);
                     break;
                 case LoginRecvOperations.GuestIDLogin:
                     break;
                 case LoginRecvOperations.AccountInfoRequest:
                     break;
                 case LoginRecvOperations.WorldInfoRequest:
-                    this.OnWorldInfoRequest(packet);
+                    OnWorldInfoRequest(packet);
                     break;
                 case LoginRecvOperations.SelectWorld:
-                    this.OnSelectWorld(packet);
+                    OnSelectWorld(packet);
                     break;
                 case LoginRecvOperations.CheckUserLimit:
-                    this.OnCheckUserLimit(packet);
+                    OnCheckUserLimit(packet);
                     break;
                 case LoginRecvOperations.ConfirmEULA:
                     break;
@@ -64,12 +64,12 @@ namespace Edelstein.WvsLogin.Sockets
                 case LoginRecvOperations.UpdatePinCode:
                     break;
                 case LoginRecvOperations.WorldRequest:
-                    this.OnWorldInfoRequest(packet);
+                    OnWorldInfoRequest(packet);
                     break;
                 case LoginRecvOperations.LogoutWorld:
                     break;
                 case LoginRecvOperations.ViewAllChar:
-                    this.OnViewAllChar(packet);
+                    OnViewAllChar(packet);
                     break;
                 case LoginRecvOperations.SelectCharacterByVAC:
                     break;
@@ -86,15 +86,15 @@ namespace Edelstein.WvsLogin.Sockets
                 case LoginRecvOperations.MigrateIn:
                     break;
                 case LoginRecvOperations.CheckDuplicatedID:
-                    this.OnCheckDuplicateID(packet);
+                    OnCheckDuplicateID(packet);
                     break;
                 case LoginRecvOperations.CreateNewCharacter:
-                    this.OnCreateNewCharacter(packet);
+                    OnCreateNewCharacter(packet);
                     break;
                 case LoginRecvOperations.CreateNewCharacterInCS:
                     break;
                 case LoginRecvOperations.DeleteCharacter:
-                    this.OnDeleteCharacter(packet);
+                    OnDeleteCharacter(packet);
                     break;
                 case LoginRecvOperations.AliveAck:
                     break;
@@ -103,16 +103,16 @@ namespace Edelstein.WvsLogin.Sockets
                 case LoginRecvOperations.SecurityPacket:
                     break;
                 case LoginRecvOperations.EnableSPWRequest:
-                    this.OnEnableSPWRequest(packet, false);
+                    OnEnableSPWRequest(packet, false);
                     break;
                 case LoginRecvOperations.CheckSPWRequest:
-                    this.OnCheckSPWRequest(packet);
+                    OnCheckSPWRequest(packet);
                     break;
                 case LoginRecvOperations.EnableSPWRequestByACV:
-                    this.OnEnableSPWRequest(packet, true);
+                    OnEnableSPWRequest(packet, true);
                     break;
                 case LoginRecvOperations.CheckSPWRequestByACV:
-                    this.OnCheckSPWRequest(packet);
+                    OnCheckSPWRequest(packet);
                     break;
                 case LoginRecvOperations.CheckOTPRequest:
                     break;
@@ -156,7 +156,7 @@ namespace Edelstein.WvsLogin.Sockets
 
             using (var p = new OutPacket(LoginSendOperations.CheckPasswordResult))
             {
-                using (var db = this._container.GetInstance<DataContext>())
+                using (var db = _container.GetInstance<DataContext>())
                 {
                     var account = db.Accounts
                         .Include(a => a.Data)
@@ -182,7 +182,7 @@ namespace Edelstein.WvsLogin.Sockets
 
                     if (result == 0x0)
                     {
-                        this.Account = account;
+                        Account = account;
 
                         account.State = AccountState.LoggingIn;
                         db.Update(account);
@@ -214,7 +214,7 @@ namespace Edelstein.WvsLogin.Sockets
         {
             var latestConnectedWorld = 0;
 
-            this._wvsLogin.InteropClients.ForEach(c =>
+            _wvsLogin.InteropClients.ForEach(c =>
             {
                 var worldInformation = c.Socket.WorldInformation;
 
@@ -262,7 +262,7 @@ namespace Edelstein.WvsLogin.Sockets
             using (var p = new OutPacket(LoginSendOperations.SelectWorldResult))
             {
                 byte result = 0x0;
-                var world = this._wvsLogin.InteropClients
+                var world = _wvsLogin.InteropClients
                     .Select(c => c.Socket.WorldInformation)
                     .SingleOrDefault(w => w.ID == worldID);
                 var channel = world?.Channels.SingleOrDefault(c => c.ID == channelID);
@@ -274,10 +274,10 @@ namespace Edelstein.WvsLogin.Sockets
 
                 if (result == 0)
                 {
-                    this._selectedWorld = world;
-                    this._selectedChannel = channel;
+                    _selectedWorld = world;
+                    _selectedChannel = channel;
 
-                    using (var db = this._container.GetInstance<DataContext>())
+                    using (var db = _container.GetInstance<DataContext>())
                     {
                         var data = Account.Data.SingleOrDefault(d => d.WorldID == worldID);
 
@@ -320,7 +320,7 @@ namespace Edelstein.WvsLogin.Sockets
         {
             var name = packet.Decode<string>();
 
-            using (var db = this._container.GetInstance<DataContext>())
+            using (var db = _container.GetInstance<DataContext>())
             {
                 var isDuplicatedID = db.Characters.Any(c => c.Name.Equals(name));
 
@@ -348,7 +348,7 @@ namespace Edelstein.WvsLogin.Sockets
             var weapon = packet.Decode<int>();
             var gender = packet.Decode<byte>();
 
-            using (var db = this._container.GetInstance<DataContext>())
+            using (var db = _container.GetInstance<DataContext>())
             {
                 var character = new Character
                 {
@@ -445,7 +445,7 @@ namespace Edelstein.WvsLogin.Sockets
                 return;
             }
 
-            using (var db = this._container.GetInstance<DataContext>())
+            using (var db = _container.GetInstance<DataContext>())
             {
                 Account.SPW = BCrypt.Net.BCrypt.HashPassword(spw);
                 db.Update(Account);
@@ -472,7 +472,7 @@ namespace Edelstein.WvsLogin.Sockets
                 return;
             }
 
-            var world = this._wvsLogin.InteropClients.Single(c => c.Socket.WorldInformation.ID == _selectedWorld.ID);
+            var world = _wvsLogin.InteropClients.Single(c => c.Socket.WorldInformation.ID == _selectedWorld.ID);
 
             using (var p = new OutPacket(InteropRecvOperations.MigrationRequest))
             {
@@ -486,8 +486,8 @@ namespace Edelstein.WvsLogin.Sockets
 
         private void OnViewAllChar(InPacket packet)
         {
-            var worlds = this._wvsLogin.InteropClients.Select(c => c.Socket.WorldInformation).ToList();
-            var allCharacters = this.Account.Characters.Where(c => worlds.Any(w => c.WorldID == w.ID)).ToList();
+            var worlds = _wvsLogin.InteropClients.Select(c => c.Socket.WorldInformation).ToList();
+            var allCharacters = Account.Characters.Where(c => worlds.Any(w => c.WorldID == w.ID)).ToList();
 
             using (var p = new OutPacket(LoginSendOperations.ViewAllCharResult))
             {
@@ -534,7 +534,7 @@ namespace Edelstein.WvsLogin.Sockets
 
             if (result == 0x0)
             {
-                using (var db = this._container.GetInstance<DataContext>())
+                using (var db = _container.GetInstance<DataContext>())
                 {
                     var character = Account.Characters.Single(c => c.ID == characterID);
 

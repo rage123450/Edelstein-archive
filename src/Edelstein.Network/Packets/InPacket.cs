@@ -17,7 +17,7 @@ namespace Edelstein.Network.Packets
             var type = typeof(T);
 
             if (PacketMethods.DecodeMethods.ContainsKey(type))
-                return (T) PacketMethods.DecodeMethods[type](this.Buffer);
+                return (T) PacketMethods.DecodeMethods[type](Buffer);
 
             return default(T);
         }

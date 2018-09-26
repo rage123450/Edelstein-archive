@@ -10,12 +10,12 @@ namespace Edelstein.WvsCenter.Sockets
 
         public CenterClientSocketFactory(IContainer container)
         {
-            this._container = container;
+            _container = container;
         }
 
         public CenterClientSocket Build(IChannel channel, uint seqSend, uint seqRecv)
         {
-            return new CenterClientSocket(this._container, channel, seqSend, seqRecv);
+            return new CenterClientSocket(_container, channel, seqSend, seqRecv);
         }
     }
 }

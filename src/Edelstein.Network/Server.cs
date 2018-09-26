@@ -27,9 +27,9 @@ namespace Edelstein.Network
             ISocketFactory<T> socketFactory
         )
         {
-            this.Sockets = new List<T>();
-            this._options = options;
-            this._socketFactory = socketFactory;
+            Sockets = new List<T>();
+            _options = options;
+            _socketFactory = socketFactory;
         }
 
         public async Task Run()
@@ -37,7 +37,7 @@ namespace Edelstein.Network
             BossGroup = new MultithreadEventLoopGroup();
             WorkerGroup = new MultithreadEventLoopGroup();
 
-            this.Channel = await new ServerBootstrap()
+            Channel = await new ServerBootstrap()
                 .Group(BossGroup, WorkerGroup)
                 .Channel<TcpServerSocketChannel>()
                 .Option(ChannelOption.SoBacklog, 1024)
@@ -45,11 +45,11 @@ namespace Edelstein.Network
                 {
                     ch.Pipeline.AddLast(
                         new PacketDecoder(),
-                        new ServerAdapter<T>(this, this._socketFactory),
+                        new ServerAdapter<T>(this, _socketFactory),
                         new PacketEncoder()
                     );
                 }))
-                .BindAsync(IPAddress.Parse(this._options.Host), this._options.Port);
+                .BindAsync(IPAddress.Parse(_options.Host), _options.Port);
         }
 
 

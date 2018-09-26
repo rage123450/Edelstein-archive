@@ -10,12 +10,12 @@ namespace Edelstein.WvsGame.Sockets
 
         public GameClientSocketFactory(IContainer container)
         {
-            this._container = container;
+            _container = container;
         }
 
         public GameClientSocket Build(IChannel channel, uint seqSend, uint seqRecv)
         {
-            return new GameClientSocket(this._container, channel, seqSend, seqRecv);
+            return new GameClientSocket(_container, channel, seqSend, seqRecv);
         }
     }
 }

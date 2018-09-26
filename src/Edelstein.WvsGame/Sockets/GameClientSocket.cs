@@ -29,8 +29,8 @@ namespace Edelstein.WvsGame.Sockets
         public GameClientSocket(IContainer container, IChannel channel, uint seqSend, uint seqRecv)
             : base(channel, seqSend, seqRecv)
         {
-            this._container = container;
-            this.WvsGame = container.GetInstance<WvsGame>();
+            _container = container;
+            WvsGame = container.GetInstance<WvsGame>();
         }
 
         public override void OnPacket(InPacket packet)
@@ -40,7 +40,7 @@ namespace Edelstein.WvsGame.Sockets
             switch (operation)
             {
                 case GameRecvOperations.MigrateIn:
-                    this.OnMigrateIn(packet);
+                    OnMigrateIn(packet);
                     break;
                 case GameRecvOperations.FuncKeyMappedModified:
                     this.OnFuncKeyMappedModified(packet);

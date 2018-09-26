@@ -25,7 +25,7 @@ namespace Edelstein.Network.Packets
             if (value == null) value = default(T);
 
             if (PacketMethods.EncodeMethods.ContainsKey(type))
-                PacketMethods.EncodeMethods[type](this.Buffer, value);
+                PacketMethods.EncodeMethods[type](Buffer, value);
 
             return this;
         }

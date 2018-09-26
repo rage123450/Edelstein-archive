@@ -30,16 +30,16 @@ namespace Edelstein.WvsGame
 
         public WvsGame(IContainer container)
         {
-            this._container = container;
-            this.PendingMigrations = new List<int>();
+            _container = container;
+            PendingMigrations = new List<int>();
         }
 
         public async Task Run()
         {
-            var options = this._container.GetInstance<WvsGameOptions>();
+            var options = _container.GetInstance<WvsGameOptions>();
             var info = options.GameInfo;
 
-            this.ChannelInformation = new ChannelInformation
+            ChannelInformation = new ChannelInformation
             {
                 ID = info.ID,
                 WorldID = info.WorldID,
@@ -48,32 +48,32 @@ namespace Edelstein.WvsGame
                 AdultChannel = info.AdultChannel
             };
 
-            this.FieldTemplates = this._container.GetInstance<ITemplateManager<FieldTemplate>>();
-            this.NPCTemplates = this._container.GetInstance<ITemplateManager<NPCTemplate>>();
-            this.FieldFactory = new FieldFactory(FieldTemplates, NPCTemplates);
+            FieldTemplates = _container.GetInstance<ITemplateManager<FieldTemplate>>();
+            NPCTemplates = _container.GetInstance<ITemplateManager<NPCTemplate>>();
+            FieldFactory = new FieldFactory(FieldTemplates, NPCTemplates);
 
-            this.InteropClient = new Client<CenterServerSocket>(
+            InteropClient = new Client<CenterServerSocket>(
                 options.InteropClientOptions,
-                this._container.GetInstance<CenterServerSocketFactory>()
+                _container.GetInstance<CenterServerSocketFactory>()
             );
 
-            this.GameServer = new Server<GameClientSocket>(
+            GameServer = new Server<GameClientSocket>(
                 options.GameServerOptions,
-                this._container.GetInstance<GameClientSocketFactory>()
+                _container.GetInstance<GameClientSocketFactory>()
             );
 
-            await this.InteropClient.Run();
-            Logger.Info($"Connected to interoperability server on {this.InteropClient.Channel.RemoteAddress}");
+            await InteropClient.Run();
+            Logger.Info($"Connected to interoperability server on {InteropClient.Channel.RemoteAddress}");
 
-            await this.GameServer.Run();
-            Logger.Info($"Bounded {this.ChannelInformation.Name} on {this.GameServer.Channel.LocalAddress}");
+            await GameServer.Run();
+            Logger.Info($"Bounded {ChannelInformation.Name} on {GameServer.Channel.LocalAddress}");
 
             using (var p = new OutPacket(InteropRecvOperations.ServerRegister))
             {
                 p.Encode<byte>((byte) ServerType.Game);
                 ChannelInformation.Encode(p);
 
-                await this.InteropClient.Socket.SendPacket(p);
+                await InteropClient.Socket.SendPacket(p);
             }
         }
     }

@@ -21,9 +21,9 @@ namespace Edelstein.WvsGame.Fields
 
         public Field(int id, FieldTemplate template)
         {
-            this.ID = id;
-            this.Template = template;
-            this._objects = new List<FieldObject>();
+            ID = id;
+            Template = template;
+            _objects = new List<FieldObject>();
         }
 
         public bool OnPacket(FieldUser controller, GameRecvOperations operation, InPacket packet)
@@ -74,7 +74,7 @@ namespace Edelstein.WvsGame.Fields
 
                     if (!user.Socket.IsInstantiated) user.Socket.IsInstantiated = true;
 
-                    this._objects
+                    _objects
                         .Where(o => !o.Equals(obj))
                         .ForEach(o => user.SendPacket(o.GetEnterFieldPacket()));
                 }
@@ -88,7 +88,7 @@ namespace Edelstein.WvsGame.Fields
                     BroadcastPacket(obj.GetEnterFieldPacket());
                 }
 
-                this._objects.Add(obj);
+                _objects.Add(obj);
                 UpdateControlledObjects();
             }
         }
@@ -100,7 +100,7 @@ namespace Edelstein.WvsGame.Fields
                 if (obj is FieldUser user) BroadcastPacket(user, user.GetLeaveFieldPacket());
                 else BroadcastPacket(obj.GetLeaveFieldPacket());
 
-                this._objects.Remove(obj);
+                _objects.Remove(obj);
                 UpdateControlledObjects();
             }
         }

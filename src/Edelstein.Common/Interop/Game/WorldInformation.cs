@@ -17,7 +17,7 @@ namespace Edelstein.Common.Interop.Game
 
         public WorldInformation()
         {
-            this.Channels = new List<ChannelInformation>();
+            Channels = new List<ChannelInformation>();
         }
 
         public void Encode(OutPacket packet)

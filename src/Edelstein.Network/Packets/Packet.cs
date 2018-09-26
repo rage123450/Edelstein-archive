@@ -14,12 +14,12 @@ namespace Edelstein.Network.Packets
 
         public Packet(IByteBuffer byteBuffer)
         {
-            this.Buffer = byteBuffer;
+            Buffer = byteBuffer;
         }
 
         public void Dispose()
         {
-            this.Buffer.DiscardReadBytes();
+            Buffer.DiscardReadBytes();
         }
     }
 }
