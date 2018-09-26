@@ -66,8 +66,8 @@ namespace Edelstein.Database
                             Remove(functionKey);
                     }
 
-                    var existingItems = existing.Inventories.SelectMany(i => i.Items);
-                    var currentItems = character.Inventories.SelectMany(i => i.Items);
+                    var existingItems = existing.Inventories.SelectMany(i => i.Items).ToList();
+                    var currentItems = character.Inventories.SelectMany(i => i.Items).ToList();
 
                     foreach (var existingItem in existingItems)
                     {
