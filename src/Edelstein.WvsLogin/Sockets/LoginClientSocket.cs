@@ -378,9 +378,11 @@ namespace Edelstein.WvsLogin.Sockets
 
                 inventories.Add(new ItemInventory(ItemInventoryType.Equipped, 60));
                 inventories.Add(new ItemInventory(ItemInventoryType.EquippedCash, 60));
+                inventories.Add(new ItemInventory(ItemInventoryType.EquippedDragon, 4));
+                inventories.Add(new ItemInventory(ItemInventoryType.EquippedMechanic, 5));
 
                 // TODO: Inventory management
-                var equipped = inventories.Single(i => i.Type == ItemInventoryType.Equipped).Items;
+                var equipped = character.GetInventory(ItemInventoryType.Equipped).Items;
                 var topItem = new ItemSlotEquip();
                 var bottomItem = new ItemSlotEquip();
                 var shoesItem = new ItemSlotEquip();
@@ -390,7 +392,7 @@ namespace Edelstein.WvsLogin.Sockets
                 topItem.Durability = 100;
                 topItem.TemplateID = top;
 
-                if (job != 0) // Resistance Overalls
+                if (bottom > 0) // Resistance Overalls
                 {
                     bottomItem.Slot = 6;
                     bottomItem.Durability = 100;

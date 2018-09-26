@@ -58,18 +58,19 @@ namespace Edelstein.Common.Packets
 
                 var inventoryEquipped = c.GetInventory(ItemInventoryType.Equipped);
                 var inventoryEquippedCash = c.GetInventory(ItemInventoryType.EquippedCash);
+                var inventoryEquippedDragon = c.GetInventory(ItemInventoryType.EquippedDragon);
+                var inventoryEquippedMechanic = c.GetInventory(ItemInventoryType.EquippedMechanic);
 
                 EncodeEquips(inventoryEquipped.Items);
                 p.Encode<short>(0);
-
                 EncodeEquips(inventoryEquippedCash.Items);
                 p.Encode<short>(0);
-
                 EncodeEquips(inventoryEquip.Items);
                 p.Encode<short>(0);
-
-                p.Encode<short>(0); // Evan
-                p.Encode<short>(0); // Mechanic
+                EncodeEquips(inventoryEquippedDragon.Items);
+                p.Encode<short>(0);
+                EncodeEquips(inventoryEquippedMechanic.Items);
+                p.Encode<short>(0);
             }
 
             void EncodeBundles(IEnumerable<ItemSlot> items)
