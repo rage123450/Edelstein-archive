@@ -43,7 +43,7 @@ namespace Edelstein.WvsGame.Sockets
                     OnMigrateIn(packet);
                     break;
                 case GameRecvOperations.FuncKeyMappedModified:
-                    this.OnFuncKeyMappedModified(packet);
+                    OnFuncKeyMappedModified(packet);
                     break;
                 default:
                     if (!FieldUser?.Field.OnPacket(FieldUser, operation, packet) ?? false)
