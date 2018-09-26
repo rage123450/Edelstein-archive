@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using DotNetty.Transport.Channels;
 using Edelstein.Common.Interop;
 using Edelstein.Common.Interop.Game;
@@ -79,6 +80,13 @@ namespace Edelstein.WvsGame.Sockets
                 _wvsGame.PendingMigrations.Add(characterID);
                 p.Encode<bool>(true);
                 p.Encode<int>(characterID);
+
+                var endpoint = _wvsGame.GameServer.Channel.LocalAddress as IPEndPoint;
+                var address = endpoint.Address.MapToIPv4().GetAddressBytes();
+                var port = endpoint.Port;
+
+                foreach (var b in address) p.Encode<byte>(b);
+                p.Encode<short>((short) port);
 
                 SendPacket(p);
             }

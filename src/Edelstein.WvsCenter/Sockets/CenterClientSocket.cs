@@ -161,11 +161,11 @@ namespace Edelstein.WvsCenter.Sockets
 
                 p.Encode<int>(packet.Decode<int>());
 
-                p.Encode<byte>(192);
-                p.Encode<byte>(168);
-                p.Encode<byte>(2);
-                p.Encode<byte>(250);
-                p.Encode<short>(7575);
+                p.Encode<byte>(packet.Decode<byte>());
+                p.Encode<byte>(packet.Decode<byte>());
+                p.Encode<byte>(packet.Decode<byte>());
+                p.Encode<byte>(packet.Decode<byte>());
+                p.Encode<short>(packet.Decode<short>());
 
                 server.SendPacket(p);
 
