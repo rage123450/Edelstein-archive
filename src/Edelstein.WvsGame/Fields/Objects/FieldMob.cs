@@ -19,7 +19,7 @@ namespace Edelstein.WvsGame.Fields.Objects
             switch (operation)
             {
                 case GameRecvOperations.MobMove:
-                    OnNpcMove(packet);
+                    OnMobMove(packet);
                     break;
                 default:
                     return false;
@@ -28,7 +28,7 @@ namespace Edelstein.WvsGame.Fields.Objects
             return true;
         }
         
-        private void OnNpcMove(InPacket packet)
+        private void OnMobMove(InPacket packet)
         {
             
         }
