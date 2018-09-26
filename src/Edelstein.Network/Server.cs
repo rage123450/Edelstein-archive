@@ -14,8 +14,8 @@ namespace Edelstein.Network
     public class Server<T> : ChannelHandlerAdapter
         where T : Socket
     {
-        public IEventLoopGroup bossGroup { get; set; }
-        public IEventLoopGroup workerGroup { get; set; }
+        public IEventLoopGroup BossGroup { get; set; }
+        public IEventLoopGroup WorkerGroup { get; set; }
         public IChannel Channel { get; private set; }
         public ICollection<T> Sockets { get; set; }
 
@@ -34,11 +34,11 @@ namespace Edelstein.Network
 
         public async Task Run()
         {
-            bossGroup = new MultithreadEventLoopGroup();
-            workerGroup = new MultithreadEventLoopGroup();
+            BossGroup = new MultithreadEventLoopGroup();
+            WorkerGroup = new MultithreadEventLoopGroup();
 
             this.Channel = await new ServerBootstrap()
-                .Group(bossGroup, workerGroup)
+                .Group(BossGroup, WorkerGroup)
                 .Channel<TcpServerSocketChannel>()
                 .Option(ChannelOption.SoBacklog, 1024)
                 .ChildHandler(new ActionChannelInitializer<IChannel>(ch =>
