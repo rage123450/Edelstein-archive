@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using DotNetty.Transport.Channels;
 using Edelstein.Common;
@@ -117,24 +116,20 @@ namespace Edelstein.WvsGame.Sockets
                 var functionKeys = FieldUser.Character.FunctionKeys;
                 var functionKey = functionKeys.SingleOrDefault(f => f.Key == key);
 
-                if (key > 0)
+                if (functionKey != null)
                 {
-                    if (functionKey != null)
-                    {
-                        functionKey.Type = type;
-                        functionKey.Action = action;
-                    }
-                    else
-                    {
-                        functionKeys.Add(new FunctionKey
-                        {
-                            Key = key,
-                            Type = type,
-                            Action = action
-                        });
-                    }
+                    functionKey.Type = type;
+                    functionKey.Action = action;
                 }
-                else functionKeys.Remove(functionKey);
+                else
+                {
+                    functionKeys.Add(new FunctionKey
+                    {
+                        Key = key,
+                        Type = type,
+                        Action = action
+                    });
+                }
             }
         }
 
