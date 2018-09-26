@@ -3,14 +3,16 @@ using System;
 using Edelstein.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Edelstein.Database.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20180926024349_AddFunctionKeys")]
+    partial class AddFunctionKeys
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -160,7 +162,7 @@ namespace Edelstein.Database.Migrations
 
                     b.Property<int?>("CharacterID");
 
-                    b.Property<int>("Key");
+                    b.Property<byte>("Key");
 
                     b.Property<byte>("Type");
 

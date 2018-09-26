@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Edelstein.Database.Entities.Inventory;
@@ -47,6 +48,8 @@ namespace Edelstein.Database.Entities
         public int PlayTime { get; set; }
 
         public short SubJob { get; set; }
+
+        public ICollection<FunctionKey> FunctionKeys { get; set; }
 
         public ItemInventory InventoryEquipped { get; set; }
         public ItemInventory InventoryEquippedCash { get; set; }
