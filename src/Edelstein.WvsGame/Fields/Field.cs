@@ -30,12 +30,22 @@ namespace Edelstein.WvsGame.Fields
         {
             switch (operation)
             {
+                case GameRecvOperations.MobMove:
+                {
+                    var objectID = packet.Decode<int>();
+                    var mob = Objects
+                        .OfType<FieldMob>()
+                        .FirstOrDefault(m => m.ID == objectID);
+                    return mob?.OnPacket(controller, operation, packet) ?? true;
+                }
                 case GameRecvOperations.NpcMove:
+                {
                     var objectID = packet.Decode<int>();
                     var npc = Objects
                         .OfType<FieldNPC>()
                         .FirstOrDefault(n => n.ID == objectID);
                     return npc?.OnPacket(controller, operation, packet) ?? true;
+                }
                 default:
                     return controller.OnPacket(operation, packet);
             }

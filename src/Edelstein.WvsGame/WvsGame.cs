@@ -6,6 +6,7 @@ using Edelstein.Network;
 using Edelstein.Network.Packets;
 using Edelstein.Provider;
 using Edelstein.Provider.Fields;
+using Edelstein.Provider.Mobs;
 using Edelstein.Provider.NPC;
 using Edelstein.WvsGame.Fields;
 using Edelstein.WvsGame.Logging;
@@ -26,6 +27,7 @@ namespace Edelstein.WvsGame
 
         public ITemplateManager<FieldTemplate> FieldTemplates { get; set; }
         public ITemplateManager<NPCTemplate> NPCTemplates { get; set; }
+        public ITemplateManager<MobTemplate> MobTemplates { get; set; }
         public FieldFactory FieldFactory { get; set; }
 
         public WvsGame(IContainer container)
@@ -50,7 +52,8 @@ namespace Edelstein.WvsGame
 
             FieldTemplates = _container.GetInstance<ITemplateManager<FieldTemplate>>();
             NPCTemplates = _container.GetInstance<ITemplateManager<NPCTemplate>>();
-            FieldFactory = new FieldFactory(FieldTemplates, NPCTemplates);
+            MobTemplates = _container.GetInstance<ITemplateManager<MobTemplate>>();
+            FieldFactory = new FieldFactory(FieldTemplates, NPCTemplates, MobTemplates);
 
             InteropClient = new Client<CenterServerSocket>(
                 options.InteropClientOptions,

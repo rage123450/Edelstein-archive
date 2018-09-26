@@ -2,6 +2,7 @@ using System.IO;
 using Edelstein.Database;
 using Edelstein.Provider;
 using Edelstein.Provider.Fields;
+using Edelstein.Provider.Mobs;
 using Edelstein.Provider.NPC;
 using Edelstein.WvsGame.Sockets;
 using Lamar;
@@ -43,6 +44,7 @@ namespace Edelstein.WvsGame
             }).Singleton();
             For<ITemplateManager<FieldTemplate>>().Use<FieldTemplateManager>().Singleton();
             For<ITemplateManager<NPCTemplate>>().Use<NPCTemplateManager>().Singleton();
+            For<ITemplateManager<MobTemplate>>().Use<MobTemplateManager>().Singleton();
 
             For<CenterServerSocketFactory>().Use<CenterServerSocketFactory>();
             For<GameClientSocketFactory>().Use<GameClientSocketFactory>();

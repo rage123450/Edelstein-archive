@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using Edelstein.Provider;
 using Edelstein.Provider.Fields;
+using Edelstein.Provider.Mobs;
 using Edelstein.Provider.NPC;
 using Edelstein.WvsGame.Fields.Objects;
 using MoreLinq.Extensions;
@@ -11,15 +13,18 @@ namespace Edelstein.WvsGame.Fields
     {
         private readonly ITemplateManager<FieldTemplate> _fieldTemplateManager;
         private readonly ITemplateManager<NPCTemplate> _npcTemplateManager;
+        private readonly ITemplateManager<MobTemplate> _mobTemplateManager;
         private readonly IDictionary<int, Field> _fields;
 
         public FieldFactory(
             ITemplateManager<FieldTemplate> fieldTemplateManager,
-            ITemplateManager<NPCTemplate> npcTemplateManager
+            ITemplateManager<NPCTemplate> npcTemplateManager,
+            ITemplateManager<MobTemplate> mobTemplateManager
         )
         {
             _fieldTemplateManager = fieldTemplateManager;
             _npcTemplateManager = npcTemplateManager;
+            _mobTemplateManager = mobTemplateManager;
             _fields = new Dictionary<int, Field>();
         }
 
@@ -49,6 +54,16 @@ namespace Edelstein.WvsGame.Fields
                             });
                             break;
                         case FieldLifeType.Monster:
+                            var mobTemplate = _mobTemplateManager.Get(l.TemplateID);
+
+                            Console.WriteLine(l.TemplateID);
+                            field.Enter(new FieldMob(mobTemplate)
+                            {
+                                X = (short) l.X,
+                                Y = (short) l.Y,
+                                MoveAction = l.F,
+                                Foothold = (short) l.FH
+                            });
                             break;
                     }
                 });
