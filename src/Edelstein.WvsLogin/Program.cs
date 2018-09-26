@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Edelstein.Database;
 using Edelstein.WvsLogin.Logging;
 using Lamar;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 
@@ -21,6 +23,12 @@ namespace Edelstein.WvsLogin
             var registry = new WvsLoginRegistry();
             var container = new Container(registry);
             var wvsLogin = container.GetInstance<WvsLogin>();
+
+            using (var db = container.GetInstance<DataContext>())
+            {
+                Logger.Info("Checking and running database migrations..");
+                db.Database.Migrate();
+            }
 
             wvsLogin.Run().Wait();
 
