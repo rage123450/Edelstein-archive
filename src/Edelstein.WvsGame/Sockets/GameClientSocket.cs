@@ -67,19 +67,7 @@ namespace Edelstein.WvsGame.Sockets
                 var character = db.Characters
                     .Include(c => c.Account)
                     .Include(c => c.FunctionKeys)
-                    .Include(c => c.InventoryEquipped)
-                    .ThenInclude(c => c.Items)
-                    .Include(c => c.InventoryEquippedCash)
-                    .ThenInclude(c => c.Items)
-                    .Include(c => c.InventoryEquip)
-                    .ThenInclude(c => c.Items)
-                    .Include(c => c.InventoryConsume)
-                    .ThenInclude(c => c.Items)
-                    .Include(c => c.InventoryInstall)
-                    .ThenInclude(c => c.Items)
-                    .Include(c => c.InventoryEtc)
-                    .ThenInclude(c => c.Items)
-                    .Include(c => c.InventoryCash)
+                    .Include(c => c.Inventories)
                     .ThenInclude(c => c.Items)
                     .Single(c => c.ID == characterID);
 

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Edelstein.Database.Entities;
 using Edelstein.Database.Entities.Inventory;
 using Edelstein.Network.Packets;
@@ -22,13 +23,20 @@ namespace Edelstein.Common.Packets
             }
 
             if ((flag & 0x2) != 0) p.Encode<int>(c.Money);
+
+            var inventoryEquip = c.Inventories.Single(i => i.Type == ItemInventoryType.Equip);
+            var inventoryConsume = c.Inventories.Single(i => i.Type == ItemInventoryType.Consume);
+            var inventoryInstall = c.Inventories.Single(i => i.Type == ItemInventoryType.Install);
+            var inventoryEtc = c.Inventories.Single(i => i.Type == ItemInventoryType.Etc);
+            var inventoryCash = c.Inventories.Single(i => i.Type == ItemInventoryType.Cash);
+
             if ((flag & 0x80) != 0)
             {
-                if ((flag & 0x4) != 0) p.Encode<byte>(c.InventoryEquip.SlotMax);
-                if ((flag & 0x8) != 0) p.Encode<byte>(c.InventoryConsume.SlotMax);
-                if ((flag & 0x10) != 0) p.Encode<byte>(c.InventoryInstall.SlotMax);
-                if ((flag & 0x20) != 0) p.Encode<byte>(c.InventoryInstall.SlotMax);
-                if ((flag & 0x40) != 0) p.Encode<byte>(c.InventoryCash.SlotMax);
+                if ((flag & 0x4) != 0) p.Encode<byte>(inventoryEquip.SlotMax);
+                if ((flag & 0x8) != 0) p.Encode<byte>(inventoryConsume.SlotMax);
+                if ((flag & 0x10) != 0) p.Encode<byte>(inventoryInstall.SlotMax);
+                if ((flag & 0x20) != 0) p.Encode<byte>(inventoryEtc.SlotMax);
+                if ((flag & 0x40) != 0) p.Encode<byte>(inventoryCash.SlotMax);
             }
 
             if ((flag & 0x100000) != 0)
@@ -48,13 +56,16 @@ namespace Edelstein.Common.Packets
                     }
                 }
 
-                EncodeEquips(c.InventoryEquipped.Items);
+                var inventoryEquipped = c.Inventories.Single(i => i.Type == ItemInventoryType.Equipped);
+                var inventoryEquippedCash = c.Inventories.Single(i => i.Type == ItemInventoryType.EquippedCash);
+
+                EncodeEquips(inventoryEquipped.Items);
                 p.Encode<short>(0);
 
-                EncodeEquips(c.InventoryEquippedCash.Items);
+                EncodeEquips(inventoryEquippedCash.Items);
                 p.Encode<short>(0);
 
-                EncodeEquips(c.InventoryEquip.Items);
+                EncodeEquips(inventoryEquip.Items);
                 p.Encode<short>(0);
 
                 p.Encode<short>(0); // Evan
@@ -72,25 +83,25 @@ namespace Edelstein.Common.Packets
 
             if ((flag & 0x8) != 0)
             {
-                EncodeBundles(c.InventoryConsume.Items);
+                EncodeBundles(inventoryConsume.Items);
                 p.Encode<byte>(0);
             }
 
             if ((flag & 0x10) != 0)
             {
-                EncodeBundles(c.InventoryInstall.Items);
+                EncodeBundles(inventoryInstall.Items);
                 p.Encode<byte>(0);
             }
 
             if ((flag & 0x20) != 0)
             {
-                EncodeBundles(c.InventoryEtc.Items);
+                EncodeBundles(inventoryEtc.Items);
                 p.Encode<byte>(0);
             }
 
             if ((flag & 0x40) != 0)
             {
-                EncodeBundles(c.InventoryCash.Items);
+                EncodeBundles(inventoryCash.Items);
                 p.Encode<byte>(0);
             }
 
@@ -210,7 +221,10 @@ namespace Edelstein.Common.Packets
             p.Encode<bool>(false);
             p.Encode<int>(c.Hair);
 
-            foreach (var equippedItem in c.InventoryEquipped.Items)
+            var inventoryEquipped = c.Inventories.Single(i => i.Type == ItemInventoryType.Equipped);
+            var inventoryEquippedCash = c.Inventories.Single(i => i.Type == ItemInventoryType.EquippedCash);
+
+            foreach (var equippedItem in inventoryEquipped.Items)
             {
                 p.Encode<byte>((byte) equippedItem.Slot);
                 p.Encode<int>(equippedItem.TemplateID);
@@ -218,7 +232,7 @@ namespace Edelstein.Common.Packets
 
             p.Encode<byte>(0xFF);
 
-            foreach (var equippedCashItem in c.InventoryEquippedCash.Items)
+            foreach (var equippedCashItem in inventoryEquippedCash.Items)
             {
                 p.Encode<byte>((byte) equippedCashItem.Slot);
                 p.Encode<int>(equippedCashItem.TemplateID);

@@ -22,6 +22,29 @@ namespace Edelstein.Database
         {
             modelBuilder.Entity<ItemSlotEquip>().HasBaseType<ItemSlot>();
             modelBuilder.Entity<ItemSlotBundle>().HasBaseType<ItemSlot>();
+
+            modelBuilder.Entity<Account>()
+                .HasMany(a => a.Characters)
+                .WithOne(c => c.Account)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Account>()
+                .HasMany<AccountData>(a => a.Data)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Character>()
+                .HasMany(c => c.FunctionKeys)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Character>()
+                .HasMany(c => c.Inventories)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ItemInventory>()
+                .HasMany(i => i.Items)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
         public void InsertUpdateOrDeleteGraph(object entity)
@@ -31,19 +54,7 @@ namespace Edelstein.Database
                 var existing = Characters
                     .AsNoTracking()
                     .Include(c => c.FunctionKeys)
-                    .Include(c => c.InventoryEquipped)
-                    .ThenInclude(c => c.Items)
-                    .Include(c => c.InventoryEquippedCash)
-                    .ThenInclude(c => c.Items)
-                    .Include(c => c.InventoryEquip)
-                    .ThenInclude(c => c.Items)
-                    .Include(c => c.InventoryConsume)
-                    .ThenInclude(c => c.Items)
-                    .Include(c => c.InventoryInstall)
-                    .ThenInclude(c => c.Items)
-                    .Include(c => c.InventoryEtc)
-                    .ThenInclude(c => c.Items)
-                    .Include(c => c.InventoryCash)
+                    .Include(c => c.Inventories)
                     .ThenInclude(c => c.Items)
                     .FirstOrDefault(c => c.ID == character.ID);
 
@@ -55,22 +66,8 @@ namespace Edelstein.Database
                             Remove(functionKey);
                     }
 
-                    var existingItems = new List<ItemSlot>();
-                    existingItems.AddRange(existing.InventoryEquipped.Items);
-                    existingItems.AddRange(existing.InventoryEquippedCash.Items);
-                    existingItems.AddRange(existing.InventoryEquip.Items);
-                    existingItems.AddRange(existing.InventoryConsume.Items);
-                    existingItems.AddRange(existing.InventoryInstall.Items);
-                    existingItems.AddRange(existing.InventoryEtc.Items);
-                    existingItems.AddRange(existing.InventoryCash.Items);
-                    var currentItems = new List<ItemSlot>();
-                    currentItems.AddRange(character.InventoryEquipped.Items);
-                    currentItems.AddRange(character.InventoryEquippedCash.Items);
-                    currentItems.AddRange(character.InventoryEquip.Items);
-                    currentItems.AddRange(character.InventoryConsume.Items);
-                    currentItems.AddRange(character.InventoryInstall.Items);
-                    currentItems.AddRange(character.InventoryEtc.Items);
-                    currentItems.AddRange(character.InventoryCash.Items);
+                    var existingItems = existing.Inventories.SelectMany(i => i.Items);
+                    var currentItems = character.Inventories.SelectMany(i => i.Items);
 
                     foreach (var existingItem in existingItems)
                     {

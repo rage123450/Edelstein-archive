@@ -9,12 +9,15 @@ namespace Edelstein.Database.Entities.Inventory
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
-
-        public ICollection<ItemSlot> Items { get; set; } = new List<ItemSlot>();
+        
+        public ItemInventoryType Type { get; set; }
         public byte SlotMax { get; set; }
+        
+        public ICollection<ItemSlot> Items { get; set; } = new List<ItemSlot>();
 
-        public ItemInventory(byte slotMax)
+        public ItemInventory(ItemInventoryType type, byte slotMax)
         {
+            Type = type;
             SlotMax = slotMax;
         }
     }

@@ -50,13 +50,6 @@ namespace Edelstein.Database.Entities
         public short SubJob { get; set; }
 
         public ICollection<FunctionKey> FunctionKeys { get; set; }
-
-        public ItemInventory InventoryEquipped { get; set; }
-        public ItemInventory InventoryEquippedCash { get; set; }
-        public ItemInventory InventoryEquip { get; set; }
-        public ItemInventory InventoryConsume { get; set; }
-        public ItemInventory InventoryInstall { get; set; }
-        public ItemInventory InventoryEtc { get; set; }
-        public ItemInventory InventoryCash { get; set; }
+        public ICollection<ItemInventory> Inventories { get; set; }
     }
 }

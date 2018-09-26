@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using DotNetty.Transport.Channels;
 using Edelstein.Common.Interop;
@@ -161,11 +162,8 @@ namespace Edelstein.WvsLogin.Sockets
                     var account = db.Accounts
                         .Include(a => a.Data)
                         .Include(a => a.Characters)
-                        .ThenInclude(c => c.InventoryEquipped)
-                        .ThenInclude(i => i.Items)
-                        .Include(c => c.Characters)
-                        .ThenInclude(c => c.InventoryEquippedCash)
-                        .ThenInclude(i => i.Items)
+                        .ThenInclude(c => c.Inventories)
+                        .ThenInclude(c => c.Items)
                         .SingleOrDefault(a => a.Username.Equals(username));
                     byte result = 0x0;
 
@@ -368,16 +366,21 @@ namespace Edelstein.WvsLogin.Sockets
                     MaxMP = 50
                 };
 
-                character.InventoryEquipped = new ItemInventory(60);
-                character.InventoryEquippedCash = new ItemInventory(60);
-                character.InventoryEquip = new ItemInventory(24);
-                character.InventoryConsume = new ItemInventory(24);
-                character.InventoryInstall = new ItemInventory(24);
-                character.InventoryEtc = new ItemInventory(24);
-                character.InventoryCash = new ItemInventory(24);
+                character.Inventories = new List<ItemInventory>();
+
+                var inventories = character.Inventories;
+
+                inventories.Add(new ItemInventory(ItemInventoryType.Equip, 24));
+                inventories.Add(new ItemInventory(ItemInventoryType.Consume, 24));
+                inventories.Add(new ItemInventory(ItemInventoryType.Install, 24));
+                inventories.Add(new ItemInventory(ItemInventoryType.Etc, 24));
+                inventories.Add(new ItemInventory(ItemInventoryType.Cash, 24));
+
+                inventories.Add(new ItemInventory(ItemInventoryType.Equipped, 60));
+                inventories.Add(new ItemInventory(ItemInventoryType.EquippedCash, 60));
 
                 // TODO: Inventory management
-                var equipped = character.InventoryEquipped.Items;
+                var equipped = inventories.Single(i => i.Type == ItemInventoryType.Equipped).Items;
                 var topItem = new ItemSlotEquip();
                 var bottomItem = new ItemSlotEquip();
                 var shoesItem = new ItemSlotEquip();
@@ -392,7 +395,9 @@ namespace Edelstein.WvsLogin.Sockets
                     bottomItem.Slot = 6;
                     bottomItem.Durability = 100;
                     bottomItem.TemplateID = bottom;
+                    equipped.Add(bottomItem);
                 }
+
                 shoesItem.Slot = 7;
                 shoesItem.Durability = 100;
                 shoesItem.TemplateID = shoes;
@@ -401,7 +406,6 @@ namespace Edelstein.WvsLogin.Sockets
                 weaponItem.TemplateID = weapon;
 
                 equipped.Add(topItem);
-                equipped.Add(bottomItem);
                 equipped.Add(shoesItem);
                 equipped.Add(weaponItem);
 
