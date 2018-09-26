@@ -128,7 +128,7 @@ namespace Edelstein.WvsGame.Sockets
                 var functionKeys = FieldUser.Character.FunctionKeys;
                 var functionKey = functionKeys.SingleOrDefault(f => f.Key == key);
 
-                if (action > 0)
+                if (type > 0)
                 {
                     if (functionKey != null)
                     {
