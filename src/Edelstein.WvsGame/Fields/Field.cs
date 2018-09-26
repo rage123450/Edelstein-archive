@@ -52,7 +52,7 @@ namespace Edelstein.WvsGame.Fields
 
                 if (obj is FieldUser user)
                 {
-                    var portal = Template.Portals[user.Character.FieldPortal] ??
+                    var portal = Template.Portals.Values.FirstOrDefault(p => p.ID == user.Character.FieldPortal) ??
                                  Template.Portals.Values.First(p => p.Type == FieldPortalType.Spawn);
 
                     user.ID = user.Character.ID;
