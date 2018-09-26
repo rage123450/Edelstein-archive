@@ -24,11 +24,11 @@ namespace Edelstein.Common.Packets
 
             if ((flag & 0x2) != 0) p.Encode<int>(c.Money);
 
-            var inventoryEquip = c.Inventories.Single(i => i.Type == ItemInventoryType.Equip);
-            var inventoryConsume = c.Inventories.Single(i => i.Type == ItemInventoryType.Consume);
-            var inventoryInstall = c.Inventories.Single(i => i.Type == ItemInventoryType.Install);
-            var inventoryEtc = c.Inventories.Single(i => i.Type == ItemInventoryType.Etc);
-            var inventoryCash = c.Inventories.Single(i => i.Type == ItemInventoryType.Cash);
+            var inventoryEquip = c.GetInventory(ItemInventoryType.Equip);
+            var inventoryConsume = c.GetInventory(ItemInventoryType.Consume);
+            var inventoryInstall = c.GetInventory(ItemInventoryType.Install);
+            var inventoryEtc = c.GetInventory(ItemInventoryType.Etc);
+            var inventoryCash = c.GetInventory(ItemInventoryType.Cash);
 
             if ((flag & 0x80) != 0)
             {
@@ -56,8 +56,8 @@ namespace Edelstein.Common.Packets
                     }
                 }
 
-                var inventoryEquipped = c.Inventories.Single(i => i.Type == ItemInventoryType.Equipped);
-                var inventoryEquippedCash = c.Inventories.Single(i => i.Type == ItemInventoryType.EquippedCash);
+                var inventoryEquipped = c.GetInventory(ItemInventoryType.Equipped);
+                var inventoryEquippedCash = c.GetInventory(ItemInventoryType.EquippedCash);
 
                 EncodeEquips(inventoryEquipped.Items);
                 p.Encode<short>(0);
@@ -221,8 +221,8 @@ namespace Edelstein.Common.Packets
             p.Encode<bool>(false);
             p.Encode<int>(c.Hair);
 
-            var inventoryEquipped = c.Inventories.Single(i => i.Type == ItemInventoryType.Equipped);
-            var inventoryEquippedCash = c.Inventories.Single(i => i.Type == ItemInventoryType.EquippedCash);
+            var inventoryEquipped = c.GetInventory(ItemInventoryType.Equipped);
+            var inventoryEquippedCash = c.GetInventory(ItemInventoryType.EquippedCash);
 
             foreach (var equippedItem in inventoryEquipped.Items)
             {

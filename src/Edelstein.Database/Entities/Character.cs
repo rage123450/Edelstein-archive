@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using Edelstein.Database.Entities.Inventory;
 
 namespace Edelstein.Database.Entities
@@ -51,5 +52,10 @@ namespace Edelstein.Database.Entities
 
         public ICollection<FunctionKey> FunctionKeys { get; set; }
         public ICollection<ItemInventory> Inventories { get; set; }
+
+        public ItemInventory GetInventory(ItemInventoryType type)
+        {
+            return Inventories.Single(i => i.Type == type);
+        }
     }
 }
