@@ -56,7 +56,6 @@ namespace Edelstein.WvsGame.Fields
                         case FieldLifeType.Monster:
                             var mobTemplate = _mobTemplateManager.Get(l.TemplateID);
 
-                            Console.WriteLine(l.TemplateID);
                             field.Enter(new FieldMob(mobTemplate)
                             {
                                 X = (short) l.X,
