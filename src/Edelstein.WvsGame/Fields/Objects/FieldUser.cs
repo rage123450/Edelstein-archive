@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Edelstein.Common.Packets;
@@ -8,6 +9,7 @@ using Edelstein.Network.Packets;
 using Edelstein.WvsGame.Fields.Movements;
 using Edelstein.WvsGame.Packets;
 using Edelstein.WvsGame.Sockets;
+using MoreLinq;
 
 namespace Edelstein.WvsGame.Fields.Objects
 {
@@ -22,14 +24,14 @@ namespace Edelstein.WvsGame.Fields.Objects
             Character = character;
         }
 
-        public Task ModifyStats(Action<ModifyStatContext> action)
+        public Task ModifyStats(Action<ModifyStatContext> action = null, bool exclRequest = false)
         {
             var context = new ModifyStatContext(Character);
 
-            action.Invoke(context);
+            action?.Invoke(context);
             using (var p = new OutPacket(GameSendOperations.StatChanged))
             {
-                p.Encode<bool>(false);
+                p.Encode<bool>(exclRequest);
                 context.Encode(p);
                 p.Encode<bool>(false);
                 p.Encode<bool>(false);
@@ -52,6 +54,12 @@ namespace Edelstein.WvsGame.Fields.Objects
                     break;
                 case GameRecvOperations.UserEmotion:
                     OnUserEmotion(packet);
+                    break;
+                case GameRecvOperations.UserAbilityUpRequest:
+                    OnUserAbilityUpRequest(packet);
+                    break;
+                case GameRecvOperations.UserAbilityMassUpRequest:
+                    OnUserAbilityMassUpRequest(packet);
                     break;
                 case GameRecvOperations.UserCharacterInfoRequest:
                     OnUserCharacterInfoRequest(packet);
@@ -189,6 +197,77 @@ namespace Edelstein.WvsGame.Fields.Objects
                 p.Encode<long>(0);
                 return p;
             }
+        }
+
+        private void OnUserAbilityUpRequest(InPacket packet)
+        {
+            packet.Decode<int>();
+            var type = (ModifyStatType) packet.Decode<int>();
+
+            if (Character.AP > 0)
+            {
+                ModifyStats(s =>
+                {
+                    switch (type)
+                    {
+                        case ModifyStatType.STR:
+                            s.STR++;
+                            break;
+                        case ModifyStatType.DEX:
+                            s.DEX++;
+                            break;
+                        case ModifyStatType.INT:
+                            s.INT++;
+                            break;
+                        case ModifyStatType.LUK:
+                            s.LUK++;
+                            break;
+                    }
+
+                    s.AP--;
+                }, true);
+            }
+        }
+
+        private void OnUserAbilityMassUpRequest(InPacket packet)
+        {
+            packet.Decode<int>();
+            var count = packet.Decode<int>();
+            var inc = new Dictionary<int, int>();
+
+            for (var i = 0; i < count; i++)
+                inc.Add(packet.Decode<int>(), packet.Decode<int>());
+
+            var total = inc.Values.Sum();
+
+            if (Character.AP < total) return;
+
+            ModifyStats(s =>
+            {
+                inc.ForEach(p =>
+                {
+                    var type = (ModifyStatType) p.Key;
+                    var value = p.Value;
+
+                    switch (type)
+                    {
+                        case ModifyStatType.STR:
+                            s.STR += Convert.ToInt16(value);
+                            break;
+                        case ModifyStatType.DEX:
+                            s.DEX += Convert.ToInt16(value);
+                            break;
+                        case ModifyStatType.INT:
+                            s.INT += Convert.ToInt16(value);
+                            break;
+                        case ModifyStatType.LUK:
+                            s.LUK += Convert.ToInt16(value);
+                            break;
+                    }
+                });
+
+                s.AP -= Convert.ToInt16(total);
+            }, true);
         }
 
         private void OnUserCharacterInfoRequest(InPacket packet)
