@@ -62,7 +62,7 @@ namespace Edelstein.Database
                 {
                     foreach (var functionKey in existing.FunctionKeys)
                     {
-                        if (character.FunctionKeys.All(f => f.ID == functionKey.ID))
+                        if (character.FunctionKeys.All(f => f.ID != functionKey.ID))
                             Remove(functionKey);
                     }
 
@@ -71,7 +71,7 @@ namespace Edelstein.Database
 
                     foreach (var existingItem in existingItems)
                     {
-                        if (currentItems.All(f => f.ID == existingItem.ID))
+                        if (currentItems.All(i => i.ID != existingItem.ID))
                             Remove(existingItem);
                     }
                 }
