@@ -112,10 +112,18 @@ namespace Edelstein.WvsGame.Fields.Objects
 
             if (message.StartsWith("!"))
             {
-                Socket.WvsGame.CommandRegistry.Process(
-                    this,
-                    message.Substring(1)
-                );
+                try
+                {
+                    Socket.WvsGame.CommandRegistry.Process(
+                        this,
+                        message.Substring(1)
+                    );
+                }
+                catch (Exception)
+                {
+                    // TODO: do something
+                }
+
                 return;
             }
 
