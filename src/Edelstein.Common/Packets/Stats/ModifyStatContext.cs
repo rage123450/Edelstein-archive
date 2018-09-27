@@ -7,14 +7,14 @@ namespace Edelstein.Common.Packets.Stats
     {
         private readonly Character _character;
 
-        private ModifyStatType flag = 0;
+        private ModifyStatType _flag = 0;
 
         public byte Skin
         {
             get => _character.Skin;
             set
             {
-                flag |= ModifyStatType.Skin;
+                _flag |= ModifyStatType.Skin;
                 _character.Skin = value;
             }
         }
@@ -24,7 +24,7 @@ namespace Edelstein.Common.Packets.Stats
             get => _character.Face;
             set
             {
-                flag |= ModifyStatType.Face;
+                _flag |= ModifyStatType.Face;
                 _character.Face = value;
             }
         }
@@ -34,7 +34,7 @@ namespace Edelstein.Common.Packets.Stats
             get => _character.Hair;
             set
             {
-                flag |= ModifyStatType.Hair;
+                _flag |= ModifyStatType.Hair;
                 _character.Hair = value;
             }
         }
@@ -46,7 +46,7 @@ namespace Edelstein.Common.Packets.Stats
             get => _character.Level;
             set
             {
-                flag |= ModifyStatType.Level;
+                _flag |= ModifyStatType.Level;
                 _character.Level = value;
             }
         }
@@ -56,7 +56,7 @@ namespace Edelstein.Common.Packets.Stats
             get => _character.Job;
             set
             {
-                flag |= ModifyStatType.Job;
+                _flag |= ModifyStatType.Job;
                 _character.Job = value;
             }
         }
@@ -66,7 +66,7 @@ namespace Edelstein.Common.Packets.Stats
             get => _character.STR;
             set
             {
-                flag |= ModifyStatType.STR;
+                _flag |= ModifyStatType.STR;
                 _character.STR = value;
             }
         }
@@ -76,7 +76,7 @@ namespace Edelstein.Common.Packets.Stats
             get => _character.DEX;
             set
             {
-                flag |= ModifyStatType.DEX;
+                _flag |= ModifyStatType.DEX;
                 _character.DEX = value;
             }
         }
@@ -86,7 +86,7 @@ namespace Edelstein.Common.Packets.Stats
             get => _character.INT;
             set
             {
-                flag |= ModifyStatType.INT;
+                _flag |= ModifyStatType.INT;
                 _character.INT = value;
             }
         }
@@ -96,7 +96,7 @@ namespace Edelstein.Common.Packets.Stats
             get => _character.LUK;
             set
             {
-                flag |= ModifyStatType.LUK;
+                _flag |= ModifyStatType.LUK;
                 _character.LUK = value;
             }
         }
@@ -106,7 +106,7 @@ namespace Edelstein.Common.Packets.Stats
             get => _character.HP;
             set
             {
-                flag |= ModifyStatType.HP;
+                _flag |= ModifyStatType.HP;
                 _character.HP = value;
             }
         }
@@ -116,7 +116,7 @@ namespace Edelstein.Common.Packets.Stats
             get => _character.MaxHP;
             set
             {
-                flag |= ModifyStatType.MaxHP;
+                _flag |= ModifyStatType.MaxHP;
                 _character.MaxHP = value;
             }
         }
@@ -126,7 +126,7 @@ namespace Edelstein.Common.Packets.Stats
             get => _character.MP;
             set
             {
-                flag |= ModifyStatType.MP;
+                _flag |= ModifyStatType.MP;
                 _character.MP = value;
             }
         }
@@ -136,7 +136,7 @@ namespace Edelstein.Common.Packets.Stats
             get => _character.MaxMP;
             set
             {
-                flag |= ModifyStatType.MaxMP;
+                _flag |= ModifyStatType.MaxMP;
                 _character.MaxMP = value;
             }
         }
@@ -146,7 +146,7 @@ namespace Edelstein.Common.Packets.Stats
             get => _character.AP;
             set
             {
-                flag |= ModifyStatType.AP;
+                _flag |= ModifyStatType.AP;
                 _character.AP = value;
             }
         }
@@ -156,7 +156,7 @@ namespace Edelstein.Common.Packets.Stats
             get => _character.SP;
             set
             {
-                flag |= ModifyStatType.SP;
+                _flag |= ModifyStatType.SP;
                 _character.SP = value;
             }
         }
@@ -166,7 +166,7 @@ namespace Edelstein.Common.Packets.Stats
             get => _character.EXP;
             set
             {
-                flag |= ModifyStatType.EXP;
+                _flag |= ModifyStatType.EXP;
                 _character.EXP = value;
             }
         }
@@ -176,7 +176,7 @@ namespace Edelstein.Common.Packets.Stats
             get => _character.POP;
             set
             {
-                flag |= ModifyStatType.POP;
+                _flag |= ModifyStatType.POP;
                 _character.POP = value;
             }
         }
@@ -188,41 +188,41 @@ namespace Edelstein.Common.Packets.Stats
 
         public void Encode(OutPacket packet)
         {
-            packet.Encode<int>((int) flag);
+            packet.Encode<int>((int) _flag);
 
-            if ((flag & ModifyStatType.Skin) != 0) packet.Encode<byte>(Skin);
-            if ((flag & ModifyStatType.Face) != 0) packet.Encode<int>(Face);
-            if ((flag & ModifyStatType.Hair) != 0) packet.Encode<int>(Hair);
+            if ((_flag & ModifyStatType.Skin) != 0) packet.Encode<byte>(Skin);
+            if ((_flag & ModifyStatType.Face) != 0) packet.Encode<int>(Face);
+            if ((_flag & ModifyStatType.Hair) != 0) packet.Encode<int>(Hair);
 
-            if ((flag & ModifyStatType.Pet) != 0) packet.Encode<long>(0);
-            if ((flag & ModifyStatType.Pet2) != 0) packet.Encode<long>(0);
-            if ((flag & ModifyStatType.Pet3) != 0) packet.Encode<long>(0);
+            if ((_flag & ModifyStatType.Pet) != 0) packet.Encode<long>(0);
+            if ((_flag & ModifyStatType.Pet2) != 0) packet.Encode<long>(0);
+            if ((_flag & ModifyStatType.Pet3) != 0) packet.Encode<long>(0);
 
-            if ((flag & ModifyStatType.Level) != 0) packet.Encode<byte>(Level);
-            if ((flag & ModifyStatType.Job) != 0) packet.Encode<short>(Job);
-            if ((flag & ModifyStatType.STR) != 0) packet.Encode<short>(STR);
-            if ((flag & ModifyStatType.DEX) != 0) packet.Encode<short>(DEX);
-            if ((flag & ModifyStatType.INT) != 0) packet.Encode<short>(INT);
-            if ((flag & ModifyStatType.LUK) != 0) packet.Encode<short>(LUK);
+            if ((_flag & ModifyStatType.Level) != 0) packet.Encode<byte>(Level);
+            if ((_flag & ModifyStatType.Job) != 0) packet.Encode<short>(Job);
+            if ((_flag & ModifyStatType.STR) != 0) packet.Encode<short>(STR);
+            if ((_flag & ModifyStatType.DEX) != 0) packet.Encode<short>(DEX);
+            if ((_flag & ModifyStatType.INT) != 0) packet.Encode<short>(INT);
+            if ((_flag & ModifyStatType.LUK) != 0) packet.Encode<short>(LUK);
 
-            if ((flag & ModifyStatType.HP) != 0) packet.Encode<int>(HP);
-            if ((flag & ModifyStatType.MaxHP) != 0) packet.Encode<int>(MaxHP);
-            if ((flag & ModifyStatType.MP) != 0) packet.Encode<int>(MP);
-            if ((flag & ModifyStatType.MaxMP) != 0) packet.Encode<int>(MaxMP);
+            if ((_flag & ModifyStatType.HP) != 0) packet.Encode<int>(HP);
+            if ((_flag & ModifyStatType.MaxHP) != 0) packet.Encode<int>(MaxHP);
+            if ((_flag & ModifyStatType.MP) != 0) packet.Encode<int>(MP);
+            if ((_flag & ModifyStatType.MaxMP) != 0) packet.Encode<int>(MaxMP);
 
-            if ((flag & ModifyStatType.AP) != 0) packet.Encode<short>(AP);
-            if ((flag & ModifyStatType.SP) != 0)
+            if ((_flag & ModifyStatType.AP) != 0) packet.Encode<short>(AP);
+            if ((_flag & ModifyStatType.SP) != 0)
             {
                 if (Job / 1000 != 3 && Job / 100 != 22 && Job != 2001)
                     packet.Encode<short>(SP);
                 else packet.Encode<byte>(0);
             }
 
-            if ((flag & ModifyStatType.EXP) != 0) packet.Encode<int>(EXP);
-            if ((flag & ModifyStatType.POP) != 0) packet.Encode<short>(POP);
+            if ((_flag & ModifyStatType.EXP) != 0) packet.Encode<int>(EXP);
+            if ((_flag & ModifyStatType.POP) != 0) packet.Encode<short>(POP);
 
-            if ((flag & ModifyStatType.EXP) != 0) packet.Encode<int>(EXP);
-            if ((flag & ModifyStatType.POP) != 0) packet.Encode<short>(POP);
+            if ((_flag & ModifyStatType.EXP) != 0) packet.Encode<int>(EXP);
+            if ((_flag & ModifyStatType.POP) != 0) packet.Encode<short>(POP);
         }
     }
 }
