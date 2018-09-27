@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Edelstein.Common.Packets;
+using Edelstein.Common.Packets.Stats;
 using Edelstein.Database.Entities;
 using Edelstein.Network.Packets;
 using Edelstein.WvsGame.Fields.Movements;
@@ -19,6 +20,21 @@ namespace Edelstein.WvsGame.Fields.Objects
         {
             Socket = socket;
             Character = character;
+        }
+
+        public Task ModifyStats(Action<ModifyStatContext> action)
+        {
+            var context = new ModifyStatContext(Character);
+
+            action.Invoke(context);
+            using (var p = new OutPacket(GameSendOperations.StatChanged))
+            {
+                p.Encode<bool>(false);
+                context.Encode(p);
+                p.Encode<bool>(false);
+                p.Encode<bool>(false);
+                return SendPacket(p);
+            }
         }
 
         public bool OnPacket(GameRecvOperations operation, InPacket packet)
