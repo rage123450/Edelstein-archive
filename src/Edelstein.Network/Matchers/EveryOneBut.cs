@@ -5,13 +5,13 @@ namespace Edelstein.Network.Matchers
 {
     public class EveryOneBut : IChannelMatcher
     {
-        readonly IChannelId id;
+        readonly IChannelId _id;
 
         public EveryOneBut(IChannelId id)
         {
-            id = id;
+            _id = id;
         }
 
-        public bool Matches(IChannel channel) => !Equals(channel.Id, id);
+        public bool Matches(IChannel channel) => !Equals(channel.Id, _id);
     }
 }
