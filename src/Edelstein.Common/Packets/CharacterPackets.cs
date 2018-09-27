@@ -25,8 +25,8 @@ namespace Edelstein.Common.Packets
             if ((flag & 0x2) != 0) p.Encode<int>(c.Money);
 
             var inventoryEquip = c.GetInventory(ItemInventoryType.Equip);
-            var inventoryConsume = c.GetInventory(ItemInventoryType.Consume);
-            var inventoryInstall = c.GetInventory(ItemInventoryType.Install);
+            var inventoryConsume = c.GetInventory(ItemInventoryType.Use);
+            var inventoryInstall = c.GetInventory(ItemInventoryType.Setup);
             var inventoryEtc = c.GetInventory(ItemInventoryType.Etc);
             var inventoryCash = c.GetInventory(ItemInventoryType.Cash);
 

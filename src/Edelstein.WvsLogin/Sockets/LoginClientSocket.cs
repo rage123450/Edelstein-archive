@@ -371,8 +371,8 @@ namespace Edelstein.WvsLogin.Sockets
                 var inventories = character.Inventories;
 
                 inventories.Add(new ItemInventory(ItemInventoryType.Equip, 24));
-                inventories.Add(new ItemInventory(ItemInventoryType.Consume, 24));
-                inventories.Add(new ItemInventory(ItemInventoryType.Install, 24));
+                inventories.Add(new ItemInventory(ItemInventoryType.Use, 24));
+                inventories.Add(new ItemInventory(ItemInventoryType.Setup, 24));
                 inventories.Add(new ItemInventory(ItemInventoryType.Etc, 24));
                 inventories.Add(new ItemInventory(ItemInventoryType.Cash, 24));
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Edelstein.Common.Packets;
+using Edelstein.Common.Packets.Inventory;
 using Edelstein.Common.Packets.Stats;
 using Edelstein.Database.Entities;
 using Edelstein.Network.Packets;
@@ -34,6 +35,20 @@ namespace Edelstein.WvsGame.Fields.Objects
                 p.Encode<bool>(exclRequest);
                 context.Encode(p);
                 p.Encode<bool>(false);
+                p.Encode<bool>(false);
+                return SendPacket(p);
+            }
+        }
+
+        public Task ModifyInventory(Action<ModifyInventoryContext> action = null, bool exclRequest = false)
+        {
+            var context = new ModifyInventoryContext(Character);
+
+            action?.Invoke(context);
+            using (var p = new OutPacket(GameSendOperations.InventoryOperation))
+            {
+                p.Encode<bool>(exclRequest);
+                context.Encode(p);
                 p.Encode<bool>(false);
                 return SendPacket(p);
             }

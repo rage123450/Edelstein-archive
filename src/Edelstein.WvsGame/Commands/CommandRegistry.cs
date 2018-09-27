@@ -11,6 +11,7 @@ namespace Edelstein.WvsGame.Commands
         public CommandRegistry()
         {
             Commands.Add(new StatCommand());
+            Commands.Add(new InventoryTestCommand());
         }
 
         protected override Task Execute(CommandContext ctx)
