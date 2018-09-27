@@ -18,13 +18,13 @@ namespace Edelstein.Common.Packets.Inventory
             _operations = new List<InventoryOperation>();
         }
 
-        public void Set(ItemSlot item, ItemInventoryType type, short slot)
+        public void Set(ItemInventoryType type, ItemSlot item, short slot)
         {
             var inventory = _character.GetInventory(type);
             var inventoryItems = inventory.Items;
             var existingItem = inventoryItems.SingleOrDefault(i => i.Slot == slot);
 
-            if (existingItem != null) Remove(existingItem, type);
+            if (existingItem != null) Remove(type, existingItem);
 
             item.Slot = slot;
             inventoryItems.Add(item);
@@ -37,16 +37,43 @@ namespace Edelstein.Common.Packets.Inventory
             var inventoryItems = inventory.Items;
             var item = inventoryItems.SingleOrDefault(i => i.Slot == slot);
 
-            if (item != null) Remove(item, type);
+            if (item != null) Remove(type, item);
         }
 
-        public void Remove(ItemSlot item, ItemInventoryType type)
+        public void Remove(ItemInventoryType type, ItemSlot item)
         {
             var inventory = _character.GetInventory(type);
             var inventoryItems = inventory.Items;
 
             inventoryItems.Remove(item);
             _operations.Add(new InventoryRemoveOperation(getModifyInventoryType(type), item.Slot));
+        }
+
+        public void Move(ItemInventoryType type, short fromSlot, short toSlot)
+        {
+            var inventory = _character.GetInventory(type);
+            var inventoryItems = inventory.Items;
+            var item = inventoryItems.SingleOrDefault(i => i.Slot == fromSlot);
+
+            if (item != null) Move(type, item, toSlot);
+        }
+
+        public void Move(ItemInventoryType type, ItemSlot item, short toSlot)
+        {
+            var inventory = _character.GetInventory(type);
+            var inventoryItems = inventory.Items;
+            var existingItem = inventoryItems.SingleOrDefault(i => i.Slot == toSlot);
+            var fromSlot = item.Slot;
+
+            if (existingItem != null)
+            {
+                // TODO: bundle items
+
+                existingItem.Slot = fromSlot;
+            }
+
+            item.Slot = toSlot;
+            _operations.Add(new InventoryMoveOperation(getModifyInventoryType(type), fromSlot, toSlot));
         }
 
         private ModifyInventoryType getModifyInventoryType(ItemInventoryType type)

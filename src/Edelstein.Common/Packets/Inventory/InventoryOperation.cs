@@ -18,9 +18,6 @@ namespace Edelstein.Common.Packets.Inventory
 
         public virtual void Encode(OutPacket packet)
         {
-            Console.WriteLine(Type);
-            Console.WriteLine(Inventory);
-            Console.WriteLine(Slot);
             packet.Encode<byte>((byte) Type);
             packet.Encode<byte>((byte) Inventory);
             packet.Encode<short>(Slot);
