@@ -8,6 +8,7 @@ using Edelstein.Provider;
 using Edelstein.Provider.Fields;
 using Edelstein.Provider.Mobs;
 using Edelstein.Provider.NPC;
+using Edelstein.WvsGame.Commands;
 using Edelstein.WvsGame.Fields;
 using Edelstein.WvsGame.Logging;
 using Edelstein.WvsGame.Sockets;
@@ -24,6 +25,8 @@ namespace Edelstein.WvsGame
 
         public ChannelInformation ChannelInformation { get; set; }
         public ICollection<int> PendingMigrations { get; set; }
+
+        public CommandRegistry CommandRegistry { get; set; }
 
         public ITemplateManager<FieldTemplate> FieldTemplates { get; set; }
         public ITemplateManager<NPCTemplate> NPCTemplates { get; set; }
@@ -49,6 +52,8 @@ namespace Edelstein.WvsGame
                 UserNo = 0,
                 AdultChannel = info.AdultChannel
             };
+
+            CommandRegistry = _container.GetInstance<CommandRegistry>();
 
             FieldTemplates = _container.GetInstance<ITemplateManager<FieldTemplate>>();
             NPCTemplates = _container.GetInstance<ITemplateManager<NPCTemplate>>();

@@ -4,6 +4,7 @@ using Edelstein.Provider;
 using Edelstein.Provider.Fields;
 using Edelstein.Provider.Mobs;
 using Edelstein.Provider.NPC;
+using Edelstein.WvsGame.Commands;
 using Edelstein.WvsGame.Sockets;
 using Lamar;
 using Microsoft.EntityFrameworkCore;
@@ -36,6 +37,8 @@ namespace Edelstein.WvsGame
                 optionsBuilder.UseMySql(c.GetInstance<WvsGameOptions>().ConnectionString);
                 return new DataContext(optionsBuilder.Options);
             });
+
+            For<CommandRegistry>().Use<CommandRegistry>().Singleton();
 
             For<PackageCollection>().Use(c =>
             {

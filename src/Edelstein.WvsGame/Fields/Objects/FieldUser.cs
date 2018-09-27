@@ -110,6 +110,15 @@ namespace Edelstein.WvsGame.Fields.Objects
             var message = packet.Decode<string>();
             var onlyBalloon = packet.Decode<bool>();
 
+            if (message.StartsWith("!"))
+            {
+                Socket.WvsGame.CommandRegistry.Process(
+                    this,
+                    message.Substring(1)
+                );
+                return;
+            }
+
             using (var p = new OutPacket(GameSendOperations.UserChat))
             {
                 p.Encode<int>(ID);

@@ -181,6 +181,26 @@ namespace Edelstein.Common.Packets.Stats
             }
         }
 
+        public int Money
+        {
+            get => _character.Money;
+            set
+            {
+                _flag |= ModifyStatType.Money;
+                _character.Money = value;
+            }
+        }
+
+        public int TempEXP
+        {
+            get => _character.TempEXP;
+            set
+            {
+                _flag |= ModifyStatType.TempEXP;
+                _character.TempEXP = value;
+            }
+        }
+
         public ModifyStatContext(Character character)
         {
             _character = character;
@@ -221,8 +241,8 @@ namespace Edelstein.Common.Packets.Stats
             if ((_flag & ModifyStatType.EXP) != 0) packet.Encode<int>(EXP);
             if ((_flag & ModifyStatType.POP) != 0) packet.Encode<short>(POP);
 
-            if ((_flag & ModifyStatType.EXP) != 0) packet.Encode<int>(EXP);
-            if ((_flag & ModifyStatType.POP) != 0) packet.Encode<short>(POP);
+            if ((_flag & ModifyStatType.Money) != 0) packet.Encode<int>(Money);
+            if ((_flag & ModifyStatType.TempEXP) != 0) packet.Encode<int>(TempEXP);
         }
     }
 }
