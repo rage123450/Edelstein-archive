@@ -10,22 +10,21 @@ namespace Edelstein.WvsGame.Commands.Impl
 
         protected override Task Execute(CommandContext ctx)
         {
-            
             ctx.User.ModifyInventory(i =>
             {
-                i.Set(ItemInventoryType.Equipped,
+                i.Set(ItemInventoryType.Equip,
                     new ItemSlotEquip
                     {
                         TemplateID = 1302000,
                         Durability = 100
-                    }, 11);
+                    }, -11);
 
-                i.Set(ItemInventoryType.Equipped,
+                i.Set(ItemInventoryType.Equip,
                     new ItemSlotEquip
                     {
                         TemplateID = 1302000,
                         Durability = 100
-                    }, 111);
+                    }, -111);
             });
 
             //ctx.User.ModifyInventory(i => { i.Move(ItemInventoryType.Equip, 1, 2); });

@@ -376,31 +376,29 @@ namespace Edelstein.WvsLogin.Sockets
                 inventories.Add(new ItemInventory(ItemInventoryType.Etc, 24));
                 inventories.Add(new ItemInventory(ItemInventoryType.Cash, 24));
 
-                inventories.Add(new ItemInventory(ItemInventoryType.Equipped, 60 + 60 + 4 + 5));
-
                 // TODO: Inventory management
-                var equipped = character.GetInventory(ItemInventoryType.Equipped).Items;
+                var equipped = character.GetInventory(ItemInventoryType.Equip).Items;
                 var topItem = new ItemSlotEquip();
                 var bottomItem = new ItemSlotEquip();
                 var shoesItem = new ItemSlotEquip();
                 var weaponItem = new ItemSlotEquip();
 
-                topItem.Slot = 5;
+                topItem.Slot = -5;
                 topItem.Durability = 100;
                 topItem.TemplateID = top;
 
                 if (bottom > 0) // Resistance Overalls
                 {
-                    bottomItem.Slot = 6;
+                    bottomItem.Slot = -6;
                     bottomItem.Durability = 100;
                     bottomItem.TemplateID = bottom;
                     equipped.Add(bottomItem);
                 }
 
-                shoesItem.Slot = 7;
+                shoesItem.Slot = -7;
                 shoesItem.Durability = 100;
                 shoesItem.TemplateID = shoes;
-                weaponItem.Slot = 11;
+                weaponItem.Slot = -11;
                 weaponItem.Durability = 100;
                 weaponItem.TemplateID = weapon;
 

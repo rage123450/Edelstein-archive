@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Edelstein.Database.Entities;
@@ -51,23 +52,22 @@ namespace Edelstein.Common.Packets
                 {
                     foreach (var i in items)
                     {
-                        p.Encode<short>((short) (i.Slot - offset));
+                        p.Encode<short>((short) (Math.Abs(i.Slot) + offset));
                         (i as ItemSlotEquip).Encode(p);
                     }
                 }
 
-                var inventoryEquipped = c.GetInventory(ItemInventoryType.Equipped);
-
-                var equippedItems = inventoryEquipped.Items.Where(i => i.Slot < 100);
-                var equippedCashItems = inventoryEquipped.Items.Where(i => i.Slot >= 100 && i.Slot < 1000);
-                var equippedDragonItems = inventoryEquipped.Items.Where(i => i.Slot >= 1000 && i.Slot < 1100);
-                var equippedMechanicItems = inventoryEquipped.Items.Where(i => i.Slot >= 1100 && i.Slot < 1200);
+                var equipItems = inventoryEquip.Items.Where(i => i.Slot >= 0 && i.Slot < 100);
+                var equippedItems = inventoryEquip.Items.Where(i => i.Slot > -100 && i.Slot < 0);
+                var equippedCashItems = inventoryEquip.Items.Where(i => i.Slot > -1000 && i.Slot < -100);
+                var equippedDragonItems = inventoryEquip.Items.Where(i => i.Slot > -1100 && i.Slot < -1000);
+                var equippedMechanicItems = inventoryEquip.Items.Where(i => i.Slot > -1200 && i.Slot < -1100);
 
                 EncodeEquips(equippedItems);
                 p.Encode<short>(0);
                 EncodeEquips(equippedCashItems, 100);
                 p.Encode<short>(0);
-                EncodeEquips(inventoryEquip.Items);
+                EncodeEquips(equipItems);
                 p.Encode<short>(0);
                 EncodeEquips(equippedDragonItems, 1000);
                 p.Encode<short>(0);
@@ -224,14 +224,14 @@ namespace Edelstein.Common.Packets
             p.Encode<bool>(false);
             p.Encode<int>(c.Hair);
 
-            var inventoryEquipped = c.GetInventory(ItemInventoryType.Equipped);
+            var inventoryEquip = c.GetInventory(ItemInventoryType.Equip);
 
-            var equippedItems = inventoryEquipped.Items.Where(i => i.Slot < 100);
-            var equippedCashItems = inventoryEquipped.Items.Where(i => i.Slot >= 100 && i.Slot < 1000);
+            var equippedItems = inventoryEquip.Items.Where(i => i.Slot > -100 && i.Slot < 0);
+            var equippedCashItems = inventoryEquip.Items.Where(i => i.Slot > -1000 && i.Slot < -100);
 
             foreach (var equippedItem in equippedItems)
             {
-                p.Encode<byte>((byte) equippedItem.Slot);
+                p.Encode<byte>((byte) Math.Abs(equippedItem.Slot));
                 p.Encode<int>(equippedItem.TemplateID);
             }
 
@@ -239,7 +239,7 @@ namespace Edelstein.Common.Packets
 
             foreach (var equippedCashItem in equippedCashItems)
             {
-                p.Encode<byte>((byte) (equippedCashItem.Slot - 100));
+                p.Encode<byte>((byte) (Math.Abs(equippedCashItem.Slot) + 100));
                 p.Encode<int>(equippedCashItem.TemplateID);
             }
 

@@ -56,67 +56,34 @@ namespace Edelstein.Common.Packets.Inventory
             );
         }
 
-        public void Move(ItemInventoryType fromType, short fromSlot, ItemInventoryType toType, short toSlot)
-        {
-            var fromInventory = _character.GetInventory(fromType);
-            var toInventory = _character.GetInventory(toType);
-            var item = fromInventory.Items.SingleOrDefault(i => i.Slot == fromSlot);
-
-            if (item != null) Move(item, toType, toSlot);
-        }
-
         public void Move(ItemInventoryType type, short fromSlot, short toSlot)
         {
             var inventory = _character.GetInventory(type);
             var inventoryItems = inventory.Items;
             var item = inventoryItems.SingleOrDefault(i => i.Slot == fromSlot);
 
-            if (item != null) Move(item, type, toSlot);
+            if (item != null) Move(item, toSlot);
         }
 
-        public void Move(ItemSlot item, ItemInventoryType toType, short toSlot)
+        public void Move(ItemSlot item, short toSlot)
         {
-            var fromInventory = item.ItemInventory;
-            var toInventory = _character.GetInventory(toType);
-            var existingItem = toInventory.Items.SingleOrDefault(i => i.Slot == toSlot);
+            var inventory = item.ItemInventory;
+            var existingItem = inventory.Items.SingleOrDefault(i => i.Slot == toSlot);
             var fromSlot = item.Slot;
-
-            if (fromInventory != toInventory)
-            {
-                if (fromInventory.Type != ItemInventoryType.Equip ||
-                    fromInventory.Type != ItemInventoryType.Equipped) return;
-                if (toInventory.Type != ItemInventoryType.Equip ||
-                    toInventory.Type != ItemInventoryType.Equipped) return;
-            }
 
             if (existingItem != null)
             {
                 // TODO: bundle items
-                existingItem.ItemInventory = fromInventory;
+                existingItem.ItemInventory = inventory;
                 existingItem.Slot = fromSlot;
             }
 
-            item.ItemInventory = toInventory;
             item.Slot = toSlot;
 
-            if (fromInventory != toInventory)
-            {
-                fromInventory.Items.Remove(item);
-                toInventory.Items.Add(item);
-
-                if (existingItem != null)
-                {
-                    toInventory.Items.Remove(existingItem);
-                    fromInventory.Items.Add(existingItem);
-                }
-            }
-
             _operations.Add(new InventoryMoveOperation(
-                fromInventory.Type,
+                inventory.Type,
                 fromSlot,
-                (short) (toInventory.Type == ItemInventoryType.Equipped
-                    ? -toSlot
-                    : toSlot))
+                toSlot)
             );
         }
 

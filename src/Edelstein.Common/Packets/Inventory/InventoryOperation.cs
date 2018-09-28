@@ -10,16 +10,6 @@ namespace Edelstein.Common.Packets.Inventory
         protected readonly ItemInventoryType Inventory;
         protected readonly short Slot;
 
-        private ModifyInventoryType ModifyInventoryType =>
-            Inventory == ItemInventoryType.Equipped
-                ? ModifyInventoryType.Equip
-                : (ModifyInventoryType) Inventory;
-
-        private short ModifyInventorySlot => (short) (
-            Inventory == ItemInventoryType.Equipped
-                ? -Slot
-                : Slot);
-
         public InventoryOperation(InventoryOperationType type, ItemInventoryType inventory, short slot)
         {
             Type = type;
@@ -30,8 +20,8 @@ namespace Edelstein.Common.Packets.Inventory
         public virtual void Encode(OutPacket packet)
         {
             packet.Encode<byte>((byte) Type);
-            packet.Encode<byte>((byte) ModifyInventoryType);
-            packet.Encode<short>(ModifyInventorySlot);
+            packet.Encode<byte>((byte) Inventory);
+            packet.Encode<short>(Slot);
         }
     }
 }

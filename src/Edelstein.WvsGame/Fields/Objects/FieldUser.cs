@@ -222,32 +222,13 @@ namespace Edelstein.WvsGame.Fields.Objects
         {
             packet.Decode<int>();
 
-            var fromInventory = (ItemInventoryType) packet.Decode<byte>();
-            var toInventory = fromInventory;
+            var inventoryType = (ItemInventoryType) packet.Decode<byte>();
             var fromSlot = packet.Decode<short>();
             var toSlot = packet.Decode<short>();
 
             packet.Decode<short>();
 
-            if (fromSlot < 0) fromInventory = ItemInventoryType.Equipped;
-
-            ModifyInventory(i =>
-            {
-                switch (fromInventory)
-                {
-                    case ItemInventoryType.Equip when toSlot < 0:
-                        toInventory = ItemInventoryType.Equipped;
-                        break;
-                    case ItemInventoryType.Equipped when toSlot >= 0:
-                        toInventory = ItemInventoryType.Equip;
-                        break;
-                }
-
-                fromSlot = Math.Abs(fromSlot);
-                toSlot = Math.Abs(toSlot);
-
-                i.Move(fromInventory, fromSlot, toInventory, toSlot);
-            }, true);
+            ModifyInventory(i => i.Move(inventoryType, fromSlot, toSlot), true);
         }
 
         private void OnUserAbilityUpRequest(InPacket packet)
