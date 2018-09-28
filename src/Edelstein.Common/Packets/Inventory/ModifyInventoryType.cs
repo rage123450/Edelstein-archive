@@ -6,8 +6,6 @@ namespace Edelstein.Common.Packets.Inventory
         Use = 0x2,
         Setup = 0x3,
         Etc = 0x4,
-        Cash = 0x5,
-
-        Equipped = 0xFF
+        Cash = 0x5
     }
 }

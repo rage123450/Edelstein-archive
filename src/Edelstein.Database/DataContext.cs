@@ -43,12 +43,14 @@ namespace Edelstein.Database
 
             modelBuilder.Entity<ItemInventory>()
                 .HasMany(i => i.Items)
-                .WithOne()
+                .WithOne(i => i.ItemInventory)
                 .OnDelete(DeleteBehavior.Cascade);
         }
 
         public void InsertUpdateOrDeleteGraph(object entity)
         {
+            ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+
             if (entity is Character character)
             {
                 var existing = Characters
@@ -63,7 +65,7 @@ namespace Edelstein.Database
                     foreach (var functionKey in existing.FunctionKeys)
                     {
                         if (character.FunctionKeys.All(f => f.ID != functionKey.ID))
-                            Remove(functionKey);
+                            Entry(functionKey).State = EntityState.Deleted;
                     }
 
                     var existingItems = existing.Inventories.SelectMany(i => i.Items).ToList();
@@ -72,7 +74,7 @@ namespace Edelstein.Database
                     foreach (var existingItem in existingItems)
                     {
                         if (currentItems.All(i => i.ID != existingItem.ID))
-                            Remove(existingItem);
+                            Entry(existingItem).State = EntityState.Deleted;
                     }
                 }
             }

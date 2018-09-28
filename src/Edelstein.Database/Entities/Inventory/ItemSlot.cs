@@ -10,10 +10,11 @@ namespace Edelstein.Database.Entities.Inventory
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
 
+        public ItemInventory ItemInventory { get; set; }
+
         public short Slot { get; set; }
-        
+
         public int TemplateID { get; set; }
         public DateTime DateExpire { get; set; }
-
     }
 }

@@ -1,3 +1,4 @@
+using Edelstein.Database.Entities.Inventory;
 using Edelstein.Network.Packets;
 
 namespace Edelstein.Common.Packets.Inventory.Operations
@@ -6,7 +7,7 @@ namespace Edelstein.Common.Packets.Inventory.Operations
     {
         private readonly int _exp;
 
-        public InventoryUpdateEXPOperation(ModifyInventoryType inventory, short slot, int EXP)
+        public InventoryUpdateEXPOperation(ItemInventoryType inventory, short slot, int EXP)
             : base(InventoryOperationType.UpdateEXP, inventory, slot)
         {
             _exp = EXP;

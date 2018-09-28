@@ -1,8 +1,10 @@
+using Edelstein.Database.Entities.Inventory;
+
 namespace Edelstein.Common.Packets.Inventory.Operations
 {
     public class InventoryRemoveOperation : InventoryOperation
     {
-        public InventoryRemoveOperation(ModifyInventoryType inventory, short slot)
+        public InventoryRemoveOperation(ItemInventoryType inventory, short slot)
             : base(InventoryOperationType.Remove, inventory, slot)
         {
         }

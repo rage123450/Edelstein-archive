@@ -24,11 +24,15 @@ namespace Edelstein.Common.Packets.Inventory
             var inventoryItems = inventory.Items;
             var existingItem = inventoryItems.SingleOrDefault(i => i.Slot == slot);
 
-            if (existingItem != null) Remove(type, existingItem);
+            if (existingItem != null) Remove(existingItem);
 
+            item.ItemInventory = inventory;
             item.Slot = slot;
             inventoryItems.Add(item);
-            _operations.Add(new InventoryAddOperation(getModifyInventoryType(type), item));
+            _operations.Add(new InventoryAddOperation(
+                inventory.Type,
+                item)
+            );
         }
 
         public void Remove(ItemInventoryType type, short slot)
@@ -37,16 +41,19 @@ namespace Edelstein.Common.Packets.Inventory
             var inventoryItems = inventory.Items;
             var item = inventoryItems.SingleOrDefault(i => i.Slot == slot);
 
-            if (item != null) Remove(type, item);
+            if (item != null) Remove(item);
         }
 
-        public void Remove(ItemInventoryType type, ItemSlot item)
+        public void Remove(ItemSlot item)
         {
-            var inventory = _character.GetInventory(type);
+            var inventory = item.ItemInventory;
             var inventoryItems = inventory.Items;
 
             inventoryItems.Remove(item);
-            _operations.Add(new InventoryRemoveOperation(getModifyInventoryType(type), item.Slot));
+            _operations.Add(new InventoryRemoveOperation(
+                inventory.Type,
+                item.Slot)
+            );
         }
 
         public void Move(ItemInventoryType type, short fromSlot, short toSlot)
@@ -55,12 +62,12 @@ namespace Edelstein.Common.Packets.Inventory
             var inventoryItems = inventory.Items;
             var item = inventoryItems.SingleOrDefault(i => i.Slot == fromSlot);
 
-            if (item != null) Move(type, item, toSlot);
+            if (item != null) Move(item, toSlot);
         }
 
-        public void Move(ItemInventoryType type, ItemSlot item, short toSlot)
+        public void Move(ItemSlot item, short toSlot)
         {
-            var inventory = _character.GetInventory(type);
+            var inventory = item.ItemInventory;
             var inventoryItems = inventory.Items;
             var existingItem = inventoryItems.SingleOrDefault(i => i.Slot == toSlot);
             var fromSlot = item.Slot;
@@ -73,21 +80,11 @@ namespace Edelstein.Common.Packets.Inventory
             }
 
             item.Slot = toSlot;
-            _operations.Add(new InventoryMoveOperation(getModifyInventoryType(type), fromSlot, toSlot));
-        }
-
-        private ModifyInventoryType getModifyInventoryType(ItemInventoryType type)
-        {
-            switch (type)
-            {
-                case ItemInventoryType.Equipped:
-                case ItemInventoryType.EquippedCash:
-                case ItemInventoryType.EquippedDragon:
-                case ItemInventoryType.EquippedMechanic:
-                    return ModifyInventoryType.Equipped;
-                default:
-                    return (ModifyInventoryType) type;
-            }
+            _operations.Add(new InventoryMoveOperation(
+                inventory.Type,
+                fromSlot,
+                toSlot)
+            );
         }
 
         public void Encode(OutPacket packet)

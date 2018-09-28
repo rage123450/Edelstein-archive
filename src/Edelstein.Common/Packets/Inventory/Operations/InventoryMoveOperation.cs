@@ -1,3 +1,4 @@
+using Edelstein.Database.Entities.Inventory;
 using Edelstein.Network.Packets;
 
 namespace Edelstein.Common.Packets.Inventory.Operations
@@ -6,7 +7,7 @@ namespace Edelstein.Common.Packets.Inventory.Operations
     {
         private readonly short _newSlot;
 
-        public InventoryMoveOperation(ModifyInventoryType inventory, short slot, short newSlot)
+        public InventoryMoveOperation(ItemInventoryType inventory, short slot, short newSlot)
             : base(InventoryOperationType.Move, inventory, slot)
         {
             _newSlot = newSlot;

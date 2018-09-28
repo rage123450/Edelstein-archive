@@ -1,3 +1,4 @@
+using Edelstein.Database.Entities.Inventory;
 using Edelstein.Network.Packets;
 
 namespace Edelstein.Common.Packets.Inventory.Operations
@@ -6,7 +7,7 @@ namespace Edelstein.Common.Packets.Inventory.Operations
     {
         private readonly short _quantity;
 
-        public InventoryUpdateQuantityOperation(ModifyInventoryType inventory, short slot, short quantity)
+        public InventoryUpdateQuantityOperation(ItemInventoryType inventory, short slot, short quantity)
             : base(InventoryOperationType.UpdateQuantity, inventory, slot)
         {
             _quantity = quantity;
