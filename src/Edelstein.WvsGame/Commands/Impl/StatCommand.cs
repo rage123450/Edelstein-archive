@@ -9,6 +9,11 @@ namespace Edelstein.WvsGame.Commands.Impl
         public override string Name => "Stat";
         public override string Description => "Sets a specified stat to a specified value.";
 
+        public StatCommand()
+        {
+            Aliases.Add("set");
+        }
+
         protected override Task Execute(CommandContext ctx)
         {
             try
