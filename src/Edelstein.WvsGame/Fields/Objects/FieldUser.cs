@@ -258,6 +258,7 @@ namespace Edelstein.WvsGame.Fields.Objects
 
             var inventoryType = (ItemInventoryType) packet.Decode<byte>();
             var inventoryCopy = Character.GetInventory(inventoryType).Items
+                .Where(i => i.Slot > 0)
                 .OrderBy(i => i.Slot)
                 .ToList();
             short slot = 1;
@@ -283,6 +284,7 @@ namespace Edelstein.WvsGame.Fields.Objects
 
             var inventoryType = (ItemInventoryType) packet.Decode<byte>();
             var inventoryCopy = Character.GetInventory(inventoryType).Items
+                .Where(i => i.Slot > 0)
                 .OrderBy(i => i.Slot)
                 .ToList();
             var slots = inventoryCopy.Select(i => i.Slot).ToList();
