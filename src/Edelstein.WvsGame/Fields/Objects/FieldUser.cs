@@ -70,6 +70,9 @@ namespace Edelstein.WvsGame.Fields.Objects
                 case GameRecvOperations.UserEmotion:
                     OnUserEmotion(packet);
                     break;
+                case GameRecvOperations.UserChangeSlotPositionRequest:
+                    OnUserChangeSlotPositionRequest(packet);
+                    break;
                 case GameRecvOperations.UserAbilityUpRequest:
                     OnUserAbilityUpRequest(packet);
                     break;
@@ -212,6 +215,18 @@ namespace Edelstein.WvsGame.Fields.Objects
                 p.Encode<long>(0);
                 return p;
             }
+        }
+
+        private void OnUserChangeSlotPositionRequest(InPacket packet)
+        {
+            packet.Decode<int>();
+
+            Console.WriteLine("Inventory: " + packet.Decode<byte>());
+            Console.WriteLine("Pos1: " + packet.Decode<short>());
+            Console.WriteLine("Pos2: " + packet.Decode<short>());
+            Console.WriteLine("Count: " + packet.Decode<short>());
+
+            ModifyInventory(exclRequest: true);
         }
 
         private void OnUserAbilityUpRequest(InPacket packet)

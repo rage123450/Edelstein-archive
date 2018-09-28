@@ -20,12 +20,12 @@ namespace Edelstein.WvsGame.Commands.Impl
                         Durability = 100
                     }, 11);
 
-                i.Set(ItemInventoryType.EquippedCash,
+                i.Set(ItemInventoryType.Equipped,
                     new ItemSlotEquip
                     {
                         TemplateID = 1302000,
                         Durability = 100
-                    }, 11);
+                    }, 111);
             });
 
             //ctx.User.ModifyInventory(i => { i.Move(ItemInventoryType.Equip, 1, 2); });

@@ -376,10 +376,7 @@ namespace Edelstein.WvsLogin.Sockets
                 inventories.Add(new ItemInventory(ItemInventoryType.Etc, 24));
                 inventories.Add(new ItemInventory(ItemInventoryType.Cash, 24));
 
-                inventories.Add(new ItemInventory(ItemInventoryType.Equipped, 60));
-                inventories.Add(new ItemInventory(ItemInventoryType.EquippedCash, 60));
-                inventories.Add(new ItemInventory(ItemInventoryType.EquippedDragon, 4));
-                inventories.Add(new ItemInventory(ItemInventoryType.EquippedMechanic, 5));
+                inventories.Add(new ItemInventory(ItemInventoryType.Equipped, 60 + 60 + 4 + 5));
 
                 // TODO: Inventory management
                 var equipped = character.GetInventory(ItemInventoryType.Equipped).Items;
