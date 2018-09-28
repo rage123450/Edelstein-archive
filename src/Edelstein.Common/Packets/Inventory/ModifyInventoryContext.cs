@@ -81,19 +81,36 @@ namespace Edelstein.Common.Packets.Inventory
             var existingItem = toInventory.Items.SingleOrDefault(i => i.Slot == toSlot);
             var fromSlot = item.Slot;
 
+            if (fromInventory != toInventory)
+            {
+                if (fromInventory.Type != ItemInventoryType.Equip ||
+                    fromInventory.Type != ItemInventoryType.Equipped) return;
+                if (toInventory.Type != ItemInventoryType.Equip ||
+                    toInventory.Type != ItemInventoryType.Equipped) return;
+            }
+
             if (existingItem != null)
             {
                 // TODO: bundle items
                 existingItem.ItemInventory = fromInventory;
                 existingItem.Slot = fromSlot;
-                toInventory.Items.Remove(existingItem);
-                fromInventory.Items.Add(existingItem);
             }
 
             item.ItemInventory = toInventory;
             item.Slot = toSlot;
-            fromInventory.Items.Remove(item);
-            toInventory.Items.Add(item);
+
+            if (fromInventory != toInventory)
+            {
+                fromInventory.Items.Remove(item);
+                toInventory.Items.Add(item);
+
+                if (existingItem != null)
+                {
+                    toInventory.Items.Remove(existingItem);
+                    fromInventory.Items.Add(existingItem);
+                }
+            }
+
             _operations.Add(new InventoryMoveOperation(
                 fromInventory.Type,
                 fromSlot,
