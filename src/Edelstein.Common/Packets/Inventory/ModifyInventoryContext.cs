@@ -56,34 +56,50 @@ namespace Edelstein.Common.Packets.Inventory
             );
         }
 
+        public void Move(ItemInventoryType fromType, short fromSlot, ItemInventoryType toType, short toSlot)
+        {
+            var fromInventory = _character.GetInventory(fromType);
+            var toInventory = _character.GetInventory(toType);
+            var item = fromInventory.Items.SingleOrDefault(i => i.Slot == fromSlot);
+
+            if (item != null) Move(item, toType, toSlot);
+        }
+
         public void Move(ItemInventoryType type, short fromSlot, short toSlot)
         {
             var inventory = _character.GetInventory(type);
             var inventoryItems = inventory.Items;
             var item = inventoryItems.SingleOrDefault(i => i.Slot == fromSlot);
 
-            if (item != null) Move(item, toSlot);
+            if (item != null) Move(item, type, toSlot);
         }
 
-        public void Move(ItemSlot item, short toSlot)
+        public void Move(ItemSlot item, ItemInventoryType toType, short toSlot)
         {
-            var inventory = item.ItemInventory;
-            var inventoryItems = inventory.Items;
-            var existingItem = inventoryItems.SingleOrDefault(i => i.Slot == toSlot);
+            var fromInventory = item.ItemInventory;
+            var toInventory = _character.GetInventory(toType);
+            var existingItem = toInventory.Items.SingleOrDefault(i => i.Slot == toSlot);
             var fromSlot = item.Slot;
 
             if (existingItem != null)
             {
                 // TODO: bundle items
-
+                existingItem.ItemInventory = fromInventory;
                 existingItem.Slot = fromSlot;
+                toInventory.Items.Remove(existingItem);
+                fromInventory.Items.Add(existingItem);
             }
 
+            item.ItemInventory = toInventory;
             item.Slot = toSlot;
+            fromInventory.Items.Remove(item);
+            toInventory.Items.Add(item);
             _operations.Add(new InventoryMoveOperation(
-                inventory.Type,
+                fromInventory.Type,
                 fromSlot,
-                toSlot)
+                (short) (toInventory.Type == ItemInventoryType.Equipped
+                    ? -toSlot
+                    : toSlot))
             );
         }
 

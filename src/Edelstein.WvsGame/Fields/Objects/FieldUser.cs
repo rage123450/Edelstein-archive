@@ -6,6 +6,7 @@ using Edelstein.Common.Packets;
 using Edelstein.Common.Packets.Inventory;
 using Edelstein.Common.Packets.Stats;
 using Edelstein.Database.Entities;
+using Edelstein.Database.Entities.Inventory;
 using Edelstein.Network.Packets;
 using Edelstein.WvsGame.Fields.Movements;
 using Edelstein.WvsGame.Packets;
@@ -221,12 +222,32 @@ namespace Edelstein.WvsGame.Fields.Objects
         {
             packet.Decode<int>();
 
-            Console.WriteLine("Inventory: " + packet.Decode<byte>());
-            Console.WriteLine("Pos1: " + packet.Decode<short>());
-            Console.WriteLine("Pos2: " + packet.Decode<short>());
-            Console.WriteLine("Count: " + packet.Decode<short>());
+            var fromInventory = (ItemInventoryType) packet.Decode<byte>();
+            var toInventory = fromInventory;
+            var fromSlot = packet.Decode<short>();
+            var toSlot = packet.Decode<short>();
 
-            ModifyInventory(exclRequest: true);
+            packet.Decode<short>();
+
+            if (fromSlot < 0) fromInventory = ItemInventoryType.Equipped;
+
+            ModifyInventory(i =>
+            {
+                switch (fromInventory)
+                {
+                    case ItemInventoryType.Equip when toSlot < 0:
+                        toInventory = ItemInventoryType.Equipped;
+                        break;
+                    case ItemInventoryType.Equipped when toSlot >= 0:
+                        toInventory = ItemInventoryType.Equip;
+                        break;
+                }
+
+                fromSlot = Math.Abs(fromSlot);
+                toSlot = Math.Abs(toSlot);
+
+                i.Move(fromInventory, fromSlot, toInventory, toSlot);
+            }, true);
         }
 
         private void OnUserAbilityUpRequest(InPacket packet)
