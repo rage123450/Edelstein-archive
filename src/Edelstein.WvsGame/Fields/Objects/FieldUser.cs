@@ -62,7 +62,7 @@ namespace Edelstein.WvsGame.Fields.Objects
                 .Where(i => i.Slot < 0)
                 .Select(i => i.Slot)
                 .ToList();
-            
+
             if (equipped.Except(newEquipped).Any() ||
                 newEquipped.Except(equipped).Any())
             {
@@ -98,6 +98,12 @@ namespace Edelstein.WvsGame.Fields.Objects
                     break;
                 case GameRecvOperations.UserEmotion:
                     OnUserEmotion(packet);
+                    break;
+                case GameRecvOperations.UserGatherItemRequest:
+                    OnUserGatherItemRequest(packet);
+                    break;
+                case GameRecvOperations.UserSortItemRequest:
+                    OnUserSortItemRequest(packet);
                     break;
                 case GameRecvOperations.UserChangeSlotPositionRequest:
                     OnUserChangeSlotPositionRequest(packet);
@@ -243,6 +249,58 @@ namespace Edelstein.WvsGame.Fields.Objects
 
                 p.Encode<long>(0);
                 return p;
+            }
+        }
+
+        private void OnUserGatherItemRequest(InPacket packet)
+        {
+            packet.Decode<int>();
+
+            var inventoryType = (ItemInventoryType) packet.Decode<byte>();
+            var inventoryCopy = Character.GetInventory(inventoryType).Items
+                .OrderBy(i => i.Slot)
+                .ToList();
+            short slot = 1;
+
+            ModifyInventory(i =>
+            {
+                inventoryCopy.ForEach(i.Remove);
+                inventoryCopy.ForEach(item => item.Slot = slot++);
+                inventoryCopy.ForEach(i.Set);
+            }, true);
+
+            using (var p = new OutPacket(GameSendOperations.GatherItemResult))
+            {
+                p.Encode<bool>(false);
+                p.Encode<byte>((byte) inventoryType);
+                SendPacket(p);
+            }
+        }
+
+        private void OnUserSortItemRequest(InPacket packet)
+        {
+            packet.Decode<int>();
+
+            var inventoryType = (ItemInventoryType) packet.Decode<byte>();
+            var inventoryCopy = Character.GetInventory(inventoryType).Items
+                .OrderBy(i => i.Slot)
+                .ToList();
+            var slots = inventoryCopy.Select(i => i.Slot).ToList();
+            var index = 0;
+
+            ModifyInventory(i =>
+            {
+                inventoryCopy.ForEach(i.Remove);
+                inventoryCopy = inventoryCopy.OrderBy(item => item.TemplateID).ToList();
+                inventoryCopy.ForEach(item => item.Slot = slots[index++]);
+                inventoryCopy.ForEach(i.Set);
+            }, true);
+
+            using (var p = new OutPacket(GameSendOperations.SortItemResult))
+            {
+                p.Encode<bool>(false);
+                p.Encode<byte>((byte) inventoryType);
+                SendPacket(p);
             }
         }
 

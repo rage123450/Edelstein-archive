@@ -20,14 +20,19 @@ namespace Edelstein.Common.Packets.Inventory
 
         public void Set(ItemInventoryType type, ItemSlot item, short slot)
         {
-            var inventory = _character.GetInventory(type);
+            item.ItemInventory = _character.GetInventory(type);
+            item.Slot = slot;
+            Set(item);
+        }
+
+        public void Set(ItemSlot item)
+        {
+            var inventory = item.ItemInventory;
             var inventoryItems = inventory.Items;
-            var existingItem = inventoryItems.SingleOrDefault(i => i.Slot == slot);
+            var existingItem = inventoryItems.SingleOrDefault(i => i.Slot == item.Slot);
 
             if (existingItem != null) Remove(existingItem);
 
-            item.ItemInventory = inventory;
-            item.Slot = slot;
             inventoryItems.Add(item);
             _operations.Add(new InventoryAddOperation(
                 inventory.Type,
