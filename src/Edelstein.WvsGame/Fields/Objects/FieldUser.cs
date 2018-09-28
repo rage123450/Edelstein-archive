@@ -340,7 +340,7 @@ namespace Edelstein.WvsGame.Fields.Objects
             {
                 var c = user.Character;
 
-                p.Encode<int>(ID);
+                p.Encode<int>(user.ID);
                 p.Encode<byte>(c.Level);
                 p.Encode<short>(c.Job);
                 p.Encode<short>(c.POP);
