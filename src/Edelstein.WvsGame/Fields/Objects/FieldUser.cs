@@ -44,6 +44,10 @@ namespace Edelstein.WvsGame.Fields.Objects
         public Task ModifyInventory(Action<ModifyInventoryContext> action = null, bool exclRequest = false)
         {
             var context = new ModifyInventoryContext(Character);
+            var equipped = Character.GetInventory(ItemInventoryType.Equip).Items
+                .Where(i => i.Slot < 0)
+                .Select(i => i.Slot)
+                .ToList();
 
             action?.Invoke(context);
             using (var p = new OutPacket(GameSendOperations.InventoryOperation))
@@ -51,8 +55,32 @@ namespace Edelstein.WvsGame.Fields.Objects
                 p.Encode<bool>(exclRequest);
                 context.Encode(p);
                 p.Encode<bool>(false);
-                return SendPacket(p);
+                SendPacket(p);
             }
+
+            var newEquipped = Character.GetInventory(ItemInventoryType.Equip).Items
+                .Where(i => i.Slot < 0)
+                .Select(i => i.Slot)
+                .ToList();
+            
+            if (equipped.Except(newEquipped).Any() ||
+                newEquipped.Except(equipped).Any())
+            {
+                using (var p = new OutPacket(GameSendOperations.UserAvatarModified))
+                {
+                    p.Encode<int>(ID);
+                    p.Encode<byte>(0x1); // Flag
+                    Character.EncodeLook(p);
+                    p.Encode<bool>(false); // bCouple
+                    p.Encode<bool>(false); // bFriendship
+                    p.Encode<bool>(false); // Marriage
+                    p.Encode<int>(0); // nCompletedSetItemID
+
+                    Field.BroadcastPacket(this, p);
+                }
+            }
+
+            return Task.CompletedTask;
         }
 
         public bool OnPacket(GameRecvOperations operation, InPacket packet)
