@@ -287,7 +287,6 @@ namespace Edelstein.WvsGame.Fields.Objects
                 .Where(i => i.Slot > 0)
                 .OrderBy(i => i.Slot)
                 .ToList();
-            var slots = inventoryCopy.Select(i => i.Slot).ToList();
 
             ModifyInventory(i =>
             {
