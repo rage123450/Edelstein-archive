@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Edelstein.Network.Packets;
 using Edelstein.Provider.Fields;
 using Edelstein.WvsGame.Fields.Objects;
+using Edelstein.WvsGame.Fields.Objects.Drops;
 using Edelstein.WvsGame.Packets;
 using MoreLinq.Extensions;
 
@@ -26,7 +27,7 @@ namespace Edelstein.WvsGame.Fields
             _objects = new List<FieldObject>();
         }
 
-        public bool OnPacket(FieldUser controller, GameRecvOperations operation, InPacket packet)
+        public bool OnPacket(FieldUser user, GameRecvOperations operation, InPacket packet)
         {
             switch (operation)
             {
@@ -36,7 +37,7 @@ namespace Edelstein.WvsGame.Fields
                     var mob = Objects
                         .OfType<FieldMob>()
                         .FirstOrDefault(m => m.ID == objectID);
-                    return mob?.OnPacket(controller, operation, packet) ?? true;
+                    return mob?.OnPacket(user, operation, packet) ?? true;
                 }
                 case GameRecvOperations.NpcMove:
                 {
@@ -44,16 +45,35 @@ namespace Edelstein.WvsGame.Fields
                     var npc = Objects
                         .OfType<FieldNPC>()
                         .FirstOrDefault(n => n.ID == objectID);
-                    return npc?.OnPacket(controller, operation, packet) ?? true;
+                    return npc?.OnPacket(user, operation, packet) ?? true;
                 }
+                case GameRecvOperations.DropPickUpRequest:
+                    OnDropPickUpRequest(user, packet);
+                    break;
                 default:
-                    return controller.OnPacket(operation, packet);
+                    return user.OnPacket(operation, packet);
             }
 
             return true;
         }
 
-        public void Enter(FieldObject obj)
+        private void OnDropPickUpRequest(FieldUser user, InPacket packet)
+        {
+            packet.Decode<byte>();
+            packet.Decode<int>();
+            packet.Decode<short>();
+            packet.Decode<short>();
+            var objectID = packet.Decode<int>();
+            packet.Decode<int>();
+            var drop = Objects
+                .OfType<FieldDrop>()
+                .FirstOrDefault(n => n.ID == objectID);
+
+            drop?.PickUp(user);
+            Leave(drop);
+        }
+
+        public void Enter(FieldObject obj, OutPacket enterPacket = null)
         {
             lock (this)
             {
@@ -80,7 +100,7 @@ namespace Edelstein.WvsGame.Fields
                     }
 
                     user.SendPacket(user.GetSetFieldPacket());
-                    BroadcastPacket(user, user.GetEnterFieldPacket());
+                    BroadcastPacket(user, enterPacket ?? user.GetEnterFieldPacket());
 
                     if (!user.Socket.IsInstantiated) user.Socket.IsInstantiated = true;
 
@@ -95,7 +115,7 @@ namespace Edelstein.WvsGame.Fields
                         Interlocked.Exchange(ref _runningObjectID, 1);
 
                     obj.ID = _runningObjectID;
-                    BroadcastPacket(obj.GetEnterFieldPacket());
+                    BroadcastPacket(enterPacket ?? obj.GetEnterFieldPacket());
                 }
 
                 _objects.Add(obj);
@@ -103,12 +123,12 @@ namespace Edelstein.WvsGame.Fields
             }
         }
 
-        public void Leave(FieldObject obj)
+        public void Leave(FieldObject obj, OutPacket leavePacket = null)
         {
             lock (this)
             {
                 if (obj is FieldUser user) BroadcastPacket(user, user.GetLeaveFieldPacket());
-                else BroadcastPacket(obj.GetLeaveFieldPacket());
+                else BroadcastPacket(leavePacket ?? obj.GetLeaveFieldPacket());
 
                 _objects.Remove(obj);
                 UpdateControlledObjects();

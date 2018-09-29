@@ -9,6 +9,7 @@ using Edelstein.Database.Entities;
 using Edelstein.Database.Entities.Inventory;
 using Edelstein.Network.Packets;
 using Edelstein.WvsGame.Fields.Movements;
+using Edelstein.WvsGame.Fields.Objects.Drops;
 using Edelstein.WvsGame.Packets;
 using Edelstein.WvsGame.Sockets;
 using MoreLinq;
@@ -113,6 +114,9 @@ namespace Edelstein.WvsGame.Fields.Objects
                     break;
                 case GameRecvOperations.UserAbilityMassUpRequest:
                     OnUserAbilityMassUpRequest(packet);
+                    break;
+                case GameRecvOperations.UserDropMoneyRequest:
+                    OnUserDropMoneyRequest(packet);
                     break;
                 case GameRecvOperations.UserCharacterInfoRequest:
                     OnUserCharacterInfoRequest(packet);
@@ -313,6 +317,20 @@ namespace Edelstein.WvsGame.Fields.Objects
 
             packet.Decode<short>();
 
+            if (toSlot == 0)
+            {
+                ModifyInventory(i =>
+                {
+                    var item = Character.GetInventory(inventoryType).Items
+                        .Single(ii => ii.Slot == fromSlot);
+                    var drop = new FieldDropItem(item) {X = X, Y = Y};
+
+                    i.Remove(item);
+                    Field.Enter(drop);
+                }, true);
+                return;
+            }
+
             ModifyInventory(i => i.Move(inventoryType, fromSlot, toSlot), true);
         }
 
@@ -384,6 +402,20 @@ namespace Edelstein.WvsGame.Fields.Objects
                 });
 
                 s.AP -= Convert.ToInt16(total);
+            }, true);
+        }
+
+        private void OnUserDropMoneyRequest(InPacket packet)
+        {
+            packet.Decode<int>();
+            var money = packet.Decode<int>();
+
+            ModifyStats(s =>
+            {
+                if (s.Money < money) return;
+                
+                s.Money -= money;
+                Field.Enter(new FieldDropMoney(money) {X = X, Y = Y});
             }, true);
         }
 
