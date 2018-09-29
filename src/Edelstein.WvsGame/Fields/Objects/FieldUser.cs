@@ -288,14 +288,12 @@ namespace Edelstein.WvsGame.Fields.Objects
                 .OrderBy(i => i.Slot)
                 .ToList();
             var slots = inventoryCopy.Select(i => i.Slot).ToList();
-            var index = 0;
 
             ModifyInventory(i =>
             {
                 inventoryCopy.ForEach(i.Remove);
                 inventoryCopy = inventoryCopy.OrderBy(item => item.TemplateID).ToList();
-                inventoryCopy.ForEach(item => item.Slot = slots[index++]);
-                inventoryCopy.ForEach(i.Set);
+                inventoryCopy.ForEach(i.Add);
             }, true);
 
             using (var p = new OutPacket(GameSendOperations.SortItemResult))
