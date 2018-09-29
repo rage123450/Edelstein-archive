@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Edelstein.Common.Packets.Inventory.Exceptions;
 using Edelstein.Common.Packets.Inventory.Operations;
 using Edelstein.Database.Entities;
 using Edelstein.Database.Entities.Inventory;
@@ -16,6 +18,72 @@ namespace Edelstein.Common.Packets.Inventory
         {
             _character = character;
             _operations = new List<InventoryOperation>();
+        }
+
+        public void Add(ItemInventoryType type, ItemSlot item)
+        {
+            var inventory = _character.GetInventory(type);
+
+            switch (item)
+            {
+                case ItemSlotBundle bundle:
+                    if (bundle.Number < 1) bundle.Number = 1;
+                    if (bundle.MaxNumber < 1) bundle.MaxNumber = 1;
+
+                    var mergeableSlots = inventory.Items
+                        .OfType<ItemSlotBundle>()
+                        .Where(b => b.TemplateID == bundle.TemplateID)
+                        .Where(b => b.Attribute == bundle.Attribute)
+                        .Where(b => b.Title == bundle.Title)
+                        .Where(b => b.Number != b.MaxNumber)
+                        .Where(b => b.Slot > 0)
+                        .Where(b => b.Slot <= inventory.SlotMax)
+                        .ToList();
+
+                    if (mergeableSlots.Count > 0)
+                    {
+                        var existingBundle = mergeableSlots.First();
+
+                        var count = bundle.Number + existingBundle.Number;
+                        var maxNumber = existingBundle.MaxNumber;
+
+                        if (count > maxNumber)
+                        {
+                            var leftover = count - maxNumber;
+
+                            bundle.Number = (short) leftover;
+                            existingBundle.Number = maxNumber;
+                            UpdateQuantity(existingBundle);
+                            Add(bundle);
+                            return;
+                        }
+
+                        existingBundle.Number += bundle.Number;
+                        UpdateQuantity(existingBundle);
+                        return;
+                    }
+
+                    goto default;
+                default:
+                    var usedSlots = inventory.Items
+                        .Select<ItemSlot, int>(i => i.Slot)
+                        .Where(s => s > 0)
+                        .Where(s => s <= inventory.SlotMax)
+                        .ToList();
+                    var unusedSlots = Enumerable.Range(1, inventory.SlotMax - 1)
+                        .Except(usedSlots)
+                        .ToList();
+
+                    if (unusedSlots.Count == 0) throw new InventoryFullException();
+
+                    Set(type, item, (short) unusedSlots.First());
+                    break;
+            }
+        }
+
+        public void Add(ItemSlot item)
+        {
+            Add(item.ItemInventory?.Type ?? (ItemInventoryType) (item.TemplateID / 1000000), item);
         }
 
         public void Set(ItemInventoryType type, ItemSlot item, short slot)
