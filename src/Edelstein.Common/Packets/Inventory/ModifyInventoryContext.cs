@@ -76,9 +76,39 @@ namespace Edelstein.Common.Packets.Inventory
             var existingItem = inventory.Items.SingleOrDefault(i => i.Slot == toSlot);
             var fromSlot = item.Slot;
 
+            if (item is ItemSlotBundle bundle)
+            {
+                if (existingItem is ItemSlotBundle existingBundle)
+                {
+                    if (bundle.TemplateID == existingBundle.TemplateID &&
+                        bundle.Attribute == existingBundle.Attribute &&
+                        bundle.Title == existingBundle.Title)
+                    {
+                        var count = bundle.Number + existingBundle.Number;
+                        var maxNumber = existingBundle.MaxNumber;
+
+                        if (count > maxNumber)
+                        {
+                            var leftover = count - maxNumber;
+
+                            bundle.Number = (short) leftover;
+                            existingBundle.Number = maxNumber;
+                            UpdateQuantity(bundle);
+                        }
+                        else
+                        {
+                            existingBundle.Number = (short) count;
+                            Remove(bundle);
+                        }
+
+                        UpdateQuantity(existingBundle);
+                        return;
+                    }
+                }
+            }
+
             if (existingItem != null)
             {
-                // TODO: bundle items
                 existingItem.ItemInventory = inventory;
                 existingItem.Slot = fromSlot;
             }
@@ -89,6 +119,15 @@ namespace Edelstein.Common.Packets.Inventory
                 inventory.Type,
                 fromSlot,
                 toSlot)
+            );
+        }
+
+        public void UpdateQuantity(ItemSlotBundle bundle)
+        {
+            _operations.Add(new InventoryUpdateQuantityOperation(
+                bundle.ItemInventory.Type,
+                bundle.Slot,
+                bundle.Number)
             );
         }
 

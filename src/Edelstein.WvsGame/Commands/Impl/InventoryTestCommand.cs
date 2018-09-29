@@ -12,19 +12,27 @@ namespace Edelstein.WvsGame.Commands.Impl
         {
             ctx.User.ModifyInventory(i =>
             {
-                i.Set(ItemInventoryType.Equip,
-                    new ItemSlotEquip
+                i.Set(ItemInventoryType.Etc,
+                    new ItemSlotBundle
                     {
-                        TemplateID = 1302000,
-                        Durability = 100
-                    }, -11);
-
-                i.Set(ItemInventoryType.Equip,
-                    new ItemSlotEquip
+                        TemplateID = 4000000,
+                        Number = 3,
+                        MaxNumber = 5
+                    }, 1);
+                i.Set(ItemInventoryType.Etc,
+                    new ItemSlotBundle
                     {
-                        TemplateID = 1302000,
-                        Durability = 100
-                    }, -111);
+                        TemplateID = 4000000,
+                        Number = 5,
+                        MaxNumber = 5
+                    }, 2);
+                i.Set(ItemInventoryType.Etc,
+                    new ItemSlotBundle
+                    {
+                        TemplateID = 4000000,
+                        Number = 9,
+                        MaxNumber = 5
+                    }, 3);
             });
 
             //ctx.User.ModifyInventory(i => { i.Move(ItemInventoryType.Equip, 1, 2); });
