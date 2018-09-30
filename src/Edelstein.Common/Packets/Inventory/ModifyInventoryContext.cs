@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Edelstein.Common.Packets.Inventory.Exceptions;
 using Edelstein.Common.Packets.Inventory.Operations;
+using Edelstein.Common.Utils.Items;
 using Edelstein.Database.Entities;
 using Edelstein.Database.Entities.Inventory;
 using Edelstein.Network.Packets;
+using Edelstein.Provider.Items;
 
 namespace Edelstein.Common.Packets.Inventory
 {
@@ -84,6 +86,20 @@ namespace Edelstein.Common.Packets.Inventory
         public void Add(ItemSlot item)
         {
             Add(item.ItemInventory?.Type ?? (ItemInventoryType) (item.TemplateID / 1000000), item);
+        }
+
+        public void Add(ItemTemplate template, short quantity = 1, ItemVariationType type = ItemVariationType.None)
+        {
+            var item = ItemInfo.FromTemplate(template);
+
+            if (item is ItemSlotBundle bundle)
+            {
+                bundle.Number = quantity;
+                Add(bundle);
+            }
+            else
+                for (var i = 0; i < quantity; i++)
+                    Add(ItemInfo.FromTemplate(template, type));
         }
 
         public void Set(ItemInventoryType type, ItemSlot item, short slot)
