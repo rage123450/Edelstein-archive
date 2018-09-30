@@ -72,7 +72,7 @@ namespace Edelstein.Common.Packets.Inventory
                         .Where(s => s > 0)
                         .Where(s => s <= inventory.SlotMax)
                         .ToList();
-                    var unusedSlots = Enumerable.Range(1, inventory.SlotMax - 1)
+                    var unusedSlots = Enumerable.Range(1, inventory.SlotMax)
                         .Except(usedSlots)
                         .ToList();
 
