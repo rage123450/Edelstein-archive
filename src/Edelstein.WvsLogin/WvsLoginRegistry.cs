@@ -1,9 +1,12 @@
 using System.IO;
 using Edelstein.Database;
+using Edelstein.Provider;
+using Edelstein.Provider.Items;
 using Edelstein.WvsLogin.Sockets;
 using Lamar;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using PKG1;
 
 namespace Edelstein.WvsLogin
 {
@@ -31,7 +34,15 @@ namespace Edelstein.WvsLogin
                 optionsBuilder.UseMySql(c.GetInstance<WvsLoginOptions>().ConnectionString);
                 return new DataContext(optionsBuilder.Options);
             });
+            
+            For<PackageCollection>().Use(c =>
+            {
+                WZReader.InitializeKeys();
+                return new PackageCollection(c.GetInstance<WvsLoginOptions>().BaseWZPath);
+            }).Singleton();
 
+            For<TemplateManager<ItemTemplate>>().Use<ItemTemplateManager>().Singleton();
+            
             For<CenterServerSocketFactory>().Use<CenterServerSocketFactory>();
             For<LoginClientSocketFactory>().Use<LoginClientSocketFactory>();
             

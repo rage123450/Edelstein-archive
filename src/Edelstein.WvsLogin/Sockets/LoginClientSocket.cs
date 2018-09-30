@@ -4,6 +4,8 @@ using DotNetty.Transport.Channels;
 using Edelstein.Common.Interop;
 using Edelstein.Common.Interop.Game;
 using Edelstein.Common.Packets;
+using Edelstein.Common.Packets.Inventory;
+using Edelstein.Common.Utils.Items;
 using Edelstein.Database;
 using Edelstein.Database.Entities;
 using Edelstein.Database.Entities.Inventory;
@@ -376,35 +378,14 @@ namespace Edelstein.WvsLogin.Sockets
                 inventories.Add(new ItemInventory(ItemInventoryType.Etc, 24));
                 inventories.Add(new ItemInventory(ItemInventoryType.Cash, 24));
 
-                // TODO: Inventory management
-                var equipped = character.GetInventory(ItemInventoryType.Equip).Items;
-                var topItem = new ItemSlotEquip();
-                var bottomItem = new ItemSlotEquip();
-                var shoesItem = new ItemSlotEquip();
-                var weaponItem = new ItemSlotEquip();
+                var context = new ModifyInventoryContext(character);
+                var templates = _wvsLogin.ItemTemplates;
 
-                topItem.Slot = -5;
-                topItem.Durability = 100;
-                topItem.TemplateID = top;
-
-                if (bottom > 0) // Resistance Overalls
-                {
-                    bottomItem.Slot = -6;
-                    bottomItem.Durability = 100;
-                    bottomItem.TemplateID = bottom;
-                    equipped.Add(bottomItem);
-                }
-
-                shoesItem.Slot = -7;
-                shoesItem.Durability = 100;
-                shoesItem.TemplateID = shoes;
-                weaponItem.Slot = -11;
-                weaponItem.Durability = 100;
-                weaponItem.TemplateID = weapon;
-
-                equipped.Add(topItem);
-                equipped.Add(shoesItem);
-                equipped.Add(weaponItem);
+                context.Set(templates.Get(top), -5);
+                if (bottom > 0)
+                    context.Set(templates.Get(bottom), -6);
+                context.Set(templates.Get(shoes), -7);
+                context.Set(templates.Get(weapon), -11);
 
                 Account.Characters.Add(character);
                 db.Update(Account);

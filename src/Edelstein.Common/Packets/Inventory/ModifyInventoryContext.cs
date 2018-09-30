@@ -102,6 +102,11 @@ namespace Edelstein.Common.Packets.Inventory
                     Add(ItemInfo.FromTemplate(template, type));
         }
 
+        public void Set(ItemTemplate template, short slot)
+        {
+            Set((ItemInventoryType) (template.TemplateID / 1000000), ItemInfo.FromTemplate(template), slot);
+        }
+
         public void Set(ItemInventoryType type, ItemSlot item, short slot)
         {
             item.ItemInventory = _character.GetInventory(type);

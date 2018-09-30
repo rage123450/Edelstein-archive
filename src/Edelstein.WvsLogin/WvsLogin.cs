@@ -4,6 +4,8 @@ using Edelstein.Common.Interop;
 using Edelstein.Common.Interop.Game;
 using Edelstein.Network;
 using Edelstein.Network.Packets;
+using Edelstein.Provider;
+using Edelstein.Provider.Items;
 using Edelstein.WvsLogin.Logging;
 using Edelstein.WvsLogin.Sockets;
 using Lamar;
@@ -17,8 +19,10 @@ namespace Edelstein.WvsLogin
         private readonly IContainer _container;
         public List<Client<CenterServerSocket>> InteropClients;
         public Server<LoginClientSocket> GameServer;
-
+        
         public LoginInformation LoginInformation { get; set; }
+        
+        public TemplateManager<ItemTemplate> ItemTemplates { get; set; }
 
         public WvsLogin(IContainer container)
         {
@@ -36,6 +40,8 @@ namespace Edelstein.WvsLogin
                 Name = info.Name
             };
 
+            ItemTemplates = _container.GetInstance<TemplateManager<ItemTemplate>>();
+            
             foreach (var clientOptions in options.InteropClientOptions)
             {
                 var client = new Client<CenterServerSocket>(

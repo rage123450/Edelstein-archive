@@ -12,5 +12,6 @@
     "Host": "127.0.0.1",
     "Port": 8484
   },
-  "ConnectionString": "Server=localhost;Uid=root;Database=Edelstein;"
+  "ConnectionString": "Server=localhost;Uid=root;Database=Edelstein;",
+  "BaseWZPath": "C:\\Nexon\\Library\\maplestory\\appdata\\Base.wz"
 }

@@ -10,6 +10,7 @@ namespace Edelstein.WvsLogin
         public ICollection<ClientOptions> InteropClientOptions { get; set; }
         public ServerOptions GameServerOptions { get; set; }
         public string ConnectionString { get; set; }
+        public string BaseWZPath { get; set; }
     }
 
     public class LoginInfo
