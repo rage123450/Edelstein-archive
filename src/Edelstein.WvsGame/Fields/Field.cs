@@ -70,7 +70,7 @@ namespace Edelstein.WvsGame.Fields
                 .FirstOrDefault(n => n.ID == objectID);
 
             drop?.PickUp(user);
-            Leave(drop);
+            Leave(drop, () => drop.GetLeaveFieldPacket(0x2, user));
         }
 
         public void Enter(FieldObject obj, Func<OutPacket> getEnterPacket = null)

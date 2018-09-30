@@ -47,7 +47,8 @@ namespace Edelstein.WvsGame.Fields.Objects.Drops
         }
 
         public OutPacket GetLeaveFieldPacket(
-            byte leaveType
+            byte leaveType,
+            FieldObject source = null
         )
         {
             using (var p = new OutPacket(GameSendOperations.DropLeaveField))
@@ -57,7 +58,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Drops
 
                 if (leaveType == 0x2 ||
                     leaveType == 0x3 ||
-                    leaveType == 0x5) p.Encode<int>(0);
+                    leaveType == 0x5) p.Encode<int>(source?.ID ?? 0);
                 else if (leaveType == 0x4) p.Encode<short>(0);
 
                 return p;
