@@ -406,7 +406,7 @@ namespace Edelstein.WvsLogin.Sockets
         private void OnEnableSPWRequest(InPacket packet, bool vac)
         {
             packet.Decode<bool>(); // ?
-            packet.Decode<int>(); // dwCharacterID
+            var characterID = packet.Decode<int>();
 
             if (vac) packet.Decode<int>(); // Unknown
 
@@ -432,6 +432,17 @@ namespace Edelstein.WvsLogin.Sockets
                 Account.SPW = BCrypt.Net.BCrypt.HashPassword(spw);
                 db.Update(Account);
                 db.SaveChanges();
+            }
+
+            var world = _wvsLogin.InteropClients.Single(c => c.Socket.WorldInformation.ID == _selectedWorld.ID);
+
+            using (var p = new OutPacket(InteropRecvOperations.MigrationRequest))
+            {
+                p.Encode<byte>((byte) ServerType.Game);
+                p.Encode<byte>(_selectedChannel.ID);
+                p.Encode<string>(SessionKey);
+                p.Encode<int>(characterID);
+                world.Socket.SendPacket(p);
             }
         }
 
