@@ -2,18 +2,15 @@ using PKG1;
 
 namespace Edelstein.Provider.Items
 {
-    public class ItemTemplateManager : ITemplateManager<ItemTemplate>
+    public class ItemTemplateManager : TemplateManager<ItemTemplate>
     {
-        private readonly PackageCollection _collection;
-
-        public ItemTemplateManager(PackageCollection collection)
+        public ItemTemplateManager(PackageCollection collection) : base(collection)
         {
-            _collection = collection;
         }
 
-        public ItemTemplate Get(int templateId)
+        public override ItemTemplate Load(int templateId)
         {
-            return ItemTemplate.Parse(templateId, _collection);
+            return ItemTemplate.Parse(templateId, Collection);
         }
     }
 }

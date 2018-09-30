@@ -2,18 +2,15 @@ using PKG1;
 
 namespace Edelstein.Provider.NPC
 {
-    public class NPCTemplateManager : ITemplateManager<NPCTemplate>
+    public class NPCTemplateManager : TemplateManager<NPCTemplate>
     {
-        private readonly PackageCollection _collection;
-
-        public NPCTemplateManager(PackageCollection collection)
+        public NPCTemplateManager(PackageCollection collection) : base(collection)
         {
-            _collection = collection;
         }
 
-        public NPCTemplate Get(int templateId)
+        public override NPCTemplate Load(int templateId)
         {
-            return NPCTemplate.Parse(templateId, _collection);
+            return NPCTemplate.Parse(templateId, Collection);
         }
     }
 }

@@ -47,10 +47,10 @@ namespace Edelstein.WvsGame
                 return new PackageCollection(c.GetInstance<WvsGameOptions>().BaseWZPath);
             }).Singleton();
 
-            For<ITemplateManager<ItemTemplate>>().Use<ItemTemplateManager>().Singleton();
-            For<ITemplateManager<FieldTemplate>>().Use<FieldTemplateManager>().Singleton();
-            For<ITemplateManager<NPCTemplate>>().Use<NPCTemplateManager>().Singleton();
-            For<ITemplateManager<MobTemplate>>().Use<MobTemplateManager>().Singleton();
+            For<TemplateManager<ItemTemplate>>().Use<ItemTemplateManager>().Singleton();
+            For<TemplateManager<FieldTemplate>>().Use<FieldTemplateManager>().Singleton();
+            For<TemplateManager<NPCTemplate>>().Use<NPCTemplateManager>().Singleton();
+            For<TemplateManager<MobTemplate>>().Use<MobTemplateManager>().Singleton();
 
             For<CenterServerSocketFactory>().Use<CenterServerSocketFactory>();
             For<GameClientSocketFactory>().Use<GameClientSocketFactory>();

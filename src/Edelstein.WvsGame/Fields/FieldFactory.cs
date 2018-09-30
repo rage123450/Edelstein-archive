@@ -11,15 +11,15 @@ namespace Edelstein.WvsGame.Fields
 {
     public class FieldFactory
     {
-        private readonly ITemplateManager<FieldTemplate> _fieldTemplateManager;
-        private readonly ITemplateManager<NPCTemplate> _npcTemplateManager;
-        private readonly ITemplateManager<MobTemplate> _mobTemplateManager;
+        private readonly TemplateManager<FieldTemplate> _fieldTemplateManager;
+        private readonly TemplateManager<NPCTemplate> _npcTemplateManager;
+        private readonly TemplateManager<MobTemplate> _mobTemplateManager;
         private readonly IDictionary<int, Field> _fields;
 
         public FieldFactory(
-            ITemplateManager<FieldTemplate> fieldTemplateManager,
-            ITemplateManager<NPCTemplate> npcTemplateManager,
-            ITemplateManager<MobTemplate> mobTemplateManager
+            TemplateManager<FieldTemplate> fieldTemplateManager,
+            TemplateManager<NPCTemplate> npcTemplateManager,
+            TemplateManager<MobTemplate> mobTemplateManager
         )
         {
             _fieldTemplateManager = fieldTemplateManager;

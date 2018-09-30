@@ -29,10 +29,10 @@ namespace Edelstein.WvsGame
 
         public CommandRegistry CommandRegistry { get; set; }
 
-        public ITemplateManager<ItemTemplate> ItemTemplates { get; set; }
-        public ITemplateManager<FieldTemplate> FieldTemplates { get; set; }
-        public ITemplateManager<NPCTemplate> NPCTemplates { get; set; }
-        public ITemplateManager<MobTemplate> MobTemplates { get; set; }
+        public TemplateManager<ItemTemplate> ItemTemplates { get; set; }
+        public TemplateManager<FieldTemplate> FieldTemplates { get; set; }
+        public TemplateManager<NPCTemplate> NPCTemplates { get; set; }
+        public TemplateManager<MobTemplate> MobTemplates { get; set; }
         public FieldFactory FieldFactory { get; set; }
 
         public WvsGame(IContainer container)
@@ -57,10 +57,10 @@ namespace Edelstein.WvsGame
 
             CommandRegistry = _container.GetInstance<CommandRegistry>();
 
-            ItemTemplates = _container.GetInstance<ITemplateManager<ItemTemplate>>();
-            FieldTemplates = _container.GetInstance<ITemplateManager<FieldTemplate>>();
-            NPCTemplates = _container.GetInstance<ITemplateManager<NPCTemplate>>();
-            MobTemplates = _container.GetInstance<ITemplateManager<MobTemplate>>();
+            ItemTemplates = _container.GetInstance<TemplateManager<ItemTemplate>>();
+            FieldTemplates = _container.GetInstance<TemplateManager<FieldTemplate>>();
+            NPCTemplates = _container.GetInstance<TemplateManager<NPCTemplate>>();
+            MobTemplates = _container.GetInstance<TemplateManager<MobTemplate>>();
             FieldFactory = new FieldFactory(FieldTemplates, NPCTemplates, MobTemplates);
 
             InteropClient = new Client<CenterServerSocket>(

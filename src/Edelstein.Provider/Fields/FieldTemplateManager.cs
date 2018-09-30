@@ -2,18 +2,15 @@ using PKG1;
 
 namespace Edelstein.Provider.Fields
 {
-    public class FieldTemplateManager : ITemplateManager<FieldTemplate>
+    public class FieldTemplateManager : TemplateManager<FieldTemplate>
     {
-        private readonly PackageCollection _collection;
-
-        public FieldTemplateManager(PackageCollection collection)
+        public FieldTemplateManager(PackageCollection collection) : base(collection)
         {
-            _collection = collection;
         }
 
-        public FieldTemplate Get(int templateId)
+        public override FieldTemplate Load(int templateId)
         {
-            return FieldTemplate.Parse(templateId, _collection);
+            return FieldTemplate.Parse(templateId, Collection);
         }
     }
 }

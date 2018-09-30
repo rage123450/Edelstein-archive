@@ -2,18 +2,15 @@ using PKG1;
 
 namespace Edelstein.Provider.Mobs
 {
-    public class MobTemplateManager : ITemplateManager<MobTemplate>
+    public class MobTemplateManager : TemplateManager<MobTemplate>
     {
-        private readonly PackageCollection _collection;
-
-        public MobTemplateManager(PackageCollection collection)
+        public MobTemplateManager(PackageCollection collection) : base(collection)
         {
-            _collection = collection;
         }
 
-        public MobTemplate Get(int templateId)
+        public override MobTemplate Load(int templateId)
         {
-            return MobTemplate.Parse(templateId, _collection);
+            return MobTemplate.Parse(templateId, Collection);
         }
     }
 }
