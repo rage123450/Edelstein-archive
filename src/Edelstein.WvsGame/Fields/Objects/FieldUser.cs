@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Edelstein.Common.Packets;
 using Edelstein.Common.Packets.Inventory;
+using Edelstein.Common.Packets.Messages;
 using Edelstein.Common.Packets.Stats;
 using Edelstein.Database.Entities;
 using Edelstein.Database.Entities.Inventory;
@@ -82,6 +83,20 @@ namespace Edelstein.WvsGame.Fields.Objects
             }
 
             return Task.CompletedTask;
+        }
+
+        public Task Message(string text)
+        {
+            return Message(new SystemMessage(text));
+        }
+
+        public Task Message(Message message)
+        {
+            using (var p = new OutPacket(GameSendOperations.Message))
+            {
+                message.Encode(p);
+                return SendPacket(p);
+            }
         }
 
         public bool OnPacket(GameRecvOperations operation, InPacket packet)
@@ -186,7 +201,7 @@ namespace Edelstein.WvsGame.Fields.Objects
                 }
                 catch (Exception)
                 {
-                    // TODO: do something
+                    Message("An error has occured while executing that command.");
                 }
 
                 return;

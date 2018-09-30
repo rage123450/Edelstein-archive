@@ -89,6 +89,8 @@ namespace Edelstein.WvsGame.Commands.Impl
                             s.TempEXP = Convert.ToInt32(value);
                             break;
                     }
+
+                    ctx.User.Message($"Successfully set {stat} to {value}.");
                 });
             }
             catch (ArgumentException)
