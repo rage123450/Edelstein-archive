@@ -52,6 +52,7 @@ namespace Edelstein.Database.Entities
 
         public ICollection<FunctionKey> FunctionKeys { get; set; }
         public ICollection<ItemInventory> Inventories { get; set; }
+        public ICollection<SkillRecord> SkillRecords { get; set; }
 
         public ItemInventory GetInventory(ItemInventoryType type)
         {

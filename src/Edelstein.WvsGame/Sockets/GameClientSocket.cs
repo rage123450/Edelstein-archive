@@ -70,6 +70,7 @@ namespace Edelstein.WvsGame.Sockets
                     .Include(c => c.FunctionKeys)
                     .Include(c => c.Inventories)
                     .ThenInclude(c => c.Items)
+                    .Include(c => c.SkillRecords)
                     .Single(c => c.ID == characterID);
 
                 character.Account.State = AccountState.LoggedIn;

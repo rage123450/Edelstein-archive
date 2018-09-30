@@ -110,7 +110,15 @@ namespace Edelstein.Common.Packets
 
             if ((flag & 0x100) != 0) // Skill Record
             {
-                p.Encode<short>(0);
+                p.Encode<short>((short) c.SkillRecords.Count);
+                foreach (var skillRecord in c.SkillRecords)
+                {
+                    p.Encode<int>(skillRecord.SkillID);
+                    p.Encode<int>(skillRecord.Info);
+                    p.Encode<long>(0); // skillRecord.DateExpire;
+                    // is_skill_need_master_level
+                    // skillRecord.MasterLevel;
+                }
             }
 
             if ((flag & 0x8000) != 0) // Skill Cooltime

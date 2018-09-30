@@ -58,6 +58,7 @@ namespace Edelstein.Database
                     .Include(c => c.FunctionKeys)
                     .Include(c => c.Inventories)
                     .ThenInclude(c => c.Items)
+                    .Include(c => c.SkillRecords)
                     .FirstOrDefault(c => c.ID == character.ID);
 
                 if (existing != null)
@@ -75,6 +76,12 @@ namespace Edelstein.Database
                     {
                         if (currentItems.All(i => i.ID != existingItem.ID))
                             Entry(existingItem).State = EntityState.Deleted;
+                    }
+                    
+                    foreach (var skillRecord in existing.SkillRecords)
+                    {
+                        if (character.SkillRecords.All(s => s.ID != skillRecord.ID))
+                            Entry(skillRecord).State = EntityState.Deleted;
                     }
                 }
             }
