@@ -122,6 +122,8 @@ namespace Edelstein.Common.Packets.Inventory
             var inventory = item.ItemInventory;
             var inventoryItems = inventory.Items;
 
+            item.ID = 0;
+
             inventoryItems.Remove(item);
             _operations.Add(new InventoryRemoveOperation(
                 inventory.Type,
