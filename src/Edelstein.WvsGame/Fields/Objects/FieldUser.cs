@@ -199,8 +199,9 @@ namespace Edelstein.WvsGame.Fields.Objects
                         message.Substring(1)
                     );
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    Console.WriteLine(e.ToString());
                     Message("An error has occured while executing that command.");
                 }
 

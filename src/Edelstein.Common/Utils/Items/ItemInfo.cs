@@ -12,6 +12,8 @@ namespace Edelstein.Common.Utils.Items
             return new ItemSlotEquip
             {
                 TemplateID = template.TemplateID,
+
+                RUC = (byte) template.TUC,
                 STR = (short) variation.Get(template.IncSTR),
                 DEX = (short) variation.Get(template.IncDEX),
                 INT = (short) variation.Get(template.IncINT),
@@ -26,7 +28,8 @@ namespace Edelstein.Common.Utils.Items
                 EVA = (short) variation.Get(template.IncEVA),
                 Craft = (short) variation.Get(template.IncCraft),
                 Speed = (short) variation.Get(template.IncSpeed),
-                Jump = (short) variation.Get(template.IncJump)
+                Jump = (short) variation.Get(template.IncJump),
+                Durability = 100
             };
         }
 
@@ -35,7 +38,7 @@ namespace Edelstein.Common.Utils.Items
             return new ItemSlotBundle
             {
                 TemplateID = template.TemplateID,
-                MaxNumber = template.MaxPerSlot
+                MaxNumber = (short) template.MaxPerSlot
             };
         }
 

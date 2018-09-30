@@ -2,6 +2,7 @@ using System.IO;
 using Edelstein.Database;
 using Edelstein.Provider;
 using Edelstein.Provider.Fields;
+using Edelstein.Provider.Items;
 using Edelstein.Provider.Mobs;
 using Edelstein.Provider.NPC;
 using Edelstein.WvsGame.Commands;
@@ -45,6 +46,8 @@ namespace Edelstein.WvsGame
                 WZReader.InitializeKeys();
                 return new PackageCollection(c.GetInstance<WvsGameOptions>().BaseWZPath);
             }).Singleton();
+
+            For<ITemplateManager<ItemTemplate>>().Use<ItemTemplateManager>().Singleton();
             For<ITemplateManager<FieldTemplate>>().Use<FieldTemplateManager>().Singleton();
             For<ITemplateManager<NPCTemplate>>().Use<NPCTemplateManager>().Singleton();
             For<ITemplateManager<MobTemplate>>().Use<MobTemplateManager>().Singleton();

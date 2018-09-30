@@ -6,6 +6,7 @@ using Edelstein.Network;
 using Edelstein.Network.Packets;
 using Edelstein.Provider;
 using Edelstein.Provider.Fields;
+using Edelstein.Provider.Items;
 using Edelstein.Provider.Mobs;
 using Edelstein.Provider.NPC;
 using Edelstein.WvsGame.Commands;
@@ -28,6 +29,7 @@ namespace Edelstein.WvsGame
 
         public CommandRegistry CommandRegistry { get; set; }
 
+        public ITemplateManager<ItemTemplate> ItemTemplates { get; set; }
         public ITemplateManager<FieldTemplate> FieldTemplates { get; set; }
         public ITemplateManager<NPCTemplate> NPCTemplates { get; set; }
         public ITemplateManager<MobTemplate> MobTemplates { get; set; }
@@ -55,6 +57,7 @@ namespace Edelstein.WvsGame
 
             CommandRegistry = _container.GetInstance<CommandRegistry>();
 
+            ItemTemplates = _container.GetInstance<ITemplateManager<ItemTemplate>>();
             FieldTemplates = _container.GetInstance<ITemplateManager<FieldTemplate>>();
             NPCTemplates = _container.GetInstance<ITemplateManager<NPCTemplate>>();
             MobTemplates = _container.GetInstance<ITemplateManager<MobTemplate>>();
