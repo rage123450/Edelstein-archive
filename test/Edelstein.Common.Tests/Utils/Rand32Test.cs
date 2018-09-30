@@ -1,7 +1,7 @@
-using System;
+using Edelstein.Common.Utils;
 using Xunit;
 
-namespace Edelstein.Common.Tests
+namespace Edelstein.Common.Tests.Utils
 {
     public class Rand32Test
     {

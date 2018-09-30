@@ -1,4 +1,6 @@
-namespace Edelstein.Common
+using System;
+
+namespace Edelstein.Common.Utils
 {
     public class Rand32
     {
@@ -19,6 +21,16 @@ namespace Edelstein.Common
             _prevSeed1 = seed1;
             _prevSeed2 = seed2;
             _prevSeed3 = seed3;
+        }
+
+        public static Rand32 Create()
+        {
+            var rand = new Random();
+            return new Rand32(
+                (uint) rand.Next(),
+                (uint) rand.Next(),
+                (uint) rand.Next()
+            );
         }
 
         public int Random()
