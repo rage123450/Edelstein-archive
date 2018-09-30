@@ -326,7 +326,7 @@ namespace Edelstein.WvsGame.Fields.Objects
                     var drop = new FieldDropItem(item) {X = X, Y = Y};
 
                     i.Remove(item);
-                    Field.Enter(drop);
+                    Field.Enter(drop, () => drop.GetEnterFieldPacket(0x1, this));
                 }, true);
                 return;
             }
@@ -413,9 +413,10 @@ namespace Edelstein.WvsGame.Fields.Objects
             ModifyStats(s =>
             {
                 if (s.Money < money) return;
-                
+                var drop = new FieldDropMoney(money) {X = X, Y = Y};
+
                 s.Money -= money;
-                Field.Enter(new FieldDropMoney(money) {X = X, Y = Y});
+                Field.Enter(drop, () => drop.GetEnterFieldPacket(0x1, this));
             }, true);
         }
 

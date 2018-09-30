@@ -73,7 +73,7 @@ namespace Edelstein.WvsGame.Fields
             Leave(drop);
         }
 
-        public void Enter(FieldObject obj, OutPacket enterPacket = null)
+        public void Enter(FieldObject obj, Func<OutPacket> getEnterPacket = null)
         {
             lock (this)
             {
@@ -100,7 +100,7 @@ namespace Edelstein.WvsGame.Fields
                     }
 
                     user.SendPacket(user.GetSetFieldPacket());
-                    BroadcastPacket(user, enterPacket ?? user.GetEnterFieldPacket());
+                    BroadcastPacket(user, getEnterPacket?.Invoke() ?? user.GetEnterFieldPacket());
 
                     if (!user.Socket.IsInstantiated) user.Socket.IsInstantiated = true;
 
@@ -115,7 +115,7 @@ namespace Edelstein.WvsGame.Fields
                         Interlocked.Exchange(ref _runningObjectID, 1);
 
                     obj.ID = _runningObjectID;
-                    BroadcastPacket(enterPacket ?? obj.GetEnterFieldPacket());
+                    BroadcastPacket(getEnterPacket?.Invoke() ?? obj.GetEnterFieldPacket());
                 }
 
                 _objects.Add(obj);
@@ -123,12 +123,12 @@ namespace Edelstein.WvsGame.Fields
             }
         }
 
-        public void Leave(FieldObject obj, OutPacket leavePacket = null)
+        public void Leave(FieldObject obj, Func<OutPacket> getLeavePacket = null)
         {
             lock (this)
             {
                 if (obj is FieldUser user) BroadcastPacket(user, user.GetLeaveFieldPacket());
-                else BroadcastPacket(leavePacket ?? obj.GetLeaveFieldPacket());
+                else BroadcastPacket(getLeavePacket?.Invoke() ?? obj.GetLeaveFieldPacket());
 
                 _objects.Remove(obj);
                 UpdateControlledObjects();
