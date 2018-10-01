@@ -25,7 +25,7 @@ namespace Edelstein.WvsGame.Commands.Impl
             {
                 templateID = ctx.User.Socket.WvsGame.ItemNames.All
                     .FirstOrDefault(
-                        p => input.ToLower().StartsWith(p.Value.ToLower())
+                        p => p.Value.ToLower().StartsWith(input.ToLower())
                     )
                     .Key;
             }
