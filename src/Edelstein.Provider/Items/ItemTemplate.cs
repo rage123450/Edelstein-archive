@@ -45,6 +45,8 @@ namespace Edelstein.Provider.Items
             BigSize = p.ResolveFor<bool>("info/bigSize") ?? false;
             ExpireOnLogout = p.ResolveFor<bool>("info/expireOnLogout") ?? false;
             AccountSharable = p.ResolveFor<bool>("info/accountSharable") ?? false;
+
+            Cash = p.ResolveFor<bool>("info/cash") ?? false;
         }
 
         public static ItemTemplate Parse(int templateId, PackageCollection collection)
