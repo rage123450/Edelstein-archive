@@ -9,6 +9,7 @@ using Edelstein.Provider.Fields;
 using Edelstein.Provider.Items;
 using Edelstein.Provider.Mobs;
 using Edelstein.Provider.NPC;
+using Edelstein.Provider.Strings;
 using Edelstein.WvsGame.Commands;
 using Edelstein.WvsGame.Fields;
 using Edelstein.WvsGame.Logging;
@@ -28,6 +29,9 @@ namespace Edelstein.WvsGame
         public ICollection<int> PendingMigrations { get; set; }
 
         public CommandRegistry CommandRegistry { get; set; }
+
+        public ItemNameManager ItemNames { get; set; }
+        public FieldNameManager FieldNames { get; set; }
 
         public TemplateManager<ItemTemplate> ItemTemplates { get; set; }
         public TemplateManager<FieldTemplate> FieldTemplates { get; set; }
@@ -56,6 +60,16 @@ namespace Edelstein.WvsGame
             };
 
             CommandRegistry = _container.GetInstance<CommandRegistry>();
+
+            ItemNames = _container.GetInstance<ItemNameManager>();
+            FieldNames = _container.GetInstance<FieldNameManager>();
+
+            Logger.Info("Loading template names..");
+            await Task.WhenAll(
+                ItemNames.LoadAll(),
+                FieldNames.LoadAll()
+            );
+            Logger.Info("Finished loading template names");
 
             ItemTemplates = _container.GetInstance<TemplateManager<ItemTemplate>>();
             FieldTemplates = _container.GetInstance<TemplateManager<FieldTemplate>>();

@@ -5,6 +5,7 @@ using Edelstein.Provider.Fields;
 using Edelstein.Provider.Items;
 using Edelstein.Provider.Mobs;
 using Edelstein.Provider.NPC;
+using Edelstein.Provider.Strings;
 using Edelstein.WvsGame.Commands;
 using Edelstein.WvsGame.Sockets;
 using Lamar;
@@ -47,6 +48,8 @@ namespace Edelstein.WvsGame
                 return new PackageCollection(c.GetInstance<WvsGameOptions>().BaseWZPath);
             }).Singleton();
 
+            For<ItemNameManager>().Use<ItemNameManager>().Singleton();
+            For<FieldNameManager>().Use<FieldNameManager>().Singleton();
             For<TemplateManager<ItemTemplate>>().Use<ItemTemplateManager>().Singleton();
             For<TemplateManager<FieldTemplate>>().Use<FieldTemplateManager>().Singleton();
             For<TemplateManager<NPCTemplate>>().Use<NPCTemplateManager>().Singleton();
