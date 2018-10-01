@@ -5,21 +5,21 @@ using PKG1;
 
 namespace Edelstein.Provider
 {
-    public abstract class StringTemplateManager
+    public abstract class EagerTemplateManager<T> : ITemplateManager<T>
     {
         protected readonly PackageCollection Collection;
-        protected readonly IDictionary<int, string> Templates;
+        protected readonly IDictionary<int, T> Templates;
 
-        public IReadOnlyDictionary<int, string> All =>
-            new ReadOnlyDictionary<int, string>(Templates);
+        public IReadOnlyDictionary<int, T> All =>
+            new ReadOnlyDictionary<int, T>(Templates);
 
-        protected StringTemplateManager(PackageCollection collection)
+        protected EagerTemplateManager(PackageCollection collection)
         {
             Collection = collection;
-            Templates = new Dictionary<int, string>();
+            Templates = new Dictionary<int, T>();
         }
 
-        public string Get(int templateId)
+        public T Get(int templateId)
         {
             lock (this)
             {

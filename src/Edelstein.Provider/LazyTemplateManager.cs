@@ -4,12 +4,12 @@ using PKG1;
 
 namespace Edelstein.Provider
 {
-    public abstract class TemplateManager<T>
+    public abstract class LazyTemplateManager<T>: ITemplateManager<T>
     {
         protected readonly PackageCollection Collection;
         private IDictionary<int, T> _templates;
 
-        protected TemplateManager(PackageCollection collection)
+        protected LazyTemplateManager(PackageCollection collection)
         {
             Collection = collection;
             _templates = new Dictionary<int, T>();

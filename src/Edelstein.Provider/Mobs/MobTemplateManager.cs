@@ -2,9 +2,9 @@ using PKG1;
 
 namespace Edelstein.Provider.Mobs
 {
-    public class MobTemplateManager : TemplateManager<MobTemplate>
+    public class MobLazyTemplateManager : LazyTemplateManager<MobTemplate>
     {
-        public MobTemplateManager(PackageCollection collection) : base(collection)
+        public MobLazyTemplateManager(PackageCollection collection) : base(collection)
         {
         }
 

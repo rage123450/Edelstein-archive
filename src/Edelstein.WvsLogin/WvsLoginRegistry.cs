@@ -41,7 +41,7 @@ namespace Edelstein.WvsLogin
                 return new PackageCollection(c.GetInstance<WvsLoginOptions>().BaseWZPath);
             }).Singleton();
 
-            For<TemplateManager<ItemTemplate>>().Use<ItemTemplateManager>().Singleton();
+            For<LazyTemplateManager<ItemTemplate>>().Use<ItemLazyTemplateManager>().Singleton();
             
             For<CenterServerSocketFactory>().Use<CenterServerSocketFactory>();
             For<LoginClientSocketFactory>().Use<LoginClientSocketFactory>();

@@ -7,7 +7,7 @@ using PKG1;
 
 namespace Edelstein.Provider.Strings
 {
-    public class ItemNameManager : StringTemplateManager
+    public class ItemNameManager : EagerTemplateManager<string>
     {
         public ItemNameManager(PackageCollection collection) : base(collection)
         {

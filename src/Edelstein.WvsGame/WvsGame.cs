@@ -33,10 +33,10 @@ namespace Edelstein.WvsGame
         public ItemNameManager ItemNames { get; set; }
         public FieldNameManager FieldNames { get; set; }
 
-        public TemplateManager<ItemTemplate> ItemTemplates { get; set; }
-        public TemplateManager<FieldTemplate> FieldTemplates { get; set; }
-        public TemplateManager<NPCTemplate> NPCTemplates { get; set; }
-        public TemplateManager<MobTemplate> MobTemplates { get; set; }
+        public LazyTemplateManager<ItemTemplate> ItemLazyTemplates { get; set; }
+        public LazyTemplateManager<FieldTemplate> FieldLazyTemplates { get; set; }
+        public LazyTemplateManager<NPCTemplate> NpcLazyTemplates { get; set; }
+        public LazyTemplateManager<MobTemplate> MobLazyTemplates { get; set; }
         public FieldFactory FieldFactory { get; set; }
 
         public WvsGame(IContainer container)
@@ -71,11 +71,11 @@ namespace Edelstein.WvsGame
             );
             Logger.Info("Finished loading template names");
 
-            ItemTemplates = _container.GetInstance<TemplateManager<ItemTemplate>>();
-            FieldTemplates = _container.GetInstance<TemplateManager<FieldTemplate>>();
-            NPCTemplates = _container.GetInstance<TemplateManager<NPCTemplate>>();
-            MobTemplates = _container.GetInstance<TemplateManager<MobTemplate>>();
-            FieldFactory = new FieldFactory(FieldTemplates, NPCTemplates, MobTemplates);
+            ItemLazyTemplates = _container.GetInstance<LazyTemplateManager<ItemTemplate>>();
+            FieldLazyTemplates = _container.GetInstance<LazyTemplateManager<FieldTemplate>>();
+            NpcLazyTemplates = _container.GetInstance<LazyTemplateManager<NPCTemplate>>();
+            MobLazyTemplates = _container.GetInstance<LazyTemplateManager<MobTemplate>>();
+            FieldFactory = new FieldFactory(FieldLazyTemplates, NpcLazyTemplates, MobLazyTemplates);
 
             InteropClient = new Client<CenterServerSocket>(
                 options.InteropClientOptions,

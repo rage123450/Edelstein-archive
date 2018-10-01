@@ -11,20 +11,20 @@ namespace Edelstein.WvsGame.Fields
 {
     public class FieldFactory
     {
-        private readonly TemplateManager<FieldTemplate> _fieldTemplateManager;
-        private readonly TemplateManager<NPCTemplate> _npcTemplateManager;
-        private readonly TemplateManager<MobTemplate> _mobTemplateManager;
+        private readonly LazyTemplateManager<FieldTemplate> _fieldLazyTemplateManager;
+        private readonly LazyTemplateManager<NPCTemplate> _npcLazyTemplateManager;
+        private readonly LazyTemplateManager<MobTemplate> _mobLazyTemplateManager;
         private readonly IDictionary<int, Field> _fields;
 
         public FieldFactory(
-            TemplateManager<FieldTemplate> fieldTemplateManager,
-            TemplateManager<NPCTemplate> npcTemplateManager,
-            TemplateManager<MobTemplate> mobTemplateManager
+            LazyTemplateManager<FieldTemplate> fieldLazyTemplateManager,
+            LazyTemplateManager<NPCTemplate> npcLazyTemplateManager,
+            LazyTemplateManager<MobTemplate> mobLazyTemplateManager
         )
         {
-            _fieldTemplateManager = fieldTemplateManager;
-            _npcTemplateManager = npcTemplateManager;
-            _mobTemplateManager = mobTemplateManager;
+            _fieldLazyTemplateManager = fieldLazyTemplateManager;
+            _npcLazyTemplateManager = npcLazyTemplateManager;
+            _mobLazyTemplateManager = mobLazyTemplateManager;
             _fields = new Dictionary<int, Field>();
         }
 
@@ -33,7 +33,7 @@ namespace Edelstein.WvsGame.Fields
             lock (this)
             {
                 if (_fields.ContainsKey(templateId)) return _fields[templateId];
-                var field = new Field(templateId, _fieldTemplateManager.Get(templateId));
+                var field = new Field(templateId, _fieldLazyTemplateManager.Get(templateId));
                 _fields[templateId] = field;
 
                 field.Template.Life.ForEach(l =>
@@ -41,7 +41,7 @@ namespace Edelstein.WvsGame.Fields
                     switch (l.Type)
                     {
                         case FieldLifeType.NPC:
-                            var npcTemplate = _npcTemplateManager.Get(l.TemplateID);
+                            var npcTemplate = _npcLazyTemplateManager.Get(l.TemplateID);
 
                             field.Enter(new FieldNPC(npcTemplate)
                             {
@@ -54,7 +54,7 @@ namespace Edelstein.WvsGame.Fields
                             });
                             break;
                         case FieldLifeType.Monster:
-                            var mobTemplate = _mobTemplateManager.Get(l.TemplateID);
+                            var mobTemplate = _mobLazyTemplateManager.Get(l.TemplateID);
 
                             field.Enter(new FieldMob(mobTemplate)
                             {

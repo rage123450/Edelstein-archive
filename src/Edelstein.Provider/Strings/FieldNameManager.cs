@@ -6,7 +6,7 @@ using PKG1;
 
 namespace Edelstein.Provider.Strings
 {
-    public class FieldNameManager : StringTemplateManager
+    public class FieldNameManager : EagerTemplateManager<string>
     {
         public FieldNameManager(PackageCollection collection) : base(collection)
         {

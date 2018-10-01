@@ -50,10 +50,10 @@ namespace Edelstein.WvsGame
 
             For<ItemNameManager>().Use<ItemNameManager>().Singleton();
             For<FieldNameManager>().Use<FieldNameManager>().Singleton();
-            For<TemplateManager<ItemTemplate>>().Use<ItemTemplateManager>().Singleton();
-            For<TemplateManager<FieldTemplate>>().Use<FieldTemplateManager>().Singleton();
-            For<TemplateManager<NPCTemplate>>().Use<NPCTemplateManager>().Singleton();
-            For<TemplateManager<MobTemplate>>().Use<MobTemplateManager>().Singleton();
+            For<LazyTemplateManager<ItemTemplate>>().Use<ItemLazyTemplateManager>().Singleton();
+            For<LazyTemplateManager<FieldTemplate>>().Use<FieldLazyTemplateManager>().Singleton();
+            For<LazyTemplateManager<NPCTemplate>>().Use<NpcLazyTemplateManager>().Singleton();
+            For<LazyTemplateManager<MobTemplate>>().Use<MobLazyTemplateManager>().Singleton();
 
             For<CenterServerSocketFactory>().Use<CenterServerSocketFactory>();
             For<GameClientSocketFactory>().Use<GameClientSocketFactory>();
