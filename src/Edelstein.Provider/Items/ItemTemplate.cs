@@ -53,7 +53,7 @@ namespace Edelstein.Provider.Items
             ItemTemplate item = null;
             var type = templateId / 1000000;
             var subType = templateId % 1000000 / 10000;
-            var header = templateId / 1000;
+            var header = templateId / 10000;
 
             switch (type)
             {
