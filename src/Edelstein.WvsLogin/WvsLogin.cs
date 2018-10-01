@@ -22,7 +22,7 @@ namespace Edelstein.WvsLogin
         
         public LoginInformation LoginInformation { get; set; }
         
-        public LazyTemplateManager<ItemTemplate> ItemLazyTemplates { get; set; }
+        public LazyTemplateManager<ItemTemplate> ItemTemplates { get; set; }
 
         public WvsLogin(IContainer container)
         {
@@ -40,7 +40,7 @@ namespace Edelstein.WvsLogin
                 Name = info.Name
             };
 
-            ItemLazyTemplates = _container.GetInstance<LazyTemplateManager<ItemTemplate>>();
+            ItemTemplates = _container.GetInstance<LazyTemplateManager<ItemTemplate>>();
             
             foreach (var clientOptions in options.InteropClientOptions)
             {

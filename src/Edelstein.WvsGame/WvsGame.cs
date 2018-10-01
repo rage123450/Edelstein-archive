@@ -33,10 +33,10 @@ namespace Edelstein.WvsGame
         public ItemNameManager ItemNames { get; set; }
         public FieldNameManager FieldNames { get; set; }
 
-        public LazyTemplateManager<ItemTemplate> ItemLazyTemplates { get; set; }
-        public LazyTemplateManager<FieldTemplate> FieldLazyTemplates { get; set; }
-        public LazyTemplateManager<NPCTemplate> NpcLazyTemplates { get; set; }
-        public LazyTemplateManager<MobTemplate> MobLazyTemplates { get; set; }
+        public LazyTemplateManager<ItemTemplate> ItemTemplates { get; set; }
+        public LazyTemplateManager<FieldTemplate> FieldTemplates { get; set; }
+        public LazyTemplateManager<NPCTemplate> NpcTemplates { get; set; }
+        public LazyTemplateManager<MobTemplate> MobTemplates { get; set; }
         public FieldFactory FieldFactory { get; set; }
 
         public WvsGame(IContainer container)
@@ -71,11 +71,11 @@ namespace Edelstein.WvsGame
             );
             Logger.Info("Finished loading template names");
 
-            ItemLazyTemplates = _container.GetInstance<LazyTemplateManager<ItemTemplate>>();
-            FieldLazyTemplates = _container.GetInstance<LazyTemplateManager<FieldTemplate>>();
-            NpcLazyTemplates = _container.GetInstance<LazyTemplateManager<NPCTemplate>>();
-            MobLazyTemplates = _container.GetInstance<LazyTemplateManager<MobTemplate>>();
-            FieldFactory = new FieldFactory(FieldLazyTemplates, NpcLazyTemplates, MobLazyTemplates);
+            ItemTemplates = _container.GetInstance<LazyTemplateManager<ItemTemplate>>();
+            FieldTemplates = _container.GetInstance<LazyTemplateManager<FieldTemplate>>();
+            NpcTemplates = _container.GetInstance<LazyTemplateManager<NPCTemplate>>();
+            MobTemplates = _container.GetInstance<LazyTemplateManager<MobTemplate>>();
+            FieldFactory = new FieldFactory(FieldTemplates, NpcTemplates, MobTemplates);
 
             InteropClient = new Client<CenterServerSocket>(
                 options.InteropClientOptions,

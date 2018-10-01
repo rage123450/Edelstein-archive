@@ -15,7 +15,7 @@ namespace Edelstein.WvsGame.Commands.Impl
         {
             var input = ctx.Args.Dequeue();
             var templateID = -1;
-            var templates = ctx.User.Socket.WvsGame.ItemLazyTemplates;
+            var templates = ctx.User.Socket.WvsGame.ItemTemplates;
 
             try
             {

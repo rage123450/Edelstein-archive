@@ -379,7 +379,7 @@ namespace Edelstein.WvsLogin.Sockets
                 inventories.Add(new ItemInventory(ItemInventoryType.Cash, 24));
 
                 var context = new ModifyInventoryContext(character);
-                var templates = _wvsLogin.ItemLazyTemplates;
+                var templates = _wvsLogin.ItemTemplates;
 
                 context.Set(templates.Get(top), -5);
                 if (bottom > 0)
