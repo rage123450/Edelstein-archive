@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
-using MoreLinq;
+using Edelstein.Provider.Items.Consume;
+using Edelstein.Provider.Items.Install;
 using PKG1;
 
 namespace Edelstein.Provider.Items
@@ -9,43 +10,109 @@ namespace Edelstein.Provider.Items
     {
         public int TemplateID { get; set; }
 
+        public int SellPrice { get; set; }
+        public bool TimeLimited { get; set; }
+
+        public int ReplaceTemplateID { get; set; }
+        public int ReplaceMsg { get; set; }
+        public int ReplacePeriod { get; set; }
+
+        public bool Quest { get; set; }
+        public bool PartyQuest { get; set; }
+        public bool Only { get; set; }
+        public bool TradeBlock { get; set; }
+        public bool NotSale { get; set; }
+        public bool BigSize { get; set; }
+        public bool ExpireOnLogout { get; set; }
+        public bool AccountSharable { get; set; }
+
+        public bool Cash { get; set; }
+
         public virtual void Parse(int templateId, WZProperty p)
         {
             TemplateID = templateId;
+
+            SellPrice = p.ResolveFor<int>("info/price") ?? 0;
+            TimeLimited = p.ResolveFor<bool>("info/timeLimited") ?? false;
+
+            // TODO: replace
+
+            Quest = p.ResolveFor<bool>("info/quest") ?? false;
+            PartyQuest = p.ResolveFor<bool>("info/pquest") ?? false;
+            Only = p.ResolveFor<bool>("info/only") ?? false;
+            TradeBlock = p.ResolveFor<bool>("info/tradeBlock") ?? false;
+            NotSale = p.ResolveFor<bool>("info/notSale") ?? false;
+            BigSize = p.ResolveFor<bool>("info/bigSize") ?? false;
+            ExpireOnLogout = p.ResolveFor<bool>("info/expireOnLogout") ?? false;
+            AccountSharable = p.ResolveFor<bool>("info/accountSharable") ?? false;
         }
 
         public static ItemTemplate Parse(int templateId, PackageCollection collection)
         {
-            ItemTemplate item;
+            WZProperty prop = null;
+            ItemTemplate item = null;
             var type = templateId / 1000000;
+            var subType = templateId % 1000000 / 10000;
 
             switch (type)
             {
                 case 1:
-                {
-                    var entry = collection.Resolve("Character").Children
+                    item = new ItemEquipTemplate();
+                    prop = collection.Resolve("Character").Children
                         .SelectMany(c => c.Children)
                         .FirstOrDefault(c => c.Name == $"{templateId:D8}.img");
-                    item = new ItemEquipTemplate();
-                    item.Parse(templateId, entry);
-                    return item;
-                }
+                    break;
                 case 2:
+                    switch (subType)
+                    {
+                        case 0:
+                        case 1:
+                        case 2:
+                        case 5:
+                        case 21:
+                            item = new StatChangeItemTemplate();
+                            break;
+                        case 3:
+                            item = new PortalScrollItemTemplate();
+                            break;
+                        case 4:
+                            item = new UpgradeItemTemplate();
+                            break;
+                        case 10:
+                            item = new MobSummonItemTemplate();
+                            break;
+                        case 12:
+                            item = new PetFoodItemTemplate();
+                            break;
+                        case 26:
+                            item = new TamingMobFoodItemTemplate();
+                            break;
+                        case 27:
+                            item = new BridleItemTemplate();
+                            break;
+                        case 28:
+                        case 29:
+                            item = new SkillLearnItemTemplate();
+                            break;
+                    }
+
+                    break;
                 case 3:
-                case 4:
-                case 5:
-                {
-                    var entry = collection.Resolve("Item").Children
-                        .SelectMany(c => c.Children)
-                        .SelectMany(c => c.Children)
-                        .FirstOrDefault(c => c.Name == $"{templateId:D8}");
-                    item = new ItemBundleTemplate();
-                    item.Parse(templateId, entry);
-                    return item;
-                }
+                    if (subType == 1) item = new PortableChairItemTemplate();
+                    break;
+                case 5: // TODO
+                    break;
             }
 
-            return null;
+            if (prop == null)
+                prop = collection.Resolve("Item").Children
+                    .SelectMany(c => c.Children)
+                    .SelectMany(c => c.Children)
+                    .FirstOrDefault(c => c.Name == $"{templateId:D8}");
+            if (item == null) item = new ItemBundleTemplate();
+
+            item.Parse(templateId, prop);
+            return item;
         }
     }
 }
