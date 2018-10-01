@@ -53,6 +53,7 @@ namespace Edelstein.Provider.Items
             ItemTemplate item = null;
             var type = templateId / 1000000;
             var subType = templateId % 1000000 / 10000;
+            var header = templateId / 1000;
 
             switch (type)
             {
@@ -63,6 +64,7 @@ namespace Edelstein.Provider.Items
                         .FirstOrDefault(c => c.Name == $"{templateId:D8}.img");
                     break;
                 case 2:
+                    prop = collection.Resolve($"Item/Consume/{header:D4}.img/{templateId:D8}");
                     switch (subType)
                     {
                         case 0:
@@ -98,17 +100,17 @@ namespace Edelstein.Provider.Items
 
                     break;
                 case 3:
+                    prop = collection.Resolve($"Item/Install/{header:D4}.img/{templateId:D8}");
                     if (subType == 1) item = new PortableChairItemTemplate();
                     break;
+                case 4:
+                    prop = collection.Resolve($"Item/Etc/{header:D4}.img/{templateId:D8}");
+                    break;
                 case 5: // TODO
+                    prop = collection.Resolve($"Item/Cash/{header:D4}.img/{templateId:D8}");
                     break;
             }
 
-            if (prop == null)
-                prop = collection.Resolve("Item").Children
-                    .SelectMany(c => c.Children)
-                    .SelectMany(c => c.Children)
-                    .FirstOrDefault(c => c.Name == $"{templateId:D8}");
             if (item == null) item = new ItemBundleTemplate();
 
             item.Parse(templateId, prop);
