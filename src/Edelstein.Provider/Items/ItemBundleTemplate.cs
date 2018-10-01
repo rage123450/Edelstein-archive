@@ -17,6 +17,8 @@ namespace Edelstein.Provider.Items
         public override void Parse(int templateId, WZProperty p)
         {
             base.Parse(templateId, p);
+
+            MaxPerSlot = p.ResolveFor<short>("info/slotMax") ?? 100;
         }
     }
 }
