@@ -80,12 +80,13 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
                     var template = templates.Get(i.TemplateID);
                     if (!(template is ItemEquipTemplate equipTemplate)) return;
                     // TODO: and not Dragon or Mechanic
-                    // TODO: niMaxHPr, niMaxMPr
-                    // TODO: Socket1, Socket2
                     var itemReqLevel = equipTemplate.ReqLevel;
                     var itemOptionLevel = itemReqLevel / 10;
 
                     itemOptionLevel = Math.Max(itemOptionLevel, 1);
+
+                    incMaxHPr += equipTemplate.IncMaxHPr;
+                    incMaxMPr += equipTemplate.IncMaxMPr;
 
                     ApplyItemOption(options, i.Option1, itemOptionLevel);
                     ApplyItemOption(options, i.Option2, itemOptionLevel);

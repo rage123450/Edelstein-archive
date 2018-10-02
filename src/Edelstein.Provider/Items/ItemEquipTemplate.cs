@@ -19,6 +19,8 @@ namespace Edelstein.Provider.Items
         public short IncLUK { get; set; }
         public int IncMaxHP { get; set; }
         public int IncMaxMP { get; set; }
+        public int IncMaxHPr { get; set; }
+        public int IncMaxMPr { get; set; }
         public short IncPAD { get; set; }
         public short IncMAD { get; set; }
         public short IncPDD { get; set; }
@@ -68,6 +70,8 @@ namespace Edelstein.Provider.Items
             IncLUK = p.ResolveFor<short>("info/incLUK") ?? 0;
             IncMaxHP = p.ResolveFor<int>("info/incMHP") ?? 0;
             IncMaxMP = p.ResolveFor<int>("info/incMMP") ?? 0;
+            IncMaxHPr = p.ResolveFor<int>("info/incMHPr") ?? 0;
+            IncMaxMPr = p.ResolveFor<int>("info/incMMPr") ?? 0;
             IncPAD = p.ResolveFor<short>("info/incPAD") ?? 0;
             IncMAD = p.ResolveFor<short>("info/incMAD") ?? 0;
             IncPDD = p.ResolveFor<short>("info/incPDD") ?? 0;

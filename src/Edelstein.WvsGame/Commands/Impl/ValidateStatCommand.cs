@@ -16,13 +16,13 @@ namespace Edelstein.WvsGame.Commands.Impl
                              $"INT = {bs.INT} " +
                              $"LUK = {bs.LUK} " +
                              $"MaxHP = {bs.MaxHP} " +
-                             $"MaxMP = {bs.MaxHP}");
+                             $"MaxMP = {bs.MaxMP}");
             ctx.User.Message($"STR% = {bs.Option.STRr} " +
                              $"DEX% = {bs.Option.DEXr} " +
                              $"INT% = {bs.Option.INTr} " +
                              $"LUK% = {bs.Option.LUKr} " +
                              $"MaxHP% = {bs.Option.MaxHPr} " +
-                             $"MaxMP% = {bs.Option.MaxHPr}");
+                             $"MaxMP% = {bs.Option.MaxMPr}");
             return Task.CompletedTask;
         }
     }
