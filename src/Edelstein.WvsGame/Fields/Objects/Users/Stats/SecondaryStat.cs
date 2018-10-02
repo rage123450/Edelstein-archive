@@ -144,12 +144,12 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
             Speed += data.IncSpeed;
             Jump += data.IncJump;
 
-            Option.PADr = data.IncPADr;
-            Option.PDDr = data.IncPDDr;
-            Option.MADr = data.IncMADr;
-            Option.MDDr = data.IncMDDr;
-            Option.ACCr = data.IncACCr;
-            Option.EVAr = data.IncEVAr;
+            Option.PADr += data.IncPADr;
+            Option.PDDr += data.IncPDDr;
+            Option.MADr += data.IncMADr;
+            Option.MDDr += data.IncMDDr;
+            Option.ACCr += data.IncACCr;
+            Option.EVAr += data.IncEVAr;
         }
     }
 }
