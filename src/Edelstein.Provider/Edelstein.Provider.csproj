@@ -8,8 +8,4 @@
       <ProjectReference Include="..\PKG1\PKG1.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Items\Cash" />
-    </ItemGroup>
-
 </Project>

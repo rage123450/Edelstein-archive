@@ -31,7 +31,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             Character = character;
 
             BasicStat = new BasicStat(this);
-            BasicStat.Calculate();
+            ValidateStat();
         }
 
         public void ValidateStat()

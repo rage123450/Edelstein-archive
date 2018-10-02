@@ -3,6 +3,7 @@ using Edelstein.Database;
 using Edelstein.Provider;
 using Edelstein.Provider.Fields;
 using Edelstein.Provider.Items;
+using Edelstein.Provider.Items.Options;
 using Edelstein.Provider.Mobs;
 using Edelstein.Provider.NPC;
 using Edelstein.Provider.Strings;
@@ -50,6 +51,7 @@ namespace Edelstein.WvsGame
 
             For<ItemNameManager>().Use<ItemNameManager>().Singleton();
             For<FieldNameManager>().Use<FieldNameManager>().Singleton();
+            For<EagerTemplateManager<ItemOptionTemplate>>().Use<ItemOptionTemplateManager>().Singleton();
             For<LazyTemplateManager<ItemTemplate>>().Use<ItemLazyTemplateManager>().Singleton();
             For<LazyTemplateManager<FieldTemplate>>().Use<FieldLazyTemplateManager>().Singleton();
             For<LazyTemplateManager<NPCTemplate>>().Use<NpcLazyTemplateManager>().Singleton();

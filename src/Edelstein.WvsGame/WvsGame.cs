@@ -7,6 +7,7 @@ using Edelstein.Network.Packets;
 using Edelstein.Provider;
 using Edelstein.Provider.Fields;
 using Edelstein.Provider.Items;
+using Edelstein.Provider.Items.Options;
 using Edelstein.Provider.Mobs;
 using Edelstein.Provider.NPC;
 using Edelstein.Provider.Strings;
@@ -33,6 +34,7 @@ namespace Edelstein.WvsGame
         public ItemNameManager ItemNames { get; set; }
         public FieldNameManager FieldNames { get; set; }
 
+        public EagerTemplateManager<ItemOptionTemplate> ItemOptions { get; set; }
         public LazyTemplateManager<ItemTemplate> ItemTemplates { get; set; }
         public LazyTemplateManager<FieldTemplate> FieldTemplates { get; set; }
         public LazyTemplateManager<NPCTemplate> NpcTemplates { get; set; }
@@ -70,6 +72,11 @@ namespace Edelstein.WvsGame
                 FieldNames.LoadAll()
             );
             Logger.Info("Finished loading template names");
+
+            Logger.Info("Loading item options..");
+            ItemOptions = _container.GetInstance<EagerTemplateManager<ItemOptionTemplate>>();
+            await ItemOptions.LoadAll();
+            Logger.Info("Finished loading item options");
 
             ItemTemplates = _container.GetInstance<LazyTemplateManager<ItemTemplate>>();
             FieldTemplates = _container.GetInstance<LazyTemplateManager<FieldTemplate>>();
