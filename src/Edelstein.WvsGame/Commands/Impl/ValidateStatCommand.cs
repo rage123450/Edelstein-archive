@@ -17,6 +17,12 @@ namespace Edelstein.WvsGame.Commands.Impl
                              $"LUK = {bs.LUK} " +
                              $"MaxHP = {bs.MaxHP} " +
                              $"MaxMP = {bs.MaxHP}");
+            ctx.User.Message($"STR% = {bs.Option.STRr} " +
+                             $"DEX% = {bs.Option.DEXr} " +
+                             $"INT% = {bs.Option.INTr} " +
+                             $"LUK% = {bs.Option.LUKr} " +
+                             $"MaxHP% = {bs.Option.MaxHPr} " +
+                             $"MaxMP% = {bs.Option.MaxHPr}");
             return Task.CompletedTask;
         }
     }

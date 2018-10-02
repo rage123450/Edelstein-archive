@@ -1,7 +1,9 @@
 using System;
 using System.Linq;
 using Edelstein.Database.Entities.Inventory;
+using Edelstein.Provider;
 using Edelstein.Provider.Items;
+using Edelstein.Provider.Items.Options;
 using MoreLinq;
 
 namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
@@ -29,6 +31,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
         public BasicStat(FieldUser user)
         {
             _user = user;
+            Option = new BasicStatRateOption();
         }
 
         public void Calculate()
@@ -48,10 +51,19 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
             MaxHP = character.MaxHP;
             MaxMP = character.MaxMP;
 
+            Option.STRr = 0;
+            Option.DEXr = 0;
+            Option.INTr = 0;
+            Option.LUKr = 0;
+
+            Option.MaxHPr = 0;
+            Option.MaxMPr = 0;
+
+            var options = _user.Socket.WvsGame.ItemOptions;
             var templates = _user.Socket.WvsGame.ItemTemplates;
             var incMaxHPr = 0;
             var incMaxMPr = 0;
-            
+
             character.GetInventory(ItemInventoryType.Equip).Items
                 .OfType<ItemSlotEquip>()
                 .Where(i => i.Slot < 0)
@@ -66,18 +78,53 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
                     MaxMP += i.MaxHP;
 
                     var template = templates.Get(i.TemplateID);
-                    if (template is ItemEquipTemplate equipTemplate)
-                    { // TODO: and not Dragon or Mechanic
-                        // TODO: niMaxHPr, niMaxMPr
-                        // TODO: Socket1, Socket2
-                        // TODO: Option1, Option2, Option3
-                    }
+                    if (!(template is ItemEquipTemplate equipTemplate)) return;
+                    // TODO: and not Dragon or Mechanic
+                    // TODO: niMaxHPr, niMaxMPr
+                    // TODO: Socket1, Socket2
+                    var itemReqLevel = equipTemplate.ReqLevel;
+                    var itemOptionLevel = itemReqLevel / 10;
+
+                    itemOptionLevel = Math.Max(itemOptionLevel, 1);
+
+                    ApplyItemOption(options, i.Option1, itemOptionLevel);
+                    ApplyItemOption(options, i.Option2, itemOptionLevel);
+                    ApplyItemOption(options, i.Option3, itemOptionLevel);
                 });
-            
+
             // TODO: Set item
+
+            STR += (int) (STR * (Option.STRr / 100d));
+            DEX += (int) (DEX * (Option.DEXr / 100d));
+            INT += (int) (INT * (Option.INTr / 100d));
+            LUK += (int) (LUK * (Option.LUKr / 100d));
+
+            MaxHP += (int) (MaxHP * ((Option.MaxHPr + incMaxHPr) / 100d));
+            MaxMP += (int) (MaxMP * ((Option.MaxMPr + incMaxMPr) / 100d));
 
             MaxHP = Math.Min(MaxHP, 99999);
             MaxMP = Math.Min(MaxMP, 99999);
+        }
+
+        private void ApplyItemOption(ITemplateManager<ItemOptionTemplate> options, int itemOptionID, int level)
+        {
+            if (itemOptionID <= 0) return;
+            var option = options.Get(itemOptionID);
+            var data = option.LevelData[level];
+
+            STR += data.IncSTR;
+            DEX += data.IncDEX;
+            INT += data.IncINT;
+            LUK += data.IncLUK;
+            MaxHP += data.IncMaxHP;
+            MaxMP += data.IncMaxMP;
+
+            Option.STRr += data.IncSTRr;
+            Option.DEXr += data.IncDEXr;
+            Option.INTr += data.IncINTr;
+            Option.LUKr += data.IncLUKr;
+            Option.MaxHPr += data.IncMaxHPr;
+            Option.MaxMPr += data.IncMaxMPr;
         }
     }
 }
