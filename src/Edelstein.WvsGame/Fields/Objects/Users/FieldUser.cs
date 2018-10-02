@@ -23,8 +23,9 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
         public GameClientSocket Socket { get; set; }
         public Character Character { get; set; }
 
-        public BasicStat BasicStat { get; set; }
-        public SecondaryStat SecondaryStat { get; set; }
+        public BasicStat BasicStat { get; }
+        public SecondaryStat SecondaryStat { get; }
+        public IDictionary<TemporaryStatType, TemporaryStat> TemporaryStat { get; }
 
         public FieldUser(GameClientSocket socket, Character character)
         {
@@ -33,6 +34,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
             BasicStat = new BasicStat(this);
             SecondaryStat = new SecondaryStat(this);
+            TemporaryStat = new Dictionary<TemporaryStatType, TemporaryStat>();
             CalculateStat();
         }
 
@@ -96,6 +98,32 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
                     Field.BroadcastPacket(this, p);
                 }
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public Task ModifyTemporaryStat(Action<ModifyTemporaryStatContext> action = null)
+        {
+            var context = new ModifyTemporaryStatContext(this);
+
+            action?.Invoke(context);
+            context.ResetStats.ForEach(s => TemporaryStat.Remove(s.Type));
+            context.SetStats.ForEach(s => TemporaryStat.Add(s.Type, s));
+
+            using (var p = new OutPacket(GameSendOperations.TemporaryStatReset))
+            {
+                ModifyTemporaryStatContext.EncodeResetForLocal(p, context.ResetStats);
+                p.Encode<byte>(0); // IsMovementAffectingStat
+                SendPacket(p);
+            }
+
+            using (var p = new OutPacket(GameSendOperations.TemporaryStatSet))
+            {
+                ModifyTemporaryStatContext.EncodeSetForLocal(p, context.SetStats);
+                p.Encode<short>(0); // tDelay
+                p.Encode<byte>(0); // IsMovementAffectingStat
+                SendPacket(p);
             }
 
             return Task.CompletedTask;
