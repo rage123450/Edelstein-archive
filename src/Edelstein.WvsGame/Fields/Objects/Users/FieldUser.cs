@@ -15,7 +15,7 @@ using Edelstein.WvsGame.Packets;
 using Edelstein.WvsGame.Sockets;
 using MoreLinq;
 
-namespace Edelstein.WvsGame.Fields.Objects
+namespace Edelstein.WvsGame.Fields.Objects.Users
 {
     public class FieldUser : FieldObject
     {

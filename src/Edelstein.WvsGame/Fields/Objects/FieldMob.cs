@@ -1,6 +1,7 @@
 using System;
 using Edelstein.Network.Packets;
 using Edelstein.Provider.Mobs;
+using Edelstein.WvsGame.Fields.Objects.Users;
 using Edelstein.WvsGame.Packets;
 
 namespace Edelstein.WvsGame.Fields.Objects

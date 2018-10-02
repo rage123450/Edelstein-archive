@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Edelstein.WvsGame.Fields.Objects;
+using Edelstein.WvsGame.Fields.Objects.Users;
 
 namespace Edelstein.WvsGame.Commands
 {

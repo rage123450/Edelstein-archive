@@ -7,6 +7,7 @@ using Edelstein.Network.Packets;
 using Edelstein.Provider.Fields;
 using Edelstein.WvsGame.Fields.Objects;
 using Edelstein.WvsGame.Fields.Objects.Drops;
+using Edelstein.WvsGame.Fields.Objects.Users;
 using Edelstein.WvsGame.Packets;
 using MoreLinq.Extensions;
 

@@ -9,6 +9,7 @@ using Edelstein.Network;
 using Edelstein.Network.Packets;
 using Edelstein.Provider.Fields;
 using Edelstein.WvsGame.Fields.Objects;
+using Edelstein.WvsGame.Fields.Objects.Users;
 using Edelstein.WvsGame.Logging;
 using Edelstein.WvsGame.Packets;
 using Lamar;

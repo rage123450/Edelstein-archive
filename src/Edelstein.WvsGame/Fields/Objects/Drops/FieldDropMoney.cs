@@ -1,3 +1,5 @@
+using Edelstein.WvsGame.Fields.Objects.Users;
+
 namespace Edelstein.WvsGame.Fields.Objects.Drops
 {
     public class FieldDropMoney : FieldDrop

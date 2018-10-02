@@ -1,4 +1,5 @@
 using Edelstein.Database.Entities.Inventory;
+using Edelstein.WvsGame.Fields.Objects.Users;
 
 namespace Edelstein.WvsGame.Fields.Objects.Drops
 {

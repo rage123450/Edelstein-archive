@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Edelstein.WvsGame.Fields.Objects;
+using Edelstein.WvsGame.Fields.Objects.Users;
 
 namespace Edelstein.WvsGame.Commands
 {
