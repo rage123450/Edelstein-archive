@@ -15,7 +15,6 @@ namespace Edelstein.WvsGame.Commands.Impl
             ctx.User.ModifyTemporaryStat(s =>
             {
                 var date = DateTime.Now;
-                s.Set(TemporaryStatType.ShadowPartner, 30001000, 10, date.AddSeconds(30));
                 s.Set(TemporaryStatType.BlessingArmor, 30001000, 10, date.AddSeconds(30));
                 s.Set(TemporaryStatType.PDD, 30001000, 10, date.AddSeconds(30));
                 s.Set(TemporaryStatType.MAD, 30001000, 10, date.AddSeconds(30));
