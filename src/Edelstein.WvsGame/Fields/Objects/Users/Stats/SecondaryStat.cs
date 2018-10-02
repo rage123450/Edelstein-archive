@@ -125,8 +125,8 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
             MDD = Math.Min(MDD, 30000);
             ACC = Math.Min(ACC, 9999);
             EVA = Math.Min(EVA, 9999);
-            Speed = Math.Min(Math.Max(Speed, 0), 140);
-            Jump = Math.Min(Math.Max(Jump, 0), 123);
+            Speed = Math.Min(Math.Max(Speed, 100), 140);
+            Jump = Math.Min(Math.Max(Jump, 100), 123);
         }
 
         private void ApplyItemOption(ITemplateManager<ItemOptionTemplate> options, int itemOptionID, int level)
