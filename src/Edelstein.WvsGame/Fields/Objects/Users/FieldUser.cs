@@ -132,6 +132,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 }
             }
 
+            CalculateStat();
             return Task.CompletedTask;
         }
 
