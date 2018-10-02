@@ -11,6 +11,7 @@ using Edelstein.Database.Entities.Inventory;
 using Edelstein.Network.Packets;
 using Edelstein.WvsGame.Fields.Movements;
 using Edelstein.WvsGame.Fields.Objects.Drops;
+using Edelstein.WvsGame.Fields.Objects.Users.Stats;
 using Edelstein.WvsGame.Packets;
 using Edelstein.WvsGame.Sockets;
 using MoreLinq;
@@ -22,10 +23,20 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
         public GameClientSocket Socket { get; set; }
         public Character Character { get; set; }
 
+        public BasicStat BasicStat { get; set; }
+
         public FieldUser(GameClientSocket socket, Character character)
         {
             Socket = socket;
             Character = character;
+
+            BasicStat = new BasicStat(this);
+            BasicStat.Calculate();
+        }
+
+        public void ValidateStat()
+        {
+            BasicStat.Calculate();
         }
 
         public Task ModifyStats(Action<ModifyStatContext> action = null, bool exclRequest = false)
@@ -33,6 +44,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             var context = new ModifyStatContext(Character);
 
             action?.Invoke(context);
+            ValidateStat();
             using (var p = new OutPacket(GameSendOperations.StatChanged))
             {
                 p.Encode<bool>(exclRequest);
@@ -68,6 +80,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             if (equipped.Except(newEquipped).Any() ||
                 newEquipped.Except(equipped).Any())
             {
+                ValidateStat();
                 using (var p = new OutPacket(GameSendOperations.UserAvatarModified))
                 {
                     p.Encode<int>(ID);
