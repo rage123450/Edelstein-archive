@@ -31,7 +31,6 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
             dictionary.GetValueOrDefault(TemporaryStatType.Jump)?.Encode(packet);
             dictionary.GetValueOrDefault(TemporaryStatType.EMHP)?.Encode(packet);
             dictionary.GetValueOrDefault(TemporaryStatType.EMMP)?.Encode(packet);
-            dictionary.GetValueOrDefault(TemporaryStatType.EMHP)?.Encode(packet);
             dictionary.GetValueOrDefault(TemporaryStatType.EPAD)?.Encode(packet);
             dictionary.GetValueOrDefault(TemporaryStatType.EPDD)?.Encode(packet);
             dictionary.GetValueOrDefault(TemporaryStatType.EMDD)?.Encode(packet);
