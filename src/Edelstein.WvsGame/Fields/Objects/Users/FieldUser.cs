@@ -25,7 +25,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
         public BasicStat BasicStat { get; }
         public SecondaryStat SecondaryStat { get; }
-        public IDictionary<TemporaryStatType, TemporaryStat> TemporaryStat { get; }
+        public TemporaryStat TemporaryStat { get; }
 
         public FieldUser(GameClientSocket socket, Character character)
         {
@@ -34,7 +34,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
             BasicStat = new BasicStat(this);
             SecondaryStat = new SecondaryStat(this);
-            TemporaryStat = new Dictionary<TemporaryStatType, TemporaryStat>();
+            TemporaryStat = new TemporaryStat();
             CalculateStat();
         }
 
@@ -111,28 +111,45 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
             if (context.ResetStats.Count > 0)
             {
-                context.ResetStats.ForEach(s => TemporaryStat.Remove(s.Type));
+                context.ResetStats.ForEach(s => TemporaryStat.Entries.Remove(s.Type));
                 using (var p = new OutPacket(GameSendOperations.TemporaryStatReset))
                 {
-                    ModifyTemporaryStatContext.EncodeResetForLocal(p, context.ResetStats);
+                    TemporaryStat.EncodeMask(p, context.ResetStats);
                     p.Encode<byte>(0); // IsMovementAffectingStat
                     SendPacket(p);
+                }
+
+                using (var p = new OutPacket(GameSendOperations.UserTemporaryStatReset))
+                {
+                    p.Encode<int>(ID);
+                    TemporaryStat.EncodeMask(p, context.ResetStats);
+                    Field.BroadcastPacket(this, p);
                 }
             }
 
             if (context.SetStats.Count > 0)
             {
-                context.SetStats.ForEach(s => TemporaryStat.Add(s.Type, s));
+                context.SetStats.ForEach(s => TemporaryStat.Entries.Add(s.Type, s));
                 using (var p = new OutPacket(GameSendOperations.TemporaryStatSet))
                 {
-                    ModifyTemporaryStatContext.EncodeSetForLocal(p, context.SetStats);
+                    TemporaryStat.EncodeSetForLocal(p, context.SetStats);
                     p.Encode<short>(0); // tDelay
                     p.Encode<byte>(0); // IsMovementAffectingStat
                     SendPacket(p);
                 }
+
+                using (var p = new OutPacket(GameSendOperations.UserTemporaryStatSet))
+                {
+                    p.Encode<int>(ID);
+                    TemporaryStat.EncodeSetForRemote(p, context.SetStats);
+                    p.Encode<short>(0); // tDelay
+                    Field.BroadcastPacket(this, p);
+                }
             }
 
-            CalculateStat();
+            if (context.ResetStats.Count > 0 ||
+                context.SetStats.Count > 0)
+                CalculateStat();
             return Task.CompletedTask;
         }
 

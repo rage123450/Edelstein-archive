@@ -15,12 +15,12 @@ namespace Edelstein.WvsGame.Commands.Impl
             ctx.User.ModifyTemporaryStat(s =>
             {
                 var date = DateTime.Now;
-                s.Set(TemporaryStatType.PAD, 30001000, 10, date.AddSeconds(30));
-                s.Set(TemporaryStatType.PDD, 30001000, 10, date.AddSeconds(30));
+                s.Set(TemporaryStatType.BlessingArmor, 30001000, 10, date.AddSeconds(30));
+                /*s.Set(TemporaryStatType.PDD, 30001000, 10, date.AddSeconds(30));
                 s.Set(TemporaryStatType.MAD, 30001000, 10, date.AddSeconds(30));
                 s.Set(TemporaryStatType.MDD, 30001000, 10, date.AddSeconds(30));
                 s.Set(TemporaryStatType.Speed, 30001000, 100, date.AddSeconds(30));
-                s.Set(TemporaryStatType.Jump, 30001000, 100, date.AddSeconds(30));
+                s.Set(TemporaryStatType.Jump, 30001000, 100, date.AddSeconds(30));*/
             });
             ctx.User.Message("Successfully set temporary stats.");
             return Task.CompletedTask;
