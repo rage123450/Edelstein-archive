@@ -108,22 +108,28 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             var context = new ModifyTemporaryStatContext(this);
 
             action?.Invoke(context);
-            context.ResetStats.ForEach(s => TemporaryStat.Remove(s.Type));
-            context.SetStats.ForEach(s => TemporaryStat.Add(s.Type, s));
 
-            using (var p = new OutPacket(GameSendOperations.TemporaryStatReset))
+            if (context.ResetStats.Count > 0)
             {
-                ModifyTemporaryStatContext.EncodeResetForLocal(p, context.ResetStats);
-                p.Encode<byte>(0); // IsMovementAffectingStat
-                SendPacket(p);
+                context.ResetStats.ForEach(s => TemporaryStat.Remove(s.Type));
+                using (var p = new OutPacket(GameSendOperations.TemporaryStatReset))
+                {
+                    ModifyTemporaryStatContext.EncodeResetForLocal(p, context.ResetStats);
+                    p.Encode<byte>(0); // IsMovementAffectingStat
+                    SendPacket(p);
+                }
             }
 
-            using (var p = new OutPacket(GameSendOperations.TemporaryStatSet))
+            if (context.SetStats.Count > 0)
             {
-                ModifyTemporaryStatContext.EncodeSetForLocal(p, context.SetStats);
-                p.Encode<short>(0); // tDelay
-                p.Encode<byte>(0); // IsMovementAffectingStat
-                SendPacket(p);
+                context.SetStats.ForEach(s => TemporaryStat.Add(s.Type, s));
+                using (var p = new OutPacket(GameSendOperations.TemporaryStatSet))
+                {
+                    ModifyTemporaryStatContext.EncodeSetForLocal(p, context.SetStats);
+                    p.Encode<short>(0); // tDelay
+                    p.Encode<byte>(0); // IsMovementAffectingStat
+                    SendPacket(p);
+                }
             }
 
             return Task.CompletedTask;
