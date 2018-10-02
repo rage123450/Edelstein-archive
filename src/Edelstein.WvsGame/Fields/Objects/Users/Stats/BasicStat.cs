@@ -81,7 +81,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
                     if (!(template is ItemEquipTemplate equipTemplate)) return;
                     // TODO: and not Dragon or Mechanic
                     var itemReqLevel = equipTemplate.ReqLevel;
-                    var itemOptionLevel = itemReqLevel / 10;
+                    var itemOptionLevel = (itemReqLevel - 1) / 10;
 
                     itemOptionLevel = Math.Max(itemOptionLevel, 1);
 

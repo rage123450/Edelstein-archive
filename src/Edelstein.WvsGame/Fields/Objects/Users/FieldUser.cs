@@ -24,6 +24,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
         public Character Character { get; set; }
 
         public BasicStat BasicStat { get; set; }
+        public SecondaryStat SecondaryStat { get; set; }
 
         public FieldUser(GameClientSocket socket, Character character)
         {
@@ -31,12 +32,14 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             Character = character;
 
             BasicStat = new BasicStat(this);
-            ValidateStat();
+            SecondaryStat = new SecondaryStat(this);
+            CalculateStat();
         }
 
-        public void ValidateStat()
+        public void CalculateStat()
         {
             BasicStat.Calculate();
+            SecondaryStat.Calculate();
         }
 
         public Task ModifyStats(Action<ModifyStatContext> action = null, bool exclRequest = false)
@@ -44,7 +47,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             var context = new ModifyStatContext(Character);
 
             action?.Invoke(context);
-            ValidateStat();
+            CalculateStat();
             using (var p = new OutPacket(GameSendOperations.StatChanged))
             {
                 p.Encode<bool>(exclRequest);
@@ -80,7 +83,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             if (equipped.Except(newEquipped).Any() ||
                 newEquipped.Except(equipped).Any())
             {
-                ValidateStat();
+                CalculateStat();
                 using (var p = new OutPacket(GameSendOperations.UserAvatarModified))
                 {
                     p.Encode<int>(ID);
