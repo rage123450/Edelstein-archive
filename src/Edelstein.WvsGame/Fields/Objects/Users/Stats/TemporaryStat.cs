@@ -14,7 +14,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
             Entries = new Dictionary<TemporaryStatType, TemporaryStatEntry>();
         }
 
-        public static void EncodeSetForLocal(OutPacket packet, ICollection<TemporaryStatEntry> stats)
+        public static void EncodeForLocal(OutPacket packet, ICollection<TemporaryStatEntry> stats)
         {
             EncodeMask(packet, stats);
 
@@ -159,7 +159,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
                 packet.Encode<int>(0);
         }
 
-        public static void EncodeSetForRemote(OutPacket packet, ICollection<TemporaryStatEntry> stats)
+        public static void EncodeForRemote(OutPacket packet, ICollection<TemporaryStatEntry> stats)
         {
             EncodeMask(packet, stats);
 
@@ -206,7 +206,6 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
             packet.Encode<byte>(0); // nDefenseState
 
             // TODO: TwoState
-            for (var i = 0; i < 10; i++) packet.Encode<long>(0); // lul
         }
 
         public static void EncodeMask(OutPacket packet, ICollection<TemporaryStatEntry> stats)

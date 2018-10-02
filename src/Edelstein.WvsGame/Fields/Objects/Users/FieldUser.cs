@@ -132,7 +132,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 context.SetStats.ForEach(s => TemporaryStat.Entries.Add(s.Type, s));
                 using (var p = new OutPacket(GameSendOperations.TemporaryStatSet))
                 {
-                    TemporaryStat.EncodeSetForLocal(p, context.SetStats);
+                    TemporaryStat.EncodeForLocal(p, context.SetStats);
                     p.Encode<short>(0); // tDelay
                     p.Encode<byte>(0); // IsMovementAffectingStat
                     SendPacket(p);
@@ -141,7 +141,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 using (var p = new OutPacket(GameSendOperations.UserTemporaryStatSet))
                 {
                     p.Encode<int>(ID);
-                    TemporaryStat.EncodeSetForRemote(p, context.SetStats);
+                    TemporaryStat.EncodeForRemote(p, context.SetStats);
                     p.Encode<short>(0); // tDelay
                     Field.BroadcastPacket(this, p);
                 }
@@ -553,10 +553,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 p.Encode<short>(0);
                 p.Encode<byte>(0);
 
-                p.Encode<long>(0);
-                p.Encode<long>(0);
-                p.Encode<byte>(0);
-                p.Encode<byte>(0);
+                TemporaryStat.EncodeForRemote(p, TemporaryStat.Entries.Values);
 
                 p.Encode<short>(Character.Job);
                 Character.EncodeLook(p);
