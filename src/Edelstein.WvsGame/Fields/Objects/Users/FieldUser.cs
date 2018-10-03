@@ -116,7 +116,14 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
             if (context.ResetOperations.Count > 0)
             {
-                context.ResetOperations.ForEach(s => { TemporaryStatTimers.Remove(s.Type); });
+                context.ResetOperations.ForEach(s =>
+                {
+                    if (TemporaryStatTimers.ContainsKey(s.Type))
+                    {
+                        TemporaryStatTimers[s.Type].Stop();
+                        TemporaryStatTimers.Remove(s.Type);
+                    }
+                });
 
                 using (var p = new OutPacket(GameSendOperations.TemporaryStatReset))
                 {
