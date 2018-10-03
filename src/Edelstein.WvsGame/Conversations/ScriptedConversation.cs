@@ -1,5 +1,7 @@
+using System;
 using System.Threading.Tasks;
 using Edelstein.WvsGame.Conversations.Speakers;
+using Edelstein.WvsGame.Logging;
 using MoonSharp.Interpreter;
 
 namespace Edelstein.WvsGame.Conversations
@@ -8,6 +10,7 @@ namespace Edelstein.WvsGame.Conversations
         where T : Speaker
         where S : Speaker
     {
+        private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
         private readonly string _scriptPath;
 
         public ScriptedConversation(string scriptPath)
@@ -22,7 +25,18 @@ namespace Edelstein.WvsGame.Conversations
             script.Globals["target"] = UserData.Create(target);
             script.Globals["self"] = UserData.Create(self);
 
-            return Task.Run(() => script.DoFile(_scriptPath), context.TokenSource.Token);
+            return Task.Run(() =>
+                {
+                    try
+                    {
+                        script.DoFile(_scriptPath);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error(e.ToString);
+                    }
+                },
+                context.TokenSource.Token);
         }
     }
 }
