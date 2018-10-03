@@ -9,36 +9,51 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
     public class ModifyTemporaryStatContext
     {
         private readonly FieldUser _user;
-        public readonly List<TemporaryStatEntry> ResetStats;
-        public readonly List<TemporaryStatEntry> SetStats;
+        public readonly List<TemporaryStatEntry> ResetOperations;
+        public readonly List<TemporaryStatEntry> SetOperations;
 
         public ModifyTemporaryStatContext(FieldUser user)
         {
             _user = user;
-            ResetStats = new List<TemporaryStatEntry>();
-            SetStats = new List<TemporaryStatEntry>();
+            ResetOperations = new List<TemporaryStatEntry>();
+            SetOperations = new List<TemporaryStatEntry>();
+        }
+
+        public void Set(TemporaryStatType type, int templateID, short option)
+        {
+            var ts = new TemporaryStatEntry
+            {
+                Type = type,
+                TemplateID = templateID,
+                Option = option,
+                Permanent = true
+            };
+
+            Reset(type);
+            SetOperations.Add(ts);
+            _user.TemporaryStat.Entries.Add(ts.Type, ts);
         }
 
         public void Set(TemporaryStatType type, int templateID, short option, DateTime dateExpire)
         {
-            Reset(type);
-            SetStats.Add(new TemporaryStatEntry
+            var ts = new TemporaryStatEntry
             {
                 Type = type,
                 TemplateID = templateID,
                 Option = option,
                 DateExpire = dateExpire
-            });
+            };
+
+            Reset(type);
+            SetOperations.Add(ts);
+            _user.TemporaryStat.Entries.Add(ts.Type, ts);
         }
 
         public void Reset(TemporaryStatType type)
         {
-            ResetStats.AddRange(
-                _user.TemporaryStat.Entries
-                    .Where(s => s.Key == type)
-                    .Select(s => s.Value)
-                    .ToList()
-            );
+            if (_user.TemporaryStat.Entries.ContainsKey(type))
+                ResetOperations.Add(_user.TemporaryStat.Entries[type]);
+            _user.TemporaryStat.Entries.Remove(type);
         }
     }
 }

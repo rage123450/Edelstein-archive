@@ -9,12 +9,13 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
         public short Option { get; set; }
         public int TemplateID { get; set; }
         public DateTime DateExpire { get; set; }
+        public bool Permanent { get; set; }
 
         public void Encode(OutPacket packet)
         {
             packet.Encode<short>(Option);
             packet.Encode<int>(TemplateID);
-            packet.Encode<int>((int) (DateExpire - DateTime.Now).TotalMilliseconds);
+            packet.Encode<int>(Permanent ? int.MaxValue : (int) (DateExpire - DateTime.Now).TotalMilliseconds);
         }
 
         public void EncodeRemote(OutPacket packet, int size)

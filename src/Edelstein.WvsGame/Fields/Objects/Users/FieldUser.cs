@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Timers;
 using Edelstein.Common.Packets;
 using Edelstein.Common.Packets.Inventory;
 using Edelstein.Common.Packets.Messages;
@@ -27,6 +28,8 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
         public SecondaryStat SecondaryStat { get; }
         public TemporaryStat TemporaryStat { get; }
 
+        public IDictionary<TemporaryStatType, Timer> TemporaryStatTimers;
+
         public FieldUser(GameClientSocket socket, Character character)
         {
             Socket = socket;
@@ -36,6 +39,8 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             SecondaryStat = new SecondaryStat(this);
             TemporaryStat = new TemporaryStat();
             CalculateStat();
+
+            TemporaryStatTimers = new Dictionary<TemporaryStatType, Timer>();
         }
 
         public void CalculateStat()
@@ -109,12 +114,13 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
             action?.Invoke(context);
 
-            if (context.ResetStats.Count > 0)
+            if (context.ResetOperations.Count > 0)
             {
-                context.ResetStats.ForEach(s => TemporaryStat.Entries.Remove(s.Type));
+                context.ResetOperations.ForEach(s => { TemporaryStatTimers.Remove(s.Type); });
+
                 using (var p = new OutPacket(GameSendOperations.TemporaryStatReset))
                 {
-                    TemporaryStat.EncodeMask(p, context.ResetStats);
+                    TemporaryStat.EncodeMask(p, context.ResetOperations);
                     p.Encode<byte>(0); // IsMovementAffectingStat
                     SendPacket(p);
                 }
@@ -122,17 +128,36 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 using (var p = new OutPacket(GameSendOperations.UserTemporaryStatReset))
                 {
                     p.Encode<int>(ID);
-                    TemporaryStat.EncodeMask(p, context.ResetStats);
+                    TemporaryStat.EncodeMask(p, context.ResetOperations);
                     Field.BroadcastPacket(this, p);
                 }
             }
 
-            if (context.SetStats.Count > 0)
+            if (context.SetOperations.Count > 0)
             {
-                context.SetStats.ForEach(s => TemporaryStat.Entries.Add(s.Type, s));
+                context.SetOperations
+                    .Where(s => !s.Permanent)
+                    .GroupBy(s => s.DateExpire.Millisecond)
+                    .ForEach(g =>
+                    {
+                        var expire = g.First().DateExpire;
+                        var timer = new Timer((expire - DateTime.Now).TotalMilliseconds)
+                        {
+                            AutoReset = false
+                        };
+
+                        timer.Elapsed += (sender, args) =>
+                        {
+                            ModifyTemporaryStat(ts => { g.ForEach(s => { ts.Reset(s.Type); }); });
+                        };
+                        timer.Start();
+
+                        g.ForEach(s => { TemporaryStatTimers[s.Type] = timer; });
+                    });
+
                 using (var p = new OutPacket(GameSendOperations.TemporaryStatSet))
                 {
-                    TemporaryStat.EncodeForLocal(p, context.SetStats);
+                    TemporaryStat.EncodeForLocal(p, context.SetOperations);
                     p.Encode<short>(0); // tDelay
                     p.Encode<byte>(0); // IsMovementAffectingStat
                     SendPacket(p);
@@ -141,14 +166,14 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 using (var p = new OutPacket(GameSendOperations.UserTemporaryStatSet))
                 {
                     p.Encode<int>(ID);
-                    TemporaryStat.EncodeForRemote(p, context.SetStats);
+                    TemporaryStat.EncodeForRemote(p, context.SetOperations);
                     p.Encode<short>(0); // tDelay
                     Field.BroadcastPacket(this, p);
                 }
             }
 
-            if (context.ResetStats.Count > 0 ||
-                context.SetStats.Count > 0)
+            if (context.ResetOperations.Count > 0 ||
+                context.SetOperations.Count > 0)
                 CalculateStat();
             return Task.CompletedTask;
         }

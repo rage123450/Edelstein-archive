@@ -14,6 +14,7 @@ using Edelstein.WvsGame.Logging;
 using Edelstein.WvsGame.Packets;
 using Lamar;
 using Microsoft.EntityFrameworkCore;
+using MoreLinq;
 
 namespace Edelstein.WvsGame.Sockets
 {
@@ -135,7 +136,8 @@ namespace Edelstein.WvsGame.Sockets
                             Action = action
                         });
                     }
-                } else functionKeys.Remove(functionKey);
+                }
+                else functionKeys.Remove(functionKey);
             }
         }
 
@@ -170,9 +172,10 @@ namespace Edelstein.WvsGame.Sockets
                     db.Update(character);
                     db.SaveChanges();
                 }
-            }
 
-            u?.Field?.Leave(u);
+                u.TemporaryStatTimers.Values.ForEach(t => t.Stop());
+                u.Field?.Leave(u);
+            }
         }
     }
 }
