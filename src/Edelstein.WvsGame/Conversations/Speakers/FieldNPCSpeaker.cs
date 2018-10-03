@@ -25,8 +25,6 @@ namespace Edelstein.WvsGame.Conversations.Speakers
                 SpeakerParamType.NoESC,
                 message
             ));
-
-            Console.WriteLine(res);
         }
     }
 }

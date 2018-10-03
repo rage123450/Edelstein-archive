@@ -14,5 +14,6 @@
     "Port": 7575
   },
   "ConnectionString": "Server=localhost;Uid=root;Database=Edelstein;",
-  "BaseWZPath": "C:\\Nexon\\Library\\maplestory\\appdata\\Base.wz"
+  "BaseWZPath": "C:\\Nexon\\Library\\maplestory\\appdata\\Base.wz",
+  "ScriptPath": "\\Scripts"
 }

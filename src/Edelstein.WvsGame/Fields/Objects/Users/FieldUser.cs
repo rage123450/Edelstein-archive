@@ -10,6 +10,8 @@ using Edelstein.Common.Packets.Stats;
 using Edelstein.Database.Entities;
 using Edelstein.Database.Entities.Inventory;
 using Edelstein.Network.Packets;
+using Edelstein.WvsGame.Conversations;
+using Edelstein.WvsGame.Conversations.Messages;
 using Edelstein.WvsGame.Fields.Movements;
 using Edelstein.WvsGame.Fields.Objects.Drops;
 using Edelstein.WvsGame.Fields.Objects.Users.Stats;
@@ -23,6 +25,8 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
     {
         public GameClientSocket Socket { get; set; }
         public Character Character { get; set; }
+
+        public ConversationContext ConversationContext { get; set; }
 
         public BasicStat BasicStat { get; }
         public SecondaryStat SecondaryStat { get; }
@@ -213,6 +217,12 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 case GameRecvOperations.UserEmotion:
                     OnUserEmotion(packet);
                     break;
+                case GameRecvOperations.UserSelectNpc:
+                    OnUserSelectNPC(packet);
+                    break;
+                case GameRecvOperations.UserScriptMessageAnswer:
+                    OnUserScriptMessageAnswer(packet);
+                    break;
                 case GameRecvOperations.UserGatherItemRequest:
                     OnUserGatherItemRequest(packet);
                     break;
@@ -368,6 +378,19 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 p.Encode<long>(0);
                 return p;
             }
+        }
+
+        private void OnUserSelectNPC(InPacket packet)
+        {
+            var objectID = packet.Decode<int>();
+
+            if (Field.GetObject(objectID) is FieldNPC npc)
+                Socket.WvsGame.NPCConversationManager.Start(this, npc);
+        }
+
+        private void OnUserScriptMessageAnswer(InPacket packet)
+        {
+            ConversationContext?.Answers.Add(new ConversationAnswer());
         }
 
         private void OnUserGatherItemRequest(InPacket packet)

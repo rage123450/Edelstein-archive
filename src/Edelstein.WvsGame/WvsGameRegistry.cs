@@ -8,6 +8,9 @@ using Edelstein.Provider.Mobs;
 using Edelstein.Provider.NPC;
 using Edelstein.Provider.Strings;
 using Edelstein.WvsGame.Commands;
+using Edelstein.WvsGame.Conversations;
+using Edelstein.WvsGame.Fields.Objects;
+using Edelstein.WvsGame.Fields.Objects.Users;
 using Edelstein.WvsGame.Sockets;
 using Lamar;
 using Microsoft.EntityFrameworkCore;
@@ -56,6 +59,8 @@ namespace Edelstein.WvsGame
             For<LazyTemplateManager<FieldTemplate>>().Use<FieldLazyTemplateManager>().Singleton();
             For<LazyTemplateManager<NPCTemplate>>().Use<NpcLazyTemplateManager>().Singleton();
             For<LazyTemplateManager<MobTemplate>>().Use<MobLazyTemplateManager>().Singleton();
+
+            For<ConversationManager<FieldUser, FieldNPC>>().Use<NPCConversationManager>().Singleton();
 
             For<CenterServerSocketFactory>().Use<CenterServerSocketFactory>();
             For<GameClientSocketFactory>().Use<GameClientSocketFactory>();

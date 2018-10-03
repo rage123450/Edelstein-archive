@@ -171,6 +171,7 @@ namespace Edelstein.WvsGame.Sockets
                     db.SaveChanges();
                 }
 
+                u.ConversationContext?.TokenSource.Cancel();
                 u.TemporaryStatTimers.Values.ForEach(t => t.Stop());
                 u.Field?.Leave(u);
             }
