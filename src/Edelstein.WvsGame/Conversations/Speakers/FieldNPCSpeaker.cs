@@ -1,6 +1,4 @@
-using System;
 using Edelstein.WvsGame.Conversations.Messages;
-using Edelstein.WvsGame.Conversations.Messages.Requests;
 using Edelstein.WvsGame.Fields.Objects;
 
 namespace Edelstein.WvsGame.Conversations.Speakers
@@ -9,22 +7,16 @@ namespace Edelstein.WvsGame.Conversations.Speakers
     {
         private readonly FieldNPC _fieldNPC;
 
+        public override byte SpeakerTypeID => 0;
+        public override int SpeakerTemplateID => _fieldNPC.Template.TemplateID;
+        public override SpeakerParamType SpeakerParam => 0;
+
         public FieldNPCSpeaker(
             ConversationContext context,
             FieldNPC fieldNPC
         ) : base(context)
         {
             _fieldNPC = fieldNPC;
-        }
-
-        public void Say(string message)
-        {
-            var res = Context.Send(new Say(
-                0,
-                _fieldNPC.Template.TemplateID,
-                SpeakerParamType.NoESC,
-                message
-            ));
         }
     }
 }

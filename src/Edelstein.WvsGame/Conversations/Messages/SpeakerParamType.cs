@@ -3,7 +3,7 @@ using System;
 namespace Edelstein.WvsGame.Conversations.Messages
 {
     [Flags]
-    public enum SpeakerParamType
+    public enum SpeakerParamType : byte
     {
         NoESC = 0x1,
         NPCReplacedByUser = 0x2,

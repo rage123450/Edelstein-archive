@@ -2,37 +2,30 @@ using Edelstein.Network.Packets;
 
 namespace Edelstein.WvsGame.Conversations.Messages.Requests
 {
-    public class Say : ConversationQuestion
+    public class AskYesNo : ConversationQuestion
     {
-        protected override byte MessageType => 0x0;
+        protected override byte MessageType => (byte) (_quest ? 0xD : 0x2);
 
         private readonly string _text;
-        private readonly bool _prev;
-        private readonly bool _next;
+        private readonly bool _quest;
 
-        public Say(
+        public AskYesNo(
             byte speakerTypeID,
             int speakerTemplateID,
             SpeakerParamType speakerParam,
             string text,
-            bool prev,
-            bool next
+            bool quest
         ) : base(speakerTypeID, speakerTemplateID, speakerParam)
         {
             _text = text;
-            _prev = prev;
-            _next = next;
+            _quest = quest;
         }
 
         public override void Encode(OutPacket packet)
         {
             base.Encode(packet);
 
-            if ((SpeakerParam & SpeakerParamType.NPCReplacedByNPC) != 0)
-                packet.Encode<int>(SpeakerTemplateID);
             packet.Encode<string>(_text);
-            packet.Encode<bool>(_prev);
-            packet.Encode<bool>(_next);
         }
     }
 }

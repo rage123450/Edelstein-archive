@@ -8,13 +8,13 @@ namespace Edelstein.WvsGame.Conversations.Messages
 
         protected readonly byte SpeakerTypeID;
         protected readonly int SpeakerTemplateID;
-        protected readonly SpeakerParamType Param;
+        protected readonly SpeakerParamType SpeakerParam;
 
-        protected ConversationQuestion(byte speakerTypeID, int speakerTemplateID, SpeakerParamType param)
+        protected ConversationQuestion(byte speakerTypeID, int speakerTemplateID, SpeakerParamType speakerParam)
         {
             SpeakerTypeID = speakerTypeID;
             SpeakerTemplateID = speakerTemplateID;
-            Param = param;
+            SpeakerParam = speakerParam;
         }
 
         public virtual void Encode(OutPacket packet)
@@ -22,7 +22,7 @@ namespace Edelstein.WvsGame.Conversations.Messages
             packet.Encode<byte>(SpeakerTypeID);
             packet.Encode<int>(SpeakerTemplateID);
             packet.Encode<byte>(MessageType);
-            packet.Encode<byte>((byte) Param);
+            packet.Encode<byte>((byte) SpeakerParam);
         }
     }
 }
