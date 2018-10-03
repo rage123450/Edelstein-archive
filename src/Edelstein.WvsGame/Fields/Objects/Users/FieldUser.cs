@@ -562,7 +562,13 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 p.Encode<int>(0); // MedalAchievementInfo
                 p.Encode<short>(0);
 
-                p.Encode<int>(0); // ChairItemInfo
+                var chairs = c.Inventories
+                    .SelectMany(i => i.Items)
+                    .Select(i => i.TemplateID)
+                    .Where(i => i / 10000 == 301)
+                    .ToList();
+                p.Encode<int>(chairs.Count);
+                chairs.ForEach(i => p.Encode<int>(i));
                 SendPacket(p);
             }
         }
