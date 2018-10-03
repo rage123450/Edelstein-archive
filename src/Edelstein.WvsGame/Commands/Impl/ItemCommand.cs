@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Edelstein.Common.Utils.Items;
-using Edelstein.Database.Entities.Inventory;
 
 namespace Edelstein.WvsGame.Commands.Impl
 {

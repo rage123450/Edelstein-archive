@@ -1,4 +1,3 @@
-using System;
 using Edelstein.Network.Packets;
 using Edelstein.Provider.NPC;
 using Edelstein.WvsGame.Fields.Movements;

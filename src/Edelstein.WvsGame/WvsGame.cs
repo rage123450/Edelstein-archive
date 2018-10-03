@@ -12,10 +12,12 @@ using Edelstein.Provider.Mobs;
 using Edelstein.Provider.NPC;
 using Edelstein.Provider.Strings;
 using Edelstein.WvsGame.Commands;
+using Edelstein.WvsGame.Conversations.Speakers;
 using Edelstein.WvsGame.Fields;
 using Edelstein.WvsGame.Logging;
 using Edelstein.WvsGame.Sockets;
 using Lamar;
+using MoonSharp.Interpreter;
 
 namespace Edelstein.WvsGame
 {
@@ -83,6 +85,9 @@ namespace Edelstein.WvsGame
             NpcTemplates = _container.GetInstance<LazyTemplateManager<NPCTemplate>>();
             MobTemplates = _container.GetInstance<LazyTemplateManager<MobTemplate>>();
             FieldFactory = new FieldFactory(FieldTemplates, NpcTemplates, MobTemplates);
+            
+            UserData.RegisterType<FieldUserSpeaker>();
+            UserData.RegisterType<FieldNPCSpeaker>();
 
             InteropClient = new Client<CenterServerSocket>(
                 options.InteropClientOptions,

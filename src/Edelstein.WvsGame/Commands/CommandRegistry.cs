@@ -14,6 +14,7 @@ namespace Edelstein.WvsGame.Commands
             Commands.Add(new ItemCommand());
             Commands.Add(new ValidateStatCommand());
             Commands.Add(new BuffCommand());
+            Commands.Add(new ScriptMessageCommand());
         }
 
         protected override Task Execute(CommandContext ctx)

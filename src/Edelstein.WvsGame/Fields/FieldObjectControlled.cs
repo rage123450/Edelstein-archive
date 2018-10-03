@@ -1,6 +1,4 @@
-using System;
 using Edelstein.Network.Packets;
-using Edelstein.WvsGame.Fields.Objects;
 using Edelstein.WvsGame.Fields.Objects.Users;
 
 namespace Edelstein.WvsGame.Fields
