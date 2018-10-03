@@ -5,7 +5,6 @@ using Edelstein.Common.Interop;
 using Edelstein.Common.Interop.Game;
 using Edelstein.Common.Packets;
 using Edelstein.Common.Packets.Inventory;
-using Edelstein.Common.Utils.Items;
 using Edelstein.Database;
 using Edelstein.Database.Entities;
 using Edelstein.Database.Entities.Inventory;

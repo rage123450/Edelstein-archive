@@ -1,4 +1,3 @@
-using System;
 using Edelstein.WvsGame.Conversations.Messages;
 using Edelstein.WvsGame.Conversations.Messages.Requests;
 

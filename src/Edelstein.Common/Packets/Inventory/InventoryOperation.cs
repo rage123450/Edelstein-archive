@@ -1,4 +1,3 @@
-using System;
 using Edelstein.Database.Entities.Inventory;
 using Edelstein.Network.Packets;
 
