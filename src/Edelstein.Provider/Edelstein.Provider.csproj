@@ -8,4 +8,8 @@
       <ProjectReference Include="..\PKG1\PKG1.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="MathParser.org-mXparser" Version="4.2.1" />
+    </ItemGroup>
+
 </Project>

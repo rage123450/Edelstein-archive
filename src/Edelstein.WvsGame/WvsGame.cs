@@ -10,6 +10,7 @@ using Edelstein.Provider.Items;
 using Edelstein.Provider.Items.Options;
 using Edelstein.Provider.Mobs;
 using Edelstein.Provider.NPC;
+using Edelstein.Provider.Skills;
 using Edelstein.Provider.Strings;
 using Edelstein.WvsGame.Commands;
 using Edelstein.WvsGame.Conversations;
@@ -39,6 +40,7 @@ namespace Edelstein.WvsGame
         public ItemNameManager ItemNames { get; set; }
         public FieldNameManager FieldNames { get; set; }
 
+        public LazyTemplateManager<SkillTemplate> SkillTemplates { get; set; }
         public EagerTemplateManager<ItemOptionTemplate> ItemOptions { get; set; }
         public LazyTemplateManager<ItemTemplate> ItemTemplates { get; set; }
         public LazyTemplateManager<FieldTemplate> FieldTemplates { get; set; }
@@ -80,11 +82,18 @@ namespace Edelstein.WvsGame
             );
             Logger.Info("Finished loading template names");
 
-            Logger.Info("Loading item options..");
-            ItemOptions = _container.GetInstance<EagerTemplateManager<ItemOptionTemplate>>();
-            await ItemOptions.LoadAll();
-            Logger.Info("Finished loading item options");
 
+            ItemOptions = _container.GetInstance<EagerTemplateManager<ItemOptionTemplate>>();
+            await Task.WhenAll(
+                Task.Run(async () =>
+                {
+                    Logger.Info("Loading item options..");
+                    await ItemOptions.LoadAll();
+                    Logger.Info("Finished loading item options");
+                })
+            );
+
+            SkillTemplates = _container.GetInstance<LazyTemplateManager<SkillTemplate>>();
             ItemTemplates = _container.GetInstance<LazyTemplateManager<ItemTemplate>>();
             FieldTemplates = _container.GetInstance<LazyTemplateManager<FieldTemplate>>();
             NpcTemplates = _container.GetInstance<LazyTemplateManager<NPCTemplate>>();
