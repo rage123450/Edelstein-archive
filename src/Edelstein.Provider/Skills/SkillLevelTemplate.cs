@@ -82,7 +82,7 @@ namespace Edelstein.Provider.Skills
             };
         }
 
-        public static short ResolveExpression(string expression, params PrimitiveElement[] elements)
+        private static short ResolveExpression(string expression, params PrimitiveElement[] elements)
         {
             if (expression == null) return 0;
             return (short) new Expression(expression, elements).calculate();
