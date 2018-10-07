@@ -556,7 +556,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
         private void OnUserStatChangeItemCancelRequest(InPacket packet)
         {
-            var templateID = -packet.Decode<int>();
+            var templateID = packet.Decode<int>();
 
             // TODO: noCancelMouse
             ModifyTemporaryStat(ts => ts.Reset(templateID));
