@@ -1,3 +1,4 @@
+using System;
 using Edelstein.Network.Packets;
 using Edelstein.WvsGame.Fields.Objects.Users;
 using Edelstein.WvsGame.Packets;
@@ -26,7 +27,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Drops
                 p.Encode<byte>(0x2); // nOwnType
                 p.Encode<short>(X);
                 p.Encode<short>(Y);
-                p.Encode<int>(source?.ID ?? 0); // dwSourceID
+                p.Encode<int>(source is FieldUser ? 0 : source?.ID ?? 0); // dwSourceID
 
                 if (enterType == 0x0 ||
                     enterType == 0x1 ||
