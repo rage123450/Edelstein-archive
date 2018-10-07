@@ -1,4 +1,3 @@
-using Amazon.S3.Model;
 using PKG1;
 
 namespace Edelstein.Provider.Items.Consume
