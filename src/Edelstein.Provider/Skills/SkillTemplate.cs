@@ -8,6 +8,8 @@ namespace Edelstein.Provider.Skills
     public class SkillTemplate
     {
         public int TemplateID { get; set; }
+        
+        public short MaxLevel { get; set; }
 
         public IDictionary<int, int> ReqSkill;
         public IDictionary<int, SkillLevelTemplate> LevelData;
@@ -43,6 +45,7 @@ namespace Edelstein.Provider.Skills
             return new SkillTemplate
             {
                 TemplateID = templateId,
+                MaxLevel = (short) levelData.Count,
                 ReqSkill = p.Resolve("req")?.Children
                                .ToDictionary(
                                    c => Convert.ToInt32(c.Name),

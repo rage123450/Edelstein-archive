@@ -6,6 +6,7 @@ using System.Timers;
 using Edelstein.Common.Packets;
 using Edelstein.Common.Packets.Inventory;
 using Edelstein.Common.Packets.Messages;
+using Edelstein.Common.Packets.Skills;
 using Edelstein.Common.Packets.Stats;
 using Edelstein.Database.Entities;
 using Edelstein.Database.Entities.Inventory;
@@ -187,6 +188,21 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             return Task.CompletedTask;
         }
 
+        public Task ModifySkill(Action<ModifySkillContext> action = null, bool exclRequest = false)
+        {
+            var context = new ModifySkillContext(Character);
+
+            action?.Invoke(context);
+            CalculateStat();
+            using (var p = new OutPacket(GameSendOperations.ChangeSkillRecordResult))
+            {
+                p.Encode<bool>(exclRequest);
+                context.Encode(p);
+                p.Encode<bool>(true);
+                return SendPacket(p);
+            }
+        }
+
         public Task Message(string text)
         {
             return Message(new SystemMessage(text));
@@ -237,6 +253,9 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                     break;
                 case GameRecvOperations.UserAbilityMassUpRequest:
                     OnUserAbilityMassUpRequest(packet);
+                    break;
+                case GameRecvOperations.UserSkillUpRequest:
+                    OnUserSkillUpRequest(packet);
                     break;
                 case GameRecvOperations.UserDropMoneyRequest:
                     OnUserDropMoneyRequest(packet);
@@ -540,6 +559,15 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
                 s.AP -= Convert.ToInt16(total);
             }, true);
+        }
+
+        private void OnUserSkillUpRequest(InPacket packet)
+        {
+            packet.Decode<int>();
+            var templateID = packet.Decode<int>();
+
+            ModifyStats(s => s.SP--);
+            ModifySkill(s => s.Add(Socket.WvsGame.SkillTemplates.Get(templateID)), true);
         }
 
         private void OnUserDropMoneyRequest(InPacket packet)
