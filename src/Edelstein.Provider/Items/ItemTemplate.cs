@@ -73,6 +73,9 @@ namespace Edelstein.Provider.Items
                         case 2:
                         case 5:
                         case 21:
+                        case 36:
+                        case 38:
+                        case 45:
                             item = new StatChangeItemTemplate();
                             break;
                         case 3:
