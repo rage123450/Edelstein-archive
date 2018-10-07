@@ -507,7 +507,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             var template = Socket.WvsGame.ItemTemplates.Get(templateID);
 
             if (!(template is StatChangeItemTemplate scTemplate)) return;
-            
+
             var temporaryStats = new Dictionary<TemporaryStatType, short>();
 
             if (scTemplate.PAD > 0) temporaryStats.Add(TemporaryStatType.PAD, scTemplate.PAD);
@@ -557,8 +557,11 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
         private void OnUserStatChangeItemCancelRequest(InPacket packet)
         {
             var templateID = packet.Decode<int>();
+            var template = Socket.WvsGame.ItemTemplates.Get(-templateID);
 
-            // TODO: noCancelMouse
+            if (template is StatChangeItemTemplate scTemplate &&
+                scTemplate.NoCancelMouse) return;
+
             ModifyTemporaryStat(ts => ts.Reset(templateID));
         }
 

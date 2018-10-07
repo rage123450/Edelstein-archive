@@ -1,3 +1,4 @@
+using Amazon.S3.Model;
 using PKG1;
 
 namespace Edelstein.Provider.Items.Consume
@@ -8,6 +9,8 @@ namespace Edelstein.Provider.Items.Consume
         public int MP { get; set; }
         public int HPr { get; set; }
         public int MPr { get; set; }
+        
+        public bool NoCancelMouse { get; set; }
         
         public short PAD { get; set; }
         public short PDD { get; set; }
@@ -30,6 +33,8 @@ namespace Edelstein.Provider.Items.Consume
             MP = p.ResolveFor<short>("spec/mp") ?? 0;
             HPr = p.ResolveFor<short>("spec/hpR") ?? 0;
             MPr = p.ResolveFor<short>("spec/mpR") ?? 0;
+
+            NoCancelMouse = p.ResolveFor<bool>("info/noCancelMouse") ?? false;
             
             PAD = p.ResolveFor<short>("spec/pad") ?? 0;
             PDD = p.ResolveFor<short>("spec/pdd") ?? 0;
