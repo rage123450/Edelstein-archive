@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using MoreLinq;
 
 namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
 {
@@ -51,6 +53,18 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
             if (_user.TemporaryStat.Entries.ContainsKey(type))
                 ResetOperations.Add(_user.TemporaryStat.Entries[type]);
             _user.TemporaryStat.Entries.Remove(type);
+        }
+
+        public void Reset(int templateID)
+        {
+            _user.TemporaryStat.Entries.Values
+                .Where(ts => ts.TemplateID == templateID)
+                .ToList()
+                .ForEach(ts =>
+                {
+                    _user.TemporaryStat.Entries.Remove(ts.Type);
+                    ResetOperations.Add(ts);
+                });
         }
     }
 }

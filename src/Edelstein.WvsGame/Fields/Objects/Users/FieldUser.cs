@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
+using Amazon.Runtime.Internal.Transform;
 using Edelstein.Common.Packets;
 using Edelstein.Common.Packets.Inventory;
 using Edelstein.Common.Packets.Messages;
@@ -11,6 +12,7 @@ using Edelstein.Common.Packets.Stats;
 using Edelstein.Database.Entities;
 using Edelstein.Database.Entities.Inventory;
 using Edelstein.Network.Packets;
+using Edelstein.Provider.Items.Consume;
 using Edelstein.WvsGame.Conversations;
 using Edelstein.WvsGame.Conversations.Messages;
 using Edelstein.WvsGame.Fields.Movements;
@@ -247,6 +249,12 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                     break;
                 case GameRecvOperations.UserChangeSlotPositionRequest:
                     OnUserChangeSlotPositionRequest(packet);
+                    break;
+                case GameRecvOperations.UserStatChangeItemUseRequest:
+                    OnUserStatChangeItemUseRequest(packet);
+                    break;
+                case GameRecvOperations.UserStatChangeItemCancelRequest:
+                    OnUserStatChangeItemCancelRequest(packet);
                     break;
                 case GameRecvOperations.UserAbilityUpRequest:
                     OnUserAbilityUpRequest(packet);
@@ -488,6 +496,70 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             }
 
             ModifyInventory(i => i.Move(inventoryType, fromSlot, toSlot), true);
+        }
+
+        private void OnUserStatChangeItemUseRequest(InPacket packet)
+        {
+            packet.Decode<int>();
+
+            var position = packet.Decode<short>();
+            var templateID = packet.Decode<int>();
+            var template = Socket.WvsGame.ItemTemplates.Get(templateID);
+
+            if (!(template is StatChangeItemTemplate scTemplate)) return;
+            
+            var temporaryStats = new Dictionary<TemporaryStatType, short>();
+
+            if (scTemplate.PAD > 0) temporaryStats.Add(TemporaryStatType.PAD, scTemplate.PAD);
+            if (scTemplate.PDD > 0) temporaryStats.Add(TemporaryStatType.PDD, scTemplate.PDD);
+            if (scTemplate.MAD > 0) temporaryStats.Add(TemporaryStatType.MAD, scTemplate.MAD);
+            if (scTemplate.MDD > 0) temporaryStats.Add(TemporaryStatType.MDD, scTemplate.MDD);
+            if (scTemplate.ACC > 0) temporaryStats.Add(TemporaryStatType.ACC, scTemplate.ACC);
+            if (scTemplate.EVA > 0) temporaryStats.Add(TemporaryStatType.EVA, scTemplate.EVA);
+            if (scTemplate.Craft > 0) temporaryStats.Add(TemporaryStatType.Craft, scTemplate.Craft);
+            if (scTemplate.Speed > 0) temporaryStats.Add(TemporaryStatType.Speed, scTemplate.Speed);
+            if (scTemplate.Jump > 0) temporaryStats.Add(TemporaryStatType.Jump, scTemplate.Jump);
+            if (scTemplate.Morph > 0) temporaryStats.Add(TemporaryStatType.Morph, scTemplate.Morph);
+
+            if (temporaryStats.Count > 0)
+                ModifyTemporaryStat(ts => temporaryStats.ForEach(t =>
+                    ts.Set(
+                        t.Key,
+                        -templateID,
+                        t.Value,
+                        DateTime.Now.AddMilliseconds(scTemplate.Time)
+                    )
+                ));
+
+            if (!temporaryStats.ContainsKey(TemporaryStatType.Morph))
+            {
+                var incHP = 0;
+                var incMP = 0;
+
+                incHP += scTemplate.HP;
+                incMP += scTemplate.MP;
+                incHP += BasicStat.MaxHP * (scTemplate.HPr / 100);
+                incMP += BasicStat.MaxMP * (scTemplate.MPr / 100);
+
+                if (incHP > 0 || incMP > 0)
+                {
+                    ModifyStats(s =>
+                    {
+                        s.HP = Math.Min(BasicStat.MaxHP, s.HP + incHP);
+                        s.MP = Math.Min(BasicStat.MaxMP, s.MP + incMP);
+                    });
+                }
+            }
+
+            ModifyStats(exclRequest: true);
+        }
+
+        private void OnUserStatChangeItemCancelRequest(InPacket packet)
+        {
+            var templateID = -packet.Decode<int>();
+
+            // TODO: noCancelMouse
+            ModifyTemporaryStat(ts => ts.Reset(templateID));
         }
 
         private void OnUserAbilityUpRequest(InPacket packet)
