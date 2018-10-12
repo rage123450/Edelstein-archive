@@ -34,7 +34,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
         public BasicStat BasicStat { get; }
         public SecondaryStat SecondaryStat { get; }
         public TemporaryStat TemporaryStat { get; }
-        
+
         public int? CompletedSetItemID { get; set; }
 
         public IDictionary<TemporaryStatType, Timer> TemporaryStatTimers;
@@ -56,6 +56,9 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
         {
             BasicStat.Calculate();
             SecondaryStat.Calculate();
+
+            if (Character.HP > Character.MaxHP) ModifyStats(s => s.HP = Character.MaxHP);
+            if (Character.MP > Character.MaxMP) ModifyStats(s => s.MP = Character.MaxMP);
         }
 
         public Task ModifyStats(Action<ModifyStatContext> action = null, bool exclRequest = false)
