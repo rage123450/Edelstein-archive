@@ -57,8 +57,8 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             BasicStat.Calculate();
             SecondaryStat.Calculate();
 
-            if (Character.HP > Character.MaxHP) ModifyStats(s => s.HP = Character.MaxHP);
-            if (Character.MP > Character.MaxMP) ModifyStats(s => s.MP = Character.MaxMP);
+            if (Character.HP > BasicStat.MaxHP) ModifyStats(s => s.HP = BasicStat.MaxHP);
+            if (Character.MP > BasicStat.MaxMP) ModifyStats(s => s.MP = BasicStat.MaxMP);
         }
 
         public Task ModifyStats(Action<ModifyStatContext> action = null, bool exclRequest = false)
@@ -67,6 +67,8 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
             action?.Invoke(context);
             ValidateStat();
+
+            if (!Socket.IsInstantiated) return Task.CompletedTask;
             using (var p = new OutPacket(GameSendOperations.StatChanged))
             {
                 p.Encode<bool>(exclRequest);
