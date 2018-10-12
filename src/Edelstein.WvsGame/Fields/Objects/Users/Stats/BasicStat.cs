@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Edelstein.Database.Entities.Inventory;
 using Edelstein.Provider;
@@ -61,39 +62,67 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
 
             var options = _user.Socket.WvsGame.ItemOptions;
             var templates = _user.Socket.WvsGame.ItemTemplates;
+            var equipped = character.GetInventory(ItemInventoryType.Equip).Items
+                .OfType<ItemSlotEquip>()
+                .Where(i => i.Slot < 0)
+                .ToList();
+            var setItemID = new List<int>();
+            
             var incMaxHPr = 0;
             var incMaxMPr = 0;
 
-            character.GetInventory(ItemInventoryType.Equip).Items
-                .OfType<ItemSlotEquip>()
-                .Where(i => i.Slot < 0)
-                .ForEach(i =>
+            equipped.ForEach(i =>
+            {
+                STR += i.STR;
+                DEX += i.DEX;
+                INT += i.INT;
+                LUK += i.LUK;
+
+                MaxHP += i.MaxHP;
+                MaxMP += i.MaxHP;
+
+                var template = templates.Get(i.TemplateID);
+                if (!(template is ItemEquipTemplate equipTemplate)) return;
+                if (equipTemplate.SetItemID > 0) setItemID.Add(equipTemplate.SetItemID);
+                // TODO: and not Dragon or Mechanic
+
+                var itemReqLevel = equipTemplate.ReqLevel;
+                var itemOptionLevel = (itemReqLevel - 1) / 10;
+
+                itemOptionLevel = Math.Max(itemOptionLevel, 1);
+
+                incMaxHPr += equipTemplate.IncMaxHPr;
+                incMaxMPr += equipTemplate.IncMaxMPr;
+
+                ApplyItemOption(options, i.Option1, itemOptionLevel);
+                ApplyItemOption(options, i.Option2, itemOptionLevel);
+                ApplyItemOption(options, i.Option3, itemOptionLevel);
+            });
+
+            var equippedID = equipped.Select(e => e.TemplateID).ToList();
+            var setItemInfo = _user.Socket.WvsGame.SetItemInfo;
+
+            setItemID.Distinct().ForEach(s =>
+            {
+                var info = setItemInfo.Get(s);
+                var count = info.ItemTemplateID.Count(id => equippedID.Contains(id));
+                
+                if (count <= 0) return;
+                
+                for (var i = 1; i <= count; i++)
                 {
-                    STR += i.STR;
-                    DEX += i.DEX;
-                    INT += i.INT;
-                    LUK += i.LUK;
-
-                    MaxHP += i.MaxHP;
-                    MaxMP += i.MaxHP;
-
-                    var template = templates.Get(i.TemplateID);
-                    if (!(template is ItemEquipTemplate equipTemplate)) return;
-                    // TODO: and not Dragon or Mechanic
-                    var itemReqLevel = equipTemplate.ReqLevel;
-                    var itemOptionLevel = (itemReqLevel - 1) / 10;
-
-                    itemOptionLevel = Math.Max(itemOptionLevel, 1);
-
-                    incMaxHPr += equipTemplate.IncMaxHPr;
-                    incMaxMPr += equipTemplate.IncMaxMPr;
-
-                    ApplyItemOption(options, i.Option1, itemOptionLevel);
-                    ApplyItemOption(options, i.Option2, itemOptionLevel);
-                    ApplyItemOption(options, i.Option3, itemOptionLevel);
-                });
-
-            // TODO: Set item
+                    if (!info.Effect.ContainsKey(i)) continue;
+                    var effect = info.Effect[i];
+                    
+                    STR += effect.IncSTR;
+                    DEX += effect.IncDEX;
+                    INT += effect.IncINT;
+                    LUK += effect.IncLUK;
+                    
+                    MaxHP += effect.IncMaxHP;
+                    MaxMP += effect.IncMaxMP;
+                }
+            });
 
             STR += (int) (STR * (Option.STRr / 100d));
             DEX += (int) (DEX * (Option.DEXr / 100d));

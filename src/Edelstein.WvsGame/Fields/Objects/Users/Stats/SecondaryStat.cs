@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Edelstein.Database.Entities.Inventory;
 using Edelstein.Provider;
@@ -54,48 +55,79 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
 
             var options = _user.Socket.WvsGame.ItemOptions;
             var templates = _user.Socket.WvsGame.ItemTemplates;
-
-            character.GetInventory(ItemInventoryType.Equip).Items
+            var equipped = character.GetInventory(ItemInventoryType.Equip).Items
                 .OfType<ItemSlotEquip>()
                 .Where(i => i.Slot < 0)
-                .ForEach(i =>
+                .ToList();
+            var setItemID = new List<int>();
+
+            equipped.ForEach(i =>
+            {
+                var pos = i.Slot;
+                if (pos == -30 ||
+                    pos == -38 ||
+                    pos == -31 ||
+                    pos == -39 ||
+                    pos == -32 ||
+                    pos == -40 ||
+                    i.TemplateID / 10000 != 190 &&
+                    (
+                        pos == -18 ||
+                        pos == -19 ||
+                        pos == -20
+                    )
+                ) return;
+
+                PAD += i.PAD;
+                PDD += i.PDD;
+                MAD += i.MAD;
+                MDD += i.MDD;
+                ACC += i.ACC;
+                EVA += i.EVA;
+                Craft += i.Craft;
+                Speed += i.Speed;
+                Jump += i.Jump;
+
+                var template = templates.Get(i.TemplateID);
+                if (!(template is ItemEquipTemplate equipTemplate)) return;
+                if (equipTemplate.SetItemID > 0) setItemID.Add(equipTemplate.SetItemID);
+
+                var itemReqLevel = equipTemplate.ReqLevel;
+                var itemOptionLevel = (itemReqLevel - 1) / 10;
+
+                itemOptionLevel = Math.Max(itemOptionLevel, 1);
+
+                ApplyItemOption(options, i.Option1, itemOptionLevel);
+                ApplyItemOption(options, i.Option2, itemOptionLevel);
+                ApplyItemOption(options, i.Option3, itemOptionLevel);
+            });
+
+            var equippedID = equipped.Select(e => e.TemplateID).ToList();
+            var setItemInfo = _user.Socket.WvsGame.SetItemInfo;
+
+            setItemID.Distinct().ForEach(s =>
+            {
+                var info = setItemInfo.Get(s);
+                var count = info.ItemTemplateID.Count(id => equippedID.Contains(id));
+
+                if (count <= 0) return;
+
+                for (var i = 1; i <= count; i++)
                 {
-                    var pos = i.Slot;
-                    if (pos == -30 ||
-                        pos == -38 ||
-                        pos == -31 ||
-                        pos == -39 ||
-                        pos == -32 ||
-                        pos == -40 ||
-                        i.TemplateID / 10000 != 190 &&
-                        (
-                            pos == -18 ||
-                            pos == -19 ||
-                            pos == -20
-                        )
-                    ) return;
+                    if (!info.Effect.ContainsKey(i)) continue;
+                    var effect = info.Effect[i];
 
-                    PAD += i.PAD;
-                    PDD += i.PDD;
-                    MAD += i.MAD;
-                    MDD += i.MDD;
-                    ACC += i.ACC;
-                    EVA += i.EVA;
-                    Craft += i.Craft;
-                    Speed += i.Speed;
-                    Jump += i.Jump;
-
-                    var template = templates.Get(i.TemplateID);
-                    if (!(template is ItemEquipTemplate equipTemplate)) return;
-                    var itemReqLevel = equipTemplate.ReqLevel;
-                    var itemOptionLevel = (itemReqLevel - 1) / 10;
-
-                    itemOptionLevel = Math.Max(itemOptionLevel, 1);
-
-                    ApplyItemOption(options, i.Option1, itemOptionLevel);
-                    ApplyItemOption(options, i.Option2, itemOptionLevel);
-                    ApplyItemOption(options, i.Option3, itemOptionLevel);
-                });
+                    PAD += effect.IncPAD;
+                    PDD += effect.IncPDD;
+                    MAD += effect.IncMAD;
+                    MDD += effect.IncMDD;
+                    ACC += effect.IncACC;
+                    EVA += effect.IncEVA;
+                    Craft += effect.IncCraft;
+                    Speed += effect.IncSpeed;
+                    Jump += effect.IncJump;
+                }
+            });
 
             if (character.Job % 1000 / 100 == 5)
             {
