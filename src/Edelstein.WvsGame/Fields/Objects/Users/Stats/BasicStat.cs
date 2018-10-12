@@ -101,7 +101,8 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
 
             var equippedID = equipped.Select(e => e.TemplateID).ToList();
             var setItemInfo = _user.Socket.WvsGame.SetItemInfo;
-
+            
+            _user.CompletedSetItemID = null;
             setItemID.Distinct().ForEach(s =>
             {
                 var info = setItemInfo.Get(s);
@@ -122,6 +123,8 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
                     MaxHP += effect.IncMaxHP;
                     MaxMP += effect.IncMaxMP;
                 }
+
+                if (count >= info.SetCompleteCount) _user.CompletedSetItemID = s;
             });
 
             STR += (int) (STR * (Option.STRr / 100d));

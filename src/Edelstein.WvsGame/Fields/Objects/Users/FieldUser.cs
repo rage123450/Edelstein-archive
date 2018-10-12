@@ -34,6 +34,8 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
         public BasicStat BasicStat { get; }
         public SecondaryStat SecondaryStat { get; }
         public TemporaryStat TemporaryStat { get; }
+        
+        public int? CompletedSetItemID { get; set; }
 
         public IDictionary<TemporaryStatType, Timer> TemporaryStatTimers;
 
@@ -106,7 +108,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                     p.Encode<bool>(false); // bCouple
                     p.Encode<bool>(false); // bFriendship
                     p.Encode<bool>(false); // Marriage
-                    p.Encode<int>(0); // nCompletedSetItemID
+                    p.Encode<int>(CompletedSetItemID ?? 0);
 
                     Field.BroadcastPacket(this, p);
                 }
@@ -724,7 +726,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 p.Encode<int>(0);
                 p.Encode<int>(0);
                 p.Encode<int>(0);
-                p.Encode<int>(0);
+                p.Encode<int>(CompletedSetItemID ?? 0);
                 p.Encode<int>(0);
 
                 p.Encode<short>(X);
