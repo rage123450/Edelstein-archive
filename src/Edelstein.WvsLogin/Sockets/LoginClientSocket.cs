@@ -108,13 +108,13 @@ namespace Edelstein.WvsLogin.Sockets
                     OnEnableSPWRequest(packet, false);
                     break;
                 case LoginRecvOperations.CheckSPWRequest:
-                    OnCheckSPWRequest(packet);
+                    OnCheckSPWRequest(packet, false);
                     break;
                 case LoginRecvOperations.EnableSPWRequestByACV:
                     OnEnableSPWRequest(packet, true);
                     break;
                 case LoginRecvOperations.CheckSPWRequestByACV:
-                    OnCheckSPWRequest(packet);
+                    OnCheckSPWRequest(packet, true);
                     break;
                 case LoginRecvOperations.CheckOTPRequest:
                     break;
@@ -448,7 +448,7 @@ namespace Edelstein.WvsLogin.Sockets
             }
         }
 
-        private void OnCheckSPWRequest(InPacket packet)
+        private void OnCheckSPWRequest(InPacket packet, bool vac)
         {
             var spw = packet.Decode<string>();
             var characterID = packet.Decode<int>();
@@ -465,6 +465,15 @@ namespace Edelstein.WvsLogin.Sockets
                 }
 
                 return;
+            }
+
+            if (vac)
+            {
+                var character = Account.Characters.Single(c => c.ID == characterID);
+                _selectedWorld = _wvsLogin.InteropClients
+                    .Select(c => c.Socket.WorldInformation)
+                    .SingleOrDefault(w => w.ID == character.WorldID);
+                _selectedChannel = _selectedWorld.Channels.First();
             }
 
             var world = _wvsLogin.InteropClients.Single(c => c.Socket.WorldInformation.ID == _selectedWorld.ID);
