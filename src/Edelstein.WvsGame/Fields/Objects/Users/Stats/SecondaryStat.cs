@@ -138,9 +138,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
                 if (weapon == null)
                 {
                     var level = character.Level;
-                    var mult = level > 30 ? 31d : level * 0.7 + 10d;
-
-                    PAD += (int) mult;
+                    PAD += (int) (level > 30 ? 31d : level * 0.7 + 10d);
                 }
             }
 
