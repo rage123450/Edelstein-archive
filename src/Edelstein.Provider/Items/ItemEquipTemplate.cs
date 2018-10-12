@@ -46,6 +46,8 @@ namespace Edelstein.Provider.Items
 
         public byte AppliableKarmaType { get; set; }
 
+        public int SetItemID { get; set; }
+
         public int Durability { get; set; }
         // public int EnchantCategory { get; set; }
         // public int Transform { get; set; }
@@ -90,6 +92,7 @@ namespace Edelstein.Provider.Items
 
             AppliableKarmaType = p.ResolveFor<byte>("info/tradeAvailable") ?? 0;
 
+            SetItemID = p.ResolveFor<int>("info/setItemID") ?? 0;
             Durability = p.ResolveFor<int>("info/durability") ?? -1;
         }
     }

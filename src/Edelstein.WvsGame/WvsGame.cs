@@ -8,6 +8,7 @@ using Edelstein.Provider;
 using Edelstein.Provider.Fields;
 using Edelstein.Provider.Items;
 using Edelstein.Provider.Items.Options;
+using Edelstein.Provider.Items.Set;
 using Edelstein.Provider.Mobs;
 using Edelstein.Provider.NPC;
 using Edelstein.Provider.Skills;
@@ -42,6 +43,7 @@ namespace Edelstein.WvsGame
 
         public LazyTemplateManager<SkillTemplate> SkillTemplates { get; set; }
         public EagerTemplateManager<ItemOptionTemplate> ItemOptions { get; set; }
+        public EagerTemplateManager<SetItemInfoTemplate> SetItemInfo { get; set; }
         public LazyTemplateManager<ItemTemplate> ItemTemplates { get; set; }
         public LazyTemplateManager<FieldTemplate> FieldTemplates { get; set; }
         public LazyTemplateManager<NPCTemplate> NpcTemplates { get; set; }
@@ -82,14 +84,20 @@ namespace Edelstein.WvsGame
             );
             Logger.Info("Finished loading template names");
 
-
             ItemOptions = _container.GetInstance<EagerTemplateManager<ItemOptionTemplate>>();
+            SetItemInfo = _container.GetInstance<EagerTemplateManager<SetItemInfoTemplate>>();
             await Task.WhenAll(
                 Task.Run(async () =>
                 {
                     Logger.Info("Loading item options..");
                     await ItemOptions.LoadAll();
                     Logger.Info("Finished loading item options");
+                }),
+                Task.Run(async () =>
+                {
+                    Logger.Info("Loading set item info..");
+                    await SetItemInfo.LoadAll();
+                    Logger.Info("Finished loading set item info");
                 })
             );
 
