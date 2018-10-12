@@ -47,12 +47,12 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             BasicStat = new BasicStat(this);
             SecondaryStat = new SecondaryStat(this);
             TemporaryStat = new TemporaryStat();
-            CalculateStat();
+            ValidateStat();
 
             TemporaryStatTimers = new Dictionary<TemporaryStatType, Timer>();
         }
 
-        public void CalculateStat()
+        public void ValidateStat()
         {
             BasicStat.Calculate();
             SecondaryStat.Calculate();
@@ -66,7 +66,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             var context = new ModifyStatContext(Character);
 
             action?.Invoke(context);
-            CalculateStat();
+            ValidateStat();
             using (var p = new OutPacket(GameSendOperations.StatChanged))
             {
                 p.Encode<bool>(exclRequest);
@@ -102,7 +102,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             if (equipped.Except(newEquipped).Any() ||
                 newEquipped.Except(equipped).Any())
             {
-                CalculateStat();
+                ValidateStat();
                 using (var p = new OutPacket(GameSendOperations.UserAvatarModified))
                 {
                     p.Encode<int>(ID);
@@ -191,7 +191,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
             if (context.ResetOperations.Count > 0 ||
                 context.SetOperations.Count > 0)
-                CalculateStat();
+                ValidateStat();
             return Task.CompletedTask;
         }
 
@@ -200,7 +200,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             var context = new ModifySkillContext(Character);
 
             action?.Invoke(context);
-            CalculateStat();
+            ValidateStat();
             using (var p = new OutPacket(GameSendOperations.ChangeSkillRecordResult))
             {
                 p.Encode<bool>(exclRequest);
