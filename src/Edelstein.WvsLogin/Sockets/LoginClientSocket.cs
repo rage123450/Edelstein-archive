@@ -156,55 +156,58 @@ namespace Edelstein.WvsLogin.Sockets
             var password = packet.Decode<string>();
             var username = packet.Decode<string>();
 
-            using (var p = new OutPacket(LoginSendOperations.CheckPasswordResult))
+            lock (_wvsLogin.LoginLock)
             {
-                using (var db = _container.GetInstance<DataContext>())
+                using (var p = new OutPacket(LoginSendOperations.CheckPasswordResult))
                 {
-                    var account = db.Accounts
-                        .Include(a => a.Data)
-                        .Include(a => a.Characters)
-                        .ThenInclude(c => c.Inventories)
-                        .ThenInclude(c => c.Items)
-                        .SingleOrDefault(a => a.Username.Equals(username));
-                    byte result = 0x0;
-
-                    if (account == null) result = 0x5;
-                    else
+                    using (var db = _container.GetInstance<DataContext>())
                     {
-                        if (account.State != AccountState.LoggedOut) result = 0x7;
-                        if (!BCrypt.Net.BCrypt.Verify(password, account.Password)) result = 0x4;
+                        var account = db.Accounts
+                            .Include(a => a.Data)
+                            .Include(a => a.Characters)
+                            .ThenInclude(c => c.Inventories)
+                            .ThenInclude(c => c.Items)
+                            .SingleOrDefault(a => a.Username.Equals(username));
+                        byte result = 0x0;
+
+                        if (account == null) result = 0x5;
+                        else
+                        {
+                            if (account.State != AccountState.LoggedOut) result = 0x7;
+                            if (!BCrypt.Net.BCrypt.Verify(password, account.Password)) result = 0x4;
+                        }
+
+                        p.Encode<byte>(result);
+                        p.Encode<byte>(0);
+                        p.Encode<int>(0);
+
+                        if (result == 0x0)
+                        {
+                            Account = account;
+
+                            account.State = AccountState.LoggingIn;
+                            db.Update(account);
+                            db.SaveChanges();
+
+                            p.Encode<int>(account.ID); // pBlockReason
+                            p.Encode<byte>(0); // pBlockReasonIter
+                            p.Encode<byte>(0); // nGradeCode
+                            p.Encode<short>(0); // nSubGradeCode
+                            p.Encode<byte>(0); // nCountryID
+                            p.Encode<string>(account.Username); // sNexonClubID
+                            p.Encode<byte>(0); // nPurchaseEXP
+                            p.Encode<byte>(0); // ChatUnblockReason
+                            p.Encode<long>(0); // dtChatUnblockDate
+                            p.Encode<long>(0); // dtRegisterDate
+                            p.Encode<int>(4); // nNumOfCharacter
+                            p.Encode<byte>(1); // v44
+                            p.Encode<byte>(0); // sMsg
+
+                            p.Encode<long>(0); // dwHighDateTime
+                        }
+
+                        SendPacket(p);
                     }
-
-                    p.Encode<byte>(result);
-                    p.Encode<byte>(0);
-                    p.Encode<int>(0);
-
-                    if (result == 0x0)
-                    {
-                        Account = account;
-
-                        account.State = AccountState.LoggingIn;
-                        db.Update(account);
-                        db.SaveChanges();
-
-                        p.Encode<int>(account.ID); // pBlockReason
-                        p.Encode<byte>(0); // pBlockReasonIter
-                        p.Encode<byte>(0); // nGradeCode
-                        p.Encode<short>(0); // nSubGradeCode
-                        p.Encode<byte>(0); // nCountryID
-                        p.Encode<string>(account.Username); // sNexonClubID
-                        p.Encode<byte>(0); // nPurchaseEXP
-                        p.Encode<byte>(0); // ChatUnblockReason
-                        p.Encode<long>(0); // dtChatUnblockDate
-                        p.Encode<long>(0); // dtRegisterDate
-                        p.Encode<int>(4); // nNumOfCharacter
-                        p.Encode<byte>(1); // v44
-                        p.Encode<byte>(0); // sMsg
-
-                        p.Encode<long>(0); // dwHighDateTime
-                    }
-
-                    SendPacket(p);
                 }
             }
         }

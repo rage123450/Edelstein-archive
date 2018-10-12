@@ -21,6 +21,7 @@ namespace Edelstein.WvsLogin
         public Server<LoginClientSocket> GameServer;
         
         public LoginInformation LoginInformation { get; set; }
+        public readonly object LoginLock = new object();
         
         public LazyTemplateManager<ItemTemplate> ItemTemplates { get; set; }
 
