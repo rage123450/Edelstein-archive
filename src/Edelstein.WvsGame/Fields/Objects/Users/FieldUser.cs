@@ -79,7 +79,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             var context = new ModifyInventoryContext(Character);
             var equipped = Character.GetInventory(ItemInventoryType.Equip).Items
                 .Where(i => i.Slot < 0)
-                .Select(i => i.Slot)
+                .Select(i => i.TemplateID)
                 .ToList();
 
             action?.Invoke(context);
@@ -93,7 +93,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
             var newEquipped = Character.GetInventory(ItemInventoryType.Equip).Items
                 .Where(i => i.Slot < 0)
-                .Select(i => i.Slot)
+                .Select(i => i.TemplateID)
                 .ToList();
 
             if (equipped.Except(newEquipped).Any() ||
