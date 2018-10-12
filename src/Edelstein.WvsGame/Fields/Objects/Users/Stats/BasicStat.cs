@@ -79,7 +79,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
                 LUK += i.LUK;
 
                 MaxHP += i.MaxHP;
-                MaxMP += i.MaxHP;
+                MaxMP += i.MaxMP;
 
                 var template = templates.Get(i.TemplateID);
                 if (!(template is ItemEquipTemplate equipTemplate)) return;
