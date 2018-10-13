@@ -35,6 +35,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
         public SecondaryStat SecondaryStat { get; }
         public TemporaryStat TemporaryStat { get; }
 
+        public int? PortableChairID { get; set; }
         public int? CompletedSetItemID { get; set; }
 
         public IDictionary<TemporaryStatType, Timer> TemporaryStatTimers;
@@ -236,6 +237,12 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 case GameRecvOperations.UserMove:
                     OnUserMove(packet);
                     break;
+                case GameRecvOperations.UserSitRequest:
+                    OnUserSitRequest(packet);
+                    break;
+                case GameRecvOperations.UserPortableChairSitRequest:
+                    OnUserPortableChairSitRequest(packet);
+                    break;
                 case GameRecvOperations.UserChat:
                     OnUserChat(packet);
                     break;
@@ -321,6 +328,56 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 Y = movementPath.Y;
                 MoveAction = movementPath.MoveActionLast;
                 Foothold = movementPath.FHLast;
+                Field.BroadcastPacket(this, p);
+            }
+        }
+
+        private void OnUserSitRequest(InPacket packet)
+        {
+            var id = packet.Decode<short>();
+
+            using (var p = new OutPacket(GameSendOperations.UserSitResult))
+            {
+                if (id < 0)
+                {
+                    PortableChairID = null;
+                    p.Encode<byte>(0);
+                }
+                else
+                {
+                    p.Encode<byte>(1);
+                    p.Encode<short>(id); // TODO: proper checks for this
+                }
+
+                SendPacket(p);
+            }
+
+            if (PortableChairID != null) return;
+
+            using (var p = new OutPacket(GameSendOperations.UserSetActivePortableChair))
+            {
+                p.Encode<int>(ID);
+                p.Encode<int>(0);
+                Field.BroadcastPacket(this, p);
+            }
+        }
+
+        private void OnUserPortableChairSitRequest(InPacket packet)
+        {
+            var templateID = packet.Decode<int>();
+
+            if (Character.Inventories
+                .SelectMany(i => i.Items)
+                .Select(i => i.TemplateID)
+                .All(i => i != templateID)) return;
+
+            PortableChairID = templateID;
+            ModifyStats(exclRequest: true);
+
+            using (var p = new OutPacket(GameSendOperations.UserSetActivePortableChair))
+            {
+                p.Encode<int>(ID);
+                p.Encode<int>(templateID);
                 Field.BroadcastPacket(this, p);
             }
         }
@@ -732,7 +789,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 p.Encode<int>(0);
                 p.Encode<int>(0);
                 p.Encode<int>(CompletedSetItemID ?? 0);
-                p.Encode<int>(0);
+                p.Encode<int>(PortableChairID ?? 0);
 
                 p.Encode<short>(X);
                 p.Encode<short>(Y);
