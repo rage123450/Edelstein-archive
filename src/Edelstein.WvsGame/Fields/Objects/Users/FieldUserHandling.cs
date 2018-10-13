@@ -114,16 +114,15 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             var movementPath = new MovementPath();
 
             movementPath.Decode(packet);
+            X = movementPath.X;
+            Y = movementPath.Y;
+            MoveAction = movementPath.MoveActionLast;
+            Foothold = movementPath.FHLast;
 
             using (var p = new OutPacket(GameSendOperations.UserMove))
             {
                 p.Encode(ID);
                 movementPath.Encode(p);
-
-                X = movementPath.X;
-                Y = movementPath.Y;
-                MoveAction = movementPath.MoveActionLast;
-                Foothold = movementPath.FHLast;
                 Field.BroadcastPacket(this, p);
             }
         }
