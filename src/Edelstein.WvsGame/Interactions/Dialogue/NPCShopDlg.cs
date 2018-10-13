@@ -50,6 +50,8 @@ namespace Edelstein.WvsGame.Interactions.Dialogue
                         if (shopItem != null)
                         {
                             if (shopItem.TemplateID != templateID) result = 0x10;
+                            if (shopItem.Quantity > 1) count = 1;
+                            if (count > shopItem.MaxPerSlot) count = shopItem.MaxPerSlot;
                             if (shopItem.Price > 0)
                                 if (user.Character.Money < shopItem.Price * count)
                                     result = 0xA;
