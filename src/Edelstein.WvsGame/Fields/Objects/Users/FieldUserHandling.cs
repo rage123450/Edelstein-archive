@@ -271,8 +271,17 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
         {
             var objectID = packet.Decode<int>();
 
-            if (Field.GetObject(objectID) is FieldNPC npc)
-                Socket.WvsGame.NPCConversationManager.Start(this, npc);
+            if (!(Field.GetObject(objectID) is FieldNPC npc)) return;
+
+            var template = npc.Template;
+
+            if (Socket.WvsGame.NPCShops.ContainsKey(template.TemplateID))
+            {
+                Dialogue = Socket.WvsGame.NPCShops[template.TemplateID];
+                return;
+            }
+
+            Socket.WvsGame.NPCConversationManager.Start(this, npc);
         }
 
         private void OnUserScriptMessageAnswer(InPacket packet)
