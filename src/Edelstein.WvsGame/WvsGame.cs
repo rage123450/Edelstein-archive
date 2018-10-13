@@ -1,7 +1,10 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Edelstein.Common.Interop;
 using Edelstein.Common.Interop.Game;
+using Edelstein.Database;
+using Edelstein.Database.Entities.Shop;
 using Edelstein.Network;
 using Edelstein.Network.Packets;
 using Edelstein.Provider;
@@ -19,9 +22,11 @@ using Edelstein.WvsGame.Conversations.Speakers;
 using Edelstein.WvsGame.Fields;
 using Edelstein.WvsGame.Fields.Objects;
 using Edelstein.WvsGame.Fields.Objects.Users;
+using Edelstein.WvsGame.Interactions.Dialogue;
 using Edelstein.WvsGame.Logging;
 using Edelstein.WvsGame.Sockets;
 using Lamar;
+using Microsoft.EntityFrameworkCore;
 using MoonSharp.Interpreter;
 
 namespace Edelstein.WvsGame
@@ -49,6 +54,8 @@ namespace Edelstein.WvsGame
         public LazyTemplateManager<NPCTemplate> NpcTemplates { get; set; }
         public LazyTemplateManager<MobTemplate> MobTemplates { get; set; }
         public FieldFactory FieldFactory { get; set; }
+
+        public IDictionary<int, NPCShopDlg> NPCShops { get; set; }
 
         public ConversationManager<FieldUser, FieldNPC> NPCConversationManager { get; set; }
 
@@ -107,6 +114,15 @@ namespace Edelstein.WvsGame
             NpcTemplates = _container.GetInstance<LazyTemplateManager<NPCTemplate>>();
             MobTemplates = _container.GetInstance<LazyTemplateManager<MobTemplate>>();
             FieldFactory = new FieldFactory(FieldTemplates, NpcTemplates, MobTemplates);
+
+            using (var db = _container.GetInstance<DataContext>())
+            {
+                Logger.Info("Loading npc shops..");
+                NPCShops = db.NPCShops
+                    .Include(s => s.Items)
+                    .ToDictionary(s => s.TemplateID, s => new NPCShopDlg(s));
+                Logger.Info("Finished loading npc shops");
+            }
 
             UserData.RegisterType<FieldUserSpeaker>();
             UserData.RegisterType<FieldNPCSpeaker>();

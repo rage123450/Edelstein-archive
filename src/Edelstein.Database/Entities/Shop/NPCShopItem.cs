@@ -12,14 +12,14 @@ namespace Edelstein.Database.Entities.Shop
         public int TemplateID { get; set; }
         public int Position { get; set; }
         public int Price { get; set; }
-        public int DiscountRate { get; set; }
+        public byte DiscountRate { get; set; }
         public int TokenTemplateID { get; set; }
         public int TokenPrice { get; set; }
         public int ItemPeriod { get; set; }
         public int LevelLimited { get; set; }
-        public float UnitPrice { get; set; }
-        public int MaxPerSlot { get; set; }
+        public double UnitPrice { get; set; }
+        public short MaxPerSlot { get; set; }
         public int Stock { get; set; }
-        public int Quantity { get; set; }
+        public short Quantity { get; set; }
     }
 }
