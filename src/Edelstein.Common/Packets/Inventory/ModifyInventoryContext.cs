@@ -7,6 +7,7 @@ using Edelstein.Database.Entities;
 using Edelstein.Database.Entities.Inventory;
 using Edelstein.Network.Packets;
 using Edelstein.Provider.Items;
+using MoreLinq;
 
 namespace Edelstein.Common.Packets.Inventory
 {
@@ -149,6 +150,46 @@ namespace Edelstein.Common.Packets.Inventory
                 inventory.Type,
                 item.Position)
             );
+        }
+
+        public void Remove(int templateID, int count = 1)
+        {
+            Remove((ItemInventoryType) (templateID / 1000000), templateID, count);
+        }
+
+        public void Remove(ItemInventoryType type, int templateID, int count = 1)
+        {
+            var inventory = _character.GetInventory(type);
+            var items = inventory.Items;
+            var removed = 0;
+
+            items.ToList()
+                .Where(i => i.TemplateID == templateID)
+                .ForEach(i =>
+                {
+                    if (removed >= count) return;
+                    if (i is ItemSlotBundle bundle)
+                    {
+                        var diff = count - removed;
+
+                        if (bundle.Number > diff)
+                        {
+                            removed += diff;
+                            bundle.Number = (short) (bundle.Number - diff);
+                            UpdateQuantity(bundle);
+                        }
+                        else
+                        {
+                            removed += bundle.Number;
+                            Remove(bundle);
+                        }
+                    }
+                    else
+                    {
+                        removed++;
+                        Remove(i);
+                    }
+                });
         }
 
         public void Move(ItemInventoryType type, short fromSlot, short toSlot)

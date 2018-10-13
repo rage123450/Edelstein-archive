@@ -1,4 +1,8 @@
+using System;
 using System.Linq;
+using Edelstein.Common.Utils.Extensions;
+using Edelstein.Common.Utils.Items;
+using Edelstein.Database.Entities.Inventory;
 using Edelstein.Database.Entities.Shop;
 using Edelstein.Network.Packets;
 using Edelstein.WvsGame.Fields.Objects.Users;
@@ -27,7 +31,75 @@ namespace Edelstein.WvsGame.Interactions.Dialogue
         private void OnUserShopRequest(FieldUser user, InPacket packet)
         {
             var type = packet.Decode<byte>();
-            if (type == 3) user.Dialogue = null;
+
+            switch (type)
+            {
+                case 0: // Buy
+                {
+                    var pos = packet.Decode<short>();
+                    var templateID = packet.Decode<int>();
+                    var count = packet.Decode<short>();
+                    var shopItem = _shop.Items
+                        .OrderBy(i => i.Position)
+                        .ToList()[pos];
+
+                    using (var p = new OutPacket(GameSendOperations.ShopResult))
+                    {
+                        byte result = 0x0;
+
+                        if (shopItem != null)
+                        {
+                            if (shopItem.TemplateID != templateID) result = 0x10;
+                            if (shopItem.Price > 0)
+                                if (user.Character.Money < shopItem.Price * count)
+                                    result = 0xA;
+                            if (shopItem.TokenTemplateID > 0)
+                                if (user.Character.GetItemCount(shopItem.TokenTemplateID) <
+                                    shopItem.TokenPrice * count)
+                                    result = 0xD;
+                            if (shopItem.Stock == 0) result = 0x1;
+                            // TODO: level limits
+
+                            var templates = user.Socket.WvsGame.ItemTemplates;
+                            var item = ItemInfo.FromTemplate(templates.Get(shopItem.TemplateID));
+
+                            if (item is ItemSlotBundle bundle) bundle.Number = (short) (count * shopItem.Quantity);
+                            if (!user.Character.HasSlotFor(item)) result = 0x3;
+
+                            if (result == 0x0)
+                            {
+                                if (shopItem.Price > 0)
+                                    user.ModifyStats(s => s.Money -= shopItem.Price * count);
+                                if (shopItem.TokenTemplateID > 0)
+                                    user.ModifyInventory(i => i.Remove(
+                                        shopItem.TokenTemplateID,
+                                        shopItem.TokenPrice * count
+                                    ));
+                                if (shopItem.Stock > 0) shopItem.Stock--;
+
+                                user.ModifyInventory(i => i.Add(item));
+                            }
+                        }
+                        else result = 0x10;
+
+                        p.Encode<byte>(result);
+                        user.SendPacket(p);
+                    }
+
+                    break;
+                }
+                case 1: // Sell
+                {
+                    break;
+                }
+                case 2: // Recharge
+                {
+                    break;
+                }
+                case 3: // Close
+                    user.Dialogue = null;
+                    break;
+            }
         }
 
         public override OutPacket GetCreatePacket()
