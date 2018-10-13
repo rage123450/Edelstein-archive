@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MoreLinq;
 
 namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
 {

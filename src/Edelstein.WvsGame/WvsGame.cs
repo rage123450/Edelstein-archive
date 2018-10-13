@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Edelstein.Common.Interop;
 using Edelstein.Common.Interop.Game;
 using Edelstein.Database;
-using Edelstein.Database.Entities.Shop;
 using Edelstein.Network;
 using Edelstein.Network.Packets;
 using Edelstein.Provider;
