@@ -92,10 +92,57 @@ namespace Edelstein.WvsGame.Interactions.Dialogue
                 }
                 case 1: // Sell
                 {
+                    var pos = packet.Decode<short>();
+                    var templateID = packet.Decode<int>();
+                    var count = packet.Decode<short>();
+                    var inventory = user.Character.GetInventory((ItemInventoryType) (templateID / 1000000));
+                    var item = inventory.Items.FirstOrDefault(i => i.Position == pos);
+
+                    using (var p = new OutPacket(GameSendOperations.ShopResult))
+                    {
+                        byte result = 0x0;
+
+                        if (item != null)
+                        {
+                            user.ModifyInventory(i =>
+                            {
+                                if (item is ItemSlotBundle bundle)
+                                {
+                                    if (count < bundle.Number)
+                                    {
+                                        bundle.Number -= count;
+                                        i.UpdateQuantity(bundle);
+                                        return;
+                                    }
+                                }
+
+                                count = 1;
+                                i.Remove(item);
+                            });
+
+                            var templates = user.Socket.WvsGame.ItemTemplates;
+                            var template = templates.Get(item.TemplateID);
+                            var price = template.SellPrice * count;
+
+                            user.ModifyStats(s => s.Money += price);
+                        }
+                        else result = 0x10;
+
+                        p.Encode<byte>(result);
+                        user.SendPacket(p);
+                    }
+
                     break;
                 }
                 case 2: // Recharge
                 {
+                    // TODO: recharge
+                    using (var p = new OutPacket(GameSendOperations.ShopResult))
+                    {
+                        p.Encode<byte>(0x3);
+                        user.SendPacket(p);
+                    }
+
                     break;
                 }
                 case 3: // Close
