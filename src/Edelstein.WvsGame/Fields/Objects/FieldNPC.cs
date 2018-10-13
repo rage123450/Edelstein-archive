@@ -40,7 +40,7 @@ namespace Edelstein.WvsGame.Fields.Objects
                 p.Encode<byte>(packet.Decode<byte>());
                 p.Encode<byte>(packet.Decode<byte>());
 
-                if (packet.Length > 0) // m_pTemplate->bMove
+                if (Template.Move)
                 {
                     var movementPath = new MovementPath();
 

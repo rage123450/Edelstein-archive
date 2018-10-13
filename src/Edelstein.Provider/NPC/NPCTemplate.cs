@@ -15,6 +15,8 @@ namespace Edelstein.Provider.NPC
         public bool StoreBank { get; set; }
         public bool Parcel { get; set; }
 
+        public bool Move { get; set; }
+
         public ICollection<NPCScriptTemplate> Scripts;
 
         public static NPCTemplate Parse(int templateId, PackageCollection collection)
@@ -35,7 +37,8 @@ namespace Edelstein.Provider.NPC
                 Scripts = p.Resolve("info/script")?.Children
                               .Select(NPCScriptTemplate.Parse)
                               .ToList()
-                          ?? new List<NPCScriptTemplate>()
+                          ?? new List<NPCScriptTemplate>(),
+                Move = p.Resolve("move") != null
             };
         }
     }
