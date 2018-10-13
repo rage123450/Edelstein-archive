@@ -1,6 +1,7 @@
 using System.Linq;
 using Edelstein.Database.Entities;
 using Edelstein.Database.Entities.Inventory;
+using Edelstein.Database.Entities.Shop;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -10,6 +11,8 @@ namespace Edelstein.Database
     {
         public virtual DbSet<Account> Accounts { get; set; }
         public virtual DbSet<Character> Characters { get; set; }
+
+        public virtual DbSet<NPCShop> NPCShops { get; set; }
 
         public DataContext(DbContextOptions<DataContext> options)
             : base(options)
@@ -43,6 +46,11 @@ namespace Edelstein.Database
                 .HasMany(i => i.Items)
                 .WithOne(i => i.ItemInventory)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<NPCShop>()
+                .HasMany(s => s.Items)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
         public void InsertUpdateOrDeleteGraph(object entity)
@@ -75,7 +83,7 @@ namespace Edelstein.Database
                         if (currentItems.All(i => i.ID != existingItem.ID))
                             Entry(existingItem).State = EntityState.Deleted;
                     }
-                    
+
                     foreach (var skillRecord in existing.SkillRecords)
                     {
                         if (character.SkillRecords.All(s => s.ID != skillRecord.ID))

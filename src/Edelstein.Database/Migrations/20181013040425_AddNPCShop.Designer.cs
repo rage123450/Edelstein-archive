@@ -3,14 +3,16 @@ using System;
 using Edelstein.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Edelstein.Database.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20181013040425_AddNPCShop")]
+    partial class AddNPCShop
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -393,8 +395,7 @@ namespace Edelstein.Database.Migrations
                 {
                     b.HasOne("Edelstein.Database.Entities.Shop.NPCShop")
                         .WithMany("Items")
-                        .HasForeignKey("NPCShopID")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("NPCShopID");
                 });
 
             modelBuilder.Entity("Edelstein.Database.Entities.SkillRecord", b =>
