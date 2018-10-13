@@ -1,9 +1,12 @@
 using Edelstein.Network.Packets;
+using Edelstein.WvsGame.Fields.Objects.Users;
+using Edelstein.WvsGame.Packets;
 
 namespace Edelstein.WvsGame.Interactions.Dialogue
 {
-    public interface Dialogue
+    public abstract class Dialogue
     {
-        OutPacket GetCreatePacket();
+        public abstract bool OnPacket(FieldUser user, GameRecvOperations operation, InPacket packet);
+        public abstract OutPacket GetCreatePacket();
     }
 }

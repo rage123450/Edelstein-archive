@@ -1,6 +1,7 @@
 using System.Linq;
 using Edelstein.Database.Entities.Shop;
 using Edelstein.Network.Packets;
+using Edelstein.WvsGame.Fields.Objects.Users;
 using Edelstein.WvsGame.Packets;
 using MoreLinq;
 
@@ -15,7 +16,21 @@ namespace Edelstein.WvsGame.Interactions.Dialogue
             _shop = shop;
         }
 
-        public OutPacket GetCreatePacket()
+        public override bool OnPacket(FieldUser user, GameRecvOperations operation, InPacket packet)
+        {
+            if (operation == GameRecvOperations.UserShopRequest)
+                OnUserShopRequest(user, packet);
+
+            return true;
+        }
+
+        private void OnUserShopRequest(FieldUser user, InPacket packet)
+        {
+            var type = packet.Decode<byte>();
+            if (type == 3) user.Dialogue = null;
+        }
+
+        public override OutPacket GetCreatePacket()
         {
             using (var p = new OutPacket(GameSendOperations.OpenShopDlg))
             {

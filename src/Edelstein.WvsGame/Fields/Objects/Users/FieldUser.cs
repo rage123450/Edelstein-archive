@@ -18,6 +18,7 @@ using Edelstein.WvsGame.Conversations.Messages;
 using Edelstein.WvsGame.Fields.Movements;
 using Edelstein.WvsGame.Fields.Objects.Drops;
 using Edelstein.WvsGame.Fields.Objects.Users.Stats;
+using Edelstein.WvsGame.Interactions.Dialogue;
 using Edelstein.WvsGame.Packets;
 using Edelstein.WvsGame.Sockets;
 using MoreLinq;
@@ -37,6 +38,22 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
         public int? PortableChairID { get; set; }
         public int? CompletedSetItemID { get; set; }
+
+        private Dialogue _dialogue;
+
+        public Dialogue Dialogue
+        {
+            get => _dialogue;
+            set
+            {
+                if (value != null && _dialogue != null)
+                    return;
+
+                _dialogue = value;
+                if (_dialogue != null)
+                    SendPacket(_dialogue.GetCreatePacket());
+            }
+        }
 
         public IDictionary<TemporaryStatType, Timer> TemporaryStatTimers;
 
@@ -255,6 +272,12 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 case GameRecvOperations.UserScriptMessageAnswer:
                     OnUserScriptMessageAnswer(packet);
                     break;
+                case GameRecvOperations.UserShopRequest:
+                case GameRecvOperations.UserTrunkRequest:
+                case GameRecvOperations.UserEntrustedShopRequest:
+                case GameRecvOperations.UserStoreBankRequest:
+                case GameRecvOperations.UserParcelRequest:
+                    return Dialogue?.OnPacket(this, operation, packet) ?? true;
                 case GameRecvOperations.UserGatherItemRequest:
                     OnUserGatherItemRequest(packet);
                     break;

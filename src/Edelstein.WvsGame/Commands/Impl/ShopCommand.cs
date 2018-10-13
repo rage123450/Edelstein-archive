@@ -13,7 +13,7 @@ namespace Edelstein.WvsGame.Commands.Impl
             var templateID = Convert.ToInt32(ctx.Args.Dequeue());
             var shop = ctx.User.Socket.WvsGame.NPCShops[templateID];
 
-            ctx.User.SendPacket(shop.GetCreatePacket());
+            ctx.User.Dialogue = shop;
             return Task.CompletedTask;
         }
     }
