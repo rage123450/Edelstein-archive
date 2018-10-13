@@ -59,7 +59,7 @@ namespace Edelstein.WvsGame.Fields
                             {
                                 X = (short) l.X,
                                 Y = (short) l.Y,
-                                MoveAction = l.F,
+                                MoveAction = 0x4,
                                 Foothold = (short) l.FH
                             });
                             break;
