@@ -12,7 +12,7 @@ namespace Edelstein.Database.Entities.Inventory
 
         public ItemInventory ItemInventory { get; set; }
 
-        public short Slot { get; set; }
+        public short Position { get; set; }
 
         public int TemplateID { get; set; }
         public DateTime DateExpire { get; set; }

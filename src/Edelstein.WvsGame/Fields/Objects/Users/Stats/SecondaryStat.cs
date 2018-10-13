@@ -57,13 +57,13 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
             var templates = _user.Socket.WvsGame.ItemTemplates;
             var equipped = character.GetInventory(ItemInventoryType.Equip).Items
                 .OfType<ItemSlotEquip>()
-                .Where(i => i.Slot < 0)
+                .Where(i => i.Position < 0)
                 .ToList();
             var setItemID = new List<int>();
 
             equipped.ForEach(i =>
             {
-                var pos = i.Slot;
+                var pos = i.Position;
                 if (pos == -30 ||
                     pos == -38 ||
                     pos == -31 ||
@@ -133,7 +133,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
             {
                 var weapon = character.GetInventory(ItemInventoryType.Equip).Items
                     .OfType<ItemSlotEquip>()
-                    .FirstOrDefault(i => i.Slot == -11);
+                    .FirstOrDefault(i => i.Position == -11);
 
                 if (weapon == null)
                 {

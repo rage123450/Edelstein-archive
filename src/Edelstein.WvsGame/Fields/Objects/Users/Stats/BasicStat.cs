@@ -64,7 +64,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
             var templates = _user.Socket.WvsGame.ItemTemplates;
             var equipped = character.GetInventory(ItemInventoryType.Equip).Items
                 .OfType<ItemSlotEquip>()
-                .Where(i => i.Slot < 0)
+                .Where(i => i.Position < 0)
                 .ToList();
             var setItemID = new List<int>();
             

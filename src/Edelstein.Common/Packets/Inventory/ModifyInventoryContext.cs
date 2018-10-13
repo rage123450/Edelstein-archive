@@ -37,8 +37,8 @@ namespace Edelstein.Common.Packets.Inventory
                         .Where(b => b.Attribute == bundle.Attribute)
                         .Where(b => b.Title == bundle.Title)
                         .Where(b => b.Number != b.MaxNumber)
-                        .Where(b => b.Slot > 0)
-                        .Where(b => b.Slot <= inventory.SlotMax)
+                        .Where(b => b.Position > 0)
+                        .Where(b => b.Position <= inventory.SlotMax)
                         .ToList();
 
                     if (mergeableSlots.Count > 0)
@@ -67,7 +67,7 @@ namespace Edelstein.Common.Packets.Inventory
                     goto default;
                 default:
                     var usedSlots = inventory.Items
-                        .Select<ItemSlot, int>(i => i.Slot)
+                        .Select<ItemSlot, int>(i => i.Position)
                         .Where(s => s > 0)
                         .Where(s => s <= inventory.SlotMax)
                         .ToList();
@@ -109,7 +109,7 @@ namespace Edelstein.Common.Packets.Inventory
         public void Set(ItemInventoryType type, ItemSlot item, short slot)
         {
             item.ItemInventory = _character.GetInventory(type);
-            item.Slot = slot;
+            item.Position = slot;
             Set(item);
         }
 
@@ -117,7 +117,7 @@ namespace Edelstein.Common.Packets.Inventory
         {
             var inventory = item.ItemInventory;
             var inventoryItems = inventory.Items;
-            var existingItem = inventoryItems.SingleOrDefault(i => i.Slot == item.Slot);
+            var existingItem = inventoryItems.SingleOrDefault(i => i.Position == item.Position);
 
             if (existingItem != null) Remove(existingItem);
 
@@ -132,7 +132,7 @@ namespace Edelstein.Common.Packets.Inventory
         {
             var inventory = _character.GetInventory(type);
             var inventoryItems = inventory.Items;
-            var item = inventoryItems.SingleOrDefault(i => i.Slot == slot);
+            var item = inventoryItems.SingleOrDefault(i => i.Position == slot);
 
             if (item != null) Remove(item);
         }
@@ -147,7 +147,7 @@ namespace Edelstein.Common.Packets.Inventory
             inventoryItems.Remove(item);
             _operations.Add(new InventoryRemoveOperation(
                 inventory.Type,
-                item.Slot)
+                item.Position)
             );
         }
 
@@ -155,7 +155,7 @@ namespace Edelstein.Common.Packets.Inventory
         {
             var inventory = _character.GetInventory(type);
             var inventoryItems = inventory.Items;
-            var item = inventoryItems.SingleOrDefault(i => i.Slot == fromSlot);
+            var item = inventoryItems.SingleOrDefault(i => i.Position == fromSlot);
 
             if (item != null) Move(item, toSlot);
         }
@@ -163,8 +163,8 @@ namespace Edelstein.Common.Packets.Inventory
         public void Move(ItemSlot item, short toSlot)
         {
             var inventory = item.ItemInventory;
-            var existingItem = inventory.Items.SingleOrDefault(i => i.Slot == toSlot);
-            var fromSlot = item.Slot;
+            var existingItem = inventory.Items.SingleOrDefault(i => i.Position == toSlot);
+            var fromSlot = item.Position;
 
             if (item is ItemSlotBundle bundle)
             {
@@ -200,10 +200,10 @@ namespace Edelstein.Common.Packets.Inventory
             if (existingItem != null)
             {
                 existingItem.ItemInventory = inventory;
-                existingItem.Slot = fromSlot;
+                existingItem.Position = fromSlot;
             }
 
-            item.Slot = toSlot;
+            item.Position = toSlot;
 
             _operations.Add(new InventoryMoveOperation(
                 inventory.Type,
@@ -216,7 +216,7 @@ namespace Edelstein.Common.Packets.Inventory
         {
             _operations.Add(new InventoryUpdateQuantityOperation(
                 bundle.ItemInventory.Type,
-                bundle.Slot,
+                bundle.Position,
                 bundle.Number)
             );
         }

@@ -8,7 +8,7 @@ namespace Edelstein.Common.Packets.Inventory.Operations
         private readonly ItemSlot _item;
 
         public InventoryAddOperation(ItemInventoryType inventory, ItemSlot item)
-            : base(InventoryOperationType.Add, inventory, item.Slot)
+            : base(InventoryOperationType.Add, inventory, item.Position)
         {
             _item = item;
         }

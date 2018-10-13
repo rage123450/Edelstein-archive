@@ -84,7 +84,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
         {
             var context = new ModifyInventoryContext(Character);
             var equipped = Character.GetInventory(ItemInventoryType.Equip).Items
-                .Where(i => i.Slot < 0)
+                .Where(i => i.Position < 0)
                 .Select(i => i.TemplateID)
                 .ToList();
 
@@ -98,7 +98,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             }
 
             var newEquipped = Character.GetInventory(ItemInventoryType.Equip).Items
-                .Where(i => i.Slot < 0)
+                .Where(i => i.Position < 0)
                 .Select(i => i.TemplateID)
                 .ToList();
 
@@ -490,15 +490,15 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
             var inventoryType = (ItemInventoryType) packet.Decode<byte>();
             var inventoryCopy = Character.GetInventory(inventoryType).Items
-                .Where(i => i.Slot > 0)
-                .OrderBy(i => i.Slot)
+                .Where(i => i.Position > 0)
+                .OrderBy(i => i.Position)
                 .ToList();
-            short slot = 1;
+            short pos = 1;
 
             ModifyInventory(i =>
             {
                 inventoryCopy.ForEach(i.Remove);
-                inventoryCopy.ForEach(item => item.Slot = slot++);
+                inventoryCopy.ForEach(item => item.Position = pos++);
                 inventoryCopy.ForEach(i.Set);
             }, true);
 
@@ -516,8 +516,8 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
             var inventoryType = (ItemInventoryType) packet.Decode<byte>();
             var inventoryCopy = Character.GetInventory(inventoryType).Items
-                .Where(i => i.Slot > 0)
-                .OrderBy(i => i.Slot)
+                .Where(i => i.Position > 0)
+                .OrderBy(i => i.Position)
                 .ToList();
 
             ModifyInventory(i =>
@@ -550,7 +550,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 ModifyInventory(i =>
                 {
                     var item = Character.GetInventory(inventoryType).Items
-                        .Single(ii => ii.Slot == fromSlot);
+                        .Single(ii => ii.Position == fromSlot);
                     var drop = new FieldDropItem(item) {X = X, Y = Y};
 
                     i.Remove(item);
