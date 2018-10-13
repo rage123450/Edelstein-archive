@@ -105,7 +105,7 @@ namespace Edelstein.WvsGame.Fields.Objects
                 p.Encode<short>(Foothold);
                 p.Encode<short>(Foothold);
 
-                p.Encode<byte>(unchecked((byte) -2));
+                p.Encode<byte>(unchecked((byte) -1));
 
                 p.Encode<byte>(0);
                 p.Encode<int>(0);
