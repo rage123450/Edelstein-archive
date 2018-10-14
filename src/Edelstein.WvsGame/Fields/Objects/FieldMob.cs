@@ -15,6 +15,11 @@ namespace Edelstein.WvsGame.Fields.Objects
         {
             Template = template;
         }
+
+        public void Damage(FieldObject source, int damage)
+        {
+            Console.WriteLine("Total damage: " + damage);
+        }
         
         public bool OnPacket(FieldUser controller, GameRecvOperations operation, InPacket packet)
         {

@@ -7,11 +7,13 @@ using Edelstein.Database.Entities.Inventory;
 using Edelstein.Network.Packets;
 using Edelstein.Provider.Items.Consume;
 using Edelstein.WvsGame.Conversations.Messages;
+using Edelstein.WvsGame.Fields.Attacking;
 using Edelstein.WvsGame.Fields.Movements;
 using Edelstein.WvsGame.Fields.Objects.Drops;
 using Edelstein.WvsGame.Fields.Objects.Users.Stats;
 using Edelstein.WvsGame.Packets;
 using MoreLinq.Extensions;
+using Serilog.Core;
 
 namespace Edelstein.WvsGame.Fields.Objects.Users
 {
@@ -32,6 +34,9 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                     break;
                 case GameRecvOperations.UserPortableChairSitRequest:
                     OnUserPortableChairSitRequest(packet);
+                    break;
+                case GameRecvOperations.UserMeleeAttack:
+                    OnUserMeleeAttack(packet);
                     break;
                 case GameRecvOperations.UserChat:
                     OnUserChat(packet);
@@ -173,6 +178,63 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             {
                 p.Encode<int>(ID);
                 p.Encode<int>(templateID);
+                Field.BroadcastPacket(this, p);
+            }
+        }
+
+        private void OnUserMeleeAttack(InPacket packet)
+        {
+            var attackInfo = new AttackInfo();
+
+            attackInfo.Decode(packet);
+            attackInfo.Entries.ForEach(e =>
+            {
+                var fieldObject = Field.GetObject(e.MobID);
+                var totalDamage = e.Damage.Sum();
+
+                if (fieldObject is FieldMob mob)
+                    mob.Damage(this, totalDamage);
+            });
+
+            using (var p = new OutPacket(GameSendOperations.UserMeleeAttack))
+            {
+                p.Encode<int>(ID);
+                p.Encode<byte>((byte) (attackInfo.DamagePerMob | 16 * attackInfo.Count));
+                p.Encode<byte>(Character.Level);
+
+                attackInfo.SkillLevel = (byte) (attackInfo.SkillID > 0 ? 1 : 0); // TODO: hacky
+                p.Encode<byte>(attackInfo.SkillLevel);
+                if (attackInfo.SkillLevel > 0)
+                    p.Encode<int>(attackInfo.SkillID);
+                
+                p.Encode<byte>(0x20); // bSerialAttack
+                p.Encode<short>((short) (attackInfo.AttackAction & 0x7FFF | ((attackInfo.IsLeft ? 1 : 0) << 15)));
+
+                if (attackInfo.AttackAction <= 0x110)
+                {
+                    p.Encode<byte>(0); // nMastery
+                    p.Encode<byte>(0); // v82
+                    p.Encode<int>(0); // bMovingShoot
+
+                    attackInfo.Entries.ForEach(e =>
+                    {
+                        p.Encode<int>(e.MobID);
+
+                        if (e.MobID > 0)
+                        {
+                            p.Encode<byte>(e.HitAction);
+
+                            // check 4211006
+
+                            e.Damage.ForEach(d =>
+                            {
+                                p.Encode<bool>(false);
+                                p.Encode<int>(d);
+                            });
+                        }
+                    });
+                }
+
                 Field.BroadcastPacket(this, p);
             }
         }
