@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Edelstein.Network.Tests.Crypto
 {
-    public class CIGCipherTest
+    public class IGCipherTest
     {
         [Fact]
         public void HashResultIsAccurate()
