@@ -10,7 +10,7 @@ namespace Edelstein.Network.Tests.Crypto
         {
             const uint key = 0x100;
 
-            var result = CIGCipher.InnoHash(key, 4, 0);
+            var result = IGCipher.InnoHash(key, 4, 0);
 
             Assert.Equal((uint) 0x2B1F7777, result);
             Assert.NotEqual(key, result);

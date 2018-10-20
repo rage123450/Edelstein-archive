@@ -1,6 +1,6 @@
 namespace Edelstein.Network.Crypto
 {
-    public class CIGCipher
+    public class IGCipher
     {
         private static readonly byte[] bShuffle =
         {

@@ -71,7 +71,7 @@ namespace Edelstein.Network.Codecs
                                     buffer = ShandaCipher.DecryptTransform(buffer);
                                 }
 
-                                socket.SeqRecv = CIGCipher.InnoHash(seqRecv, 4, 0);
+                                socket.SeqRecv = IGCipher.InnoHash(seqRecv, 4, 0);
                             }
                         }
 

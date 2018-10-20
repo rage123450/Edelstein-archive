@@ -35,7 +35,7 @@ namespace Edelstein.Network.Codecs
                     output.WriteShortLE(dataLen);
                     output.WriteBytes(buffer);
 
-                    socket.SeqSend = CIGCipher.InnoHash(seqSend, 4, 0);
+                    socket.SeqSend = IGCipher.InnoHash(seqSend, 4, 0);
                 }
             }
             else
