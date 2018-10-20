@@ -71,5 +71,22 @@ namespace Edelstein.Common.Packets
             p.Encode<string>(i.Title);
             p.Encode<short>(i.Attribute);
         }
+
+        public static void Encode(this ItemSlotPet i, OutPacket p)
+        {
+            p.Encode<byte>(3);
+            
+            (i as ItemSlot).Encode(p);
+            
+            p.EncodeFixedString(i.PetName, 13);
+            p.Encode<byte>(i.Level);
+            p.Encode<short>(i.Tameness);
+            p.Encode<byte>(i.Repleteness);
+            p.Encode<long>(0); // dateDead
+            p.Encode<short>(i.PetAttribute);
+            p.Encode<short>(i.PetSkill);
+            p.Encode<int>(i.RemainLife);
+            p.Encode<short>(i.Attribute);
+        }
     }
 }

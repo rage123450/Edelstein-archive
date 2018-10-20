@@ -1,11 +1,12 @@
 using Edelstein.Database.Entities.Inventory;
 using Edelstein.Provider.Items;
+using Edelstein.Provider.Items.Cash;
 
 namespace Edelstein.Common.Utils.Items
 {
     public static class ItemInfo
     {
-        public static ItemSlotEquip FromTemplate(ItemEquipTemplate template,
+        private static ItemSlotEquip FromTemplate(ItemEquipTemplate template,
             ItemVariationType type = ItemVariationType.None)
         {
             var variation = new ItemVariation(Rand32.Create(), type);
@@ -13,7 +14,7 @@ namespace Edelstein.Common.Utils.Items
             {
                 TemplateID = template.TemplateID,
 
-                RUC = (byte) template.TUC,
+                RUC = template.TUC,
                 STR = (short) variation.Get(template.IncSTR),
                 DEX = (short) variation.Get(template.IncDEX),
                 INT = (short) variation.Get(template.IncINT),
@@ -33,12 +34,20 @@ namespace Edelstein.Common.Utils.Items
             };
         }
 
-        public static ItemSlotBundle FromTemplate(ItemBundleTemplate template)
+        private static ItemSlotBundle FromTemplate(ItemBundleTemplate template)
         {
             return new ItemSlotBundle
             {
                 TemplateID = template.TemplateID,
-                MaxNumber = (short) template.MaxPerSlot
+                MaxNumber = template.MaxPerSlot
+            };
+        }
+
+        private static ItemSlotPet FromTemplate(PetItemTemplate template)
+        {
+            return new ItemSlotPet
+            {
+                TemplateID = template.TemplateID
             };
         }
 
@@ -51,6 +60,8 @@ namespace Edelstein.Common.Utils.Items
                     return FromTemplate(equipTemplate, type);
                 case ItemBundleTemplate bundleTemplate:
                     return FromTemplate(bundleTemplate);
+                case PetItemTemplate petTemplate:
+                    return FromTemplate(petTemplate);
             }
 
             return null;

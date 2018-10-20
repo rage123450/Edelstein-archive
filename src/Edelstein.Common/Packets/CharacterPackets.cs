@@ -75,36 +75,37 @@ namespace Edelstein.Common.Packets
                 p.Encode<short>(0);
             }
 
-            void EncodeBundles(IEnumerable<ItemSlot> items)
+            void EncodeItems(IEnumerable<ItemSlot> items)
             {
                 foreach (var i in items)
                 {
                     p.Encode<byte>((byte) i.Position);
-                    (i as ItemSlotBundle).Encode(p);
+                    if (i is ItemSlotBundle bundle) bundle.Encode(p);
+                    if (i is ItemSlotPet pet) pet.Encode(p);
                 }
             }
 
             if ((flag & 0x8) != 0)
             {
-                EncodeBundles(inventoryConsume.Items);
+                EncodeItems(inventoryConsume.Items);
                 p.Encode<byte>(0);
             }
 
             if ((flag & 0x10) != 0)
             {
-                EncodeBundles(inventoryInstall.Items);
+                EncodeItems(inventoryInstall.Items);
                 p.Encode<byte>(0);
             }
 
             if ((flag & 0x20) != 0)
             {
-                EncodeBundles(inventoryEtc.Items);
+                EncodeItems(inventoryEtc.Items);
                 p.Encode<byte>(0);
             }
 
             if ((flag & 0x40) != 0)
             {
-                EncodeBundles(inventoryCash.Items);
+                EncodeItems(inventoryCash.Items);
                 p.Encode<byte>(0);
             }
 

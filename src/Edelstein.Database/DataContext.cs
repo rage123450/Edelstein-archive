@@ -23,6 +23,7 @@ namespace Edelstein.Database
         {
             modelBuilder.Entity<ItemSlotEquip>().HasBaseType<ItemSlot>();
             modelBuilder.Entity<ItemSlotBundle>().HasBaseType<ItemSlot>();
+            modelBuilder.Entity<ItemSlotPet>().HasBaseType<ItemSlot>();
 
             modelBuilder.Entity<Account>()
                 .HasMany(a => a.Data)

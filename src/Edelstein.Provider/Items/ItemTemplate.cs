@@ -1,4 +1,6 @@
+using System;
 using System.Linq;
+using Edelstein.Provider.Items.Cash;
 using Edelstein.Provider.Items.Consume;
 using Edelstein.Provider.Items.Install;
 using PKG1;
@@ -111,7 +113,15 @@ namespace Edelstein.Provider.Items
                     prop = collection.Resolve($"Item/Etc/{header:D4}.img/{templateId:D8}");
                     break;
                 case 5: // TODO
-                    prop = collection.Resolve($"Item/Cash/{header:D4}.img/{templateId:D8}");
+                    switch (subType)
+                    {
+                        case 0:
+                            item = new PetItemTemplate();
+                            prop = collection.Resolve($"Item/Pet/{templateId:D7}.img");
+                            break;
+                    }
+
+                    prop = prop ?? collection.Resolve($"Item/Cash/{header:D4}.img/{templateId:D8}");
                     break;
             }
 
