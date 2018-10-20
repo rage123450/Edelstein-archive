@@ -299,7 +299,6 @@ namespace Edelstein.WvsLogin.Sockets
 
                         var characters = data.Characters;
 
-
                         p.Encode<byte>((byte) characters.Count);
                         characters.ForEach(c =>
                         {

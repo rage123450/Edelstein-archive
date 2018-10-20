@@ -14,6 +14,6 @@ namespace Edelstein.Database.Entities
         public byte WorldID { get; set; }
         public int SlotCount { get; set; }
         
-        public ICollection<Character> Characters { get; set; }
+        public ICollection<Character> Characters { get; set; } = new List<Character>();
     }
 }
