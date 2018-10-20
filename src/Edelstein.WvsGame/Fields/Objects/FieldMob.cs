@@ -26,11 +26,9 @@ namespace Edelstein.WvsGame.Fields.Objects
         {
             HP -= damage;
             Console.WriteLine("Total damage: " + damage + " HP: " + HP);
-            if (HP <= 0) Field.Leave(this);
-            else
+            
+            if (source is FieldUser user)
             {
-                if (!(source is FieldUser user)) return;
-
                 var indicator = HP / (float) Template.MaxHP * 100f;
 
                 indicator = Math.Min(100, indicator);
@@ -42,6 +40,8 @@ namespace Edelstein.WvsGame.Fields.Objects
                     user.SendPacket(p);
                 }
             }
+            
+            if (HP <= 0) Field.Leave(this);
         }
 
         public bool OnPacket(FieldUser controller, GameRecvOperations operation, InPacket packet)
