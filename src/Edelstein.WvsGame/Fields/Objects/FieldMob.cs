@@ -10,15 +10,23 @@ namespace Edelstein.WvsGame.Fields.Objects
     public class FieldMob : FieldObjectControlled
     {
         public MobTemplate Template { get; set; }
+        
+        public int HP { get; set; }
+        public int MP { get; set; }
 
         public FieldMob(MobTemplate template)
         {
             Template = template;
+
+            HP = template.MaxHP;
+            MP = template.MaxMP;
         }
 
         public void Damage(FieldObject source, int damage)
         {
             Console.WriteLine("Total damage: " + damage);
+            HP -= damage;
+            if (!(HP > 0)) Field.Leave(this);
         }
         
         public bool OnPacket(FieldUser controller, GameRecvOperations operation, InPacket packet)
