@@ -121,7 +121,7 @@ namespace Edelstein.WvsGame.Fields.Objects
 
         public override OutPacket GetLeaveFieldPacket()
         {
-            using (var p = new OutPacket(GameSendOperations.MobEnterField))
+            using (var p = new OutPacket(GameSendOperations.MobLeaveField))
             {
                 p.Encode<int>(ID);
                 p.Encode<byte>(0);
