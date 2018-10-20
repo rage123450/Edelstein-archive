@@ -10,7 +10,7 @@ namespace Edelstein.WvsGame.Fields.Objects
     public class FieldMob : FieldObjectControlled
     {
         public MobTemplate Template { get; set; }
-        
+
         public int HP { get; set; }
         public int MP { get; set; }
 
@@ -24,11 +24,26 @@ namespace Edelstein.WvsGame.Fields.Objects
 
         public void Damage(FieldObject source, int damage)
         {
-            Console.WriteLine("Total damage: " + damage);
             HP -= damage;
-            if (!(HP > 0)) Field.Leave(this);
+            Console.WriteLine("Total damage: " + damage + " HP: " + HP);
+            if (HP <= 0) Field.Leave(this);
+            else
+            {
+                if (!(source is FieldUser user)) return;
+
+                var indicator = HP / (float) Template.MaxHP * 100f;
+
+                indicator = Math.Min(100, indicator);
+                indicator = Math.Max(0, indicator);
+                using (var p = new OutPacket(GameSendOperations.MobHPIndicator))
+                {
+                    p.Encode<int>(ID);
+                    p.Encode<byte>((byte) indicator);
+                    user.SendPacket(p);
+                }
+            }
         }
-        
+
         public bool OnPacket(FieldUser controller, GameRecvOperations operation, InPacket packet)
         {
             switch (operation)
@@ -42,7 +57,7 @@ namespace Edelstein.WvsGame.Fields.Objects
 
             return true;
         }
-        
+
         private void OnMobMove(InPacket packet)
         {
             var mobCtrlSN = packet.Decode<short>();
@@ -51,10 +66,10 @@ namespace Edelstein.WvsGame.Fields.Objects
             var BYTE3 = packet.Decode<byte>(); // BYTE3(v178)
             var v92 = packet.Decode<int>(); // v92 = v206
             var v8 = packet.Decode<byte>();
-            
+
             var multiTargetForBall = packet.Decode<int>();
             for (var i = 0; i < multiTargetForBall; i++) packet.Decode<long>(); // int, int
-            
+
             var randTimeforAreaAttack = packet.Decode<int>();
             for (var i = 0; i < randTimeforAreaAttack; i++) packet.Decode<int>();
 
@@ -62,7 +77,7 @@ namespace Edelstein.WvsGame.Fields.Objects
             packet.Decode<int>(); // idk
             packet.Decode<int>(); // HackedCodeCrc
             packet.Decode<int>(); // idk
-            
+
             var movementPath = new MovementPath();
 
             movementPath.Decode(packet);
@@ -93,9 +108,9 @@ namespace Edelstein.WvsGame.Fields.Objects
 
                 p.Encode<int>(0); // MultiTargetForBall
                 p.Encode<int>(0); // RandTimeforAreaAttack
-                
+
                 movementPath.Encode(p);
-                
+
                 if (Controller == null) Field.BroadcastPacket(p);
                 else Field.BroadcastPacket(Controller, p);
             }
@@ -132,7 +147,7 @@ namespace Edelstein.WvsGame.Fields.Objects
             using (var p = new OutPacket(GameSendOperations.MobLeaveField))
             {
                 p.Encode<int>(ID);
-                p.Encode<byte>(0);
+                p.Encode<byte>(1);
                 return p;
             }
         }
@@ -148,7 +163,7 @@ namespace Edelstein.WvsGame.Fields.Objects
                 {
                     p.Encode<byte>(0); // nCalcDamageIndex
                     p.Encode<int>(Template.TemplateID);
-                    
+
                     p.Encode<long>(0); // Temporary Stat
                     p.Encode<long>(0); // Temporary Stat
 
@@ -164,6 +179,7 @@ namespace Edelstein.WvsGame.Fields.Objects
                     p.Encode<int>(0);
                     p.Encode<int>(0);
                 }
+
                 return p;
             }
         }
