@@ -25,12 +25,12 @@ namespace Edelstein.Database
             modelBuilder.Entity<ItemSlotBundle>().HasBaseType<ItemSlot>();
 
             modelBuilder.Entity<Account>()
-                .HasMany(a => a.Characters)
-                .WithOne(c => c.Account)
+                .HasMany(a => a.Data)
+                .WithOne(a => a.Account)
                 .OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<Account>()
-                .HasMany<AccountData>(a => a.Data)
-                .WithOne()
+            modelBuilder.Entity<AccountData>()
+                .HasMany(a => a.Characters)
+                .WithOne(c => c.Data)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Character>()

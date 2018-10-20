@@ -15,6 +15,7 @@ using Edelstein.WvsLogin.Logging;
 using Edelstein.WvsLogin.Packets;
 using Lamar;
 using Microsoft.EntityFrameworkCore;
+using MoreLinq.Extensions;
 
 namespace Edelstein.WvsLogin.Sockets
 {
@@ -164,7 +165,7 @@ namespace Edelstein.WvsLogin.Sockets
                     {
                         var account = db.Accounts
                             .Include(a => a.Data)
-                            .Include(a => a.Characters)
+                            .ThenInclude(a => a.Characters)
                             .ThenInclude(c => c.Inventories)
                             .ThenInclude(c => c.Items)
                             .SingleOrDefault(a => a.Username.Equals(username));
@@ -296,7 +297,8 @@ namespace Edelstein.WvsLogin.Sockets
                             db.SaveChanges();
                         }
 
-                        var characters = Account.Characters.Where(c => c.WorldID == worldID).ToList();
+                        var characters = data.Characters;
+
 
                         p.Encode<byte>((byte) characters.Count);
                         characters.ForEach(c =>
@@ -355,7 +357,6 @@ namespace Edelstein.WvsLogin.Sockets
                 var character = new Character
                 {
                     Name = name,
-                    WorldID = _selectedWorld.ID,
                     Job = 0,
                     Face = face,
                     Hair = hair,
@@ -389,7 +390,11 @@ namespace Edelstein.WvsLogin.Sockets
                 context.Set(templates.Get(shoes), -7);
                 context.Set(templates.Get(weapon), -11);
 
-                Account.Characters.Add(character);
+                var data = Account.Data.FirstOrDefault(a => a.WorldID == _selectedWorld.ID);
+
+                if (data == null) return; // TODO error
+
+                data.Characters.Add(character);
                 db.Update(Account);
                 db.SaveChanges();
 
@@ -469,10 +474,12 @@ namespace Edelstein.WvsLogin.Sockets
 
             if (vac)
             {
-                var character = Account.Characters.Single(c => c.ID == characterID);
+                var character = Account.Data
+                    .SelectMany(a => a.Characters)
+                    .Single(c => c.ID == characterID);
                 _selectedWorld = _wvsLogin.InteropClients
                     .Select(c => c.Socket.WorldInformation)
-                    .SingleOrDefault(w => w.ID == character.WorldID);
+                    .SingleOrDefault(w => w.ID == character.Data.WorldID);
                 _selectedChannel = _selectedWorld.Channels.First();
             }
 
@@ -491,7 +498,10 @@ namespace Edelstein.WvsLogin.Sockets
         private void OnViewAllChar(InPacket packet)
         {
             var worlds = _wvsLogin.InteropClients.Select(c => c.Socket.WorldInformation).ToList();
-            var allCharacters = Account.Characters.Where(c => worlds.Any(w => c.WorldID == w.ID)).ToList();
+            var allCharacters = Account.Data
+                .Where(c => worlds.Any(w => c.WorldID == w.ID))
+                .SelectMany(d => d.Characters)
+                .ToList();
 
             using (var p = new OutPacket(LoginSendOperations.ViewAllCharResult))
             {
@@ -505,7 +515,7 @@ namespace Edelstein.WvsLogin.Sockets
             {
                 worlds.ForEach(w =>
                 {
-                    var characters = allCharacters.Where(c => c.WorldID == w.ID).ToList();
+                    var characters = allCharacters.Where(c => c.Data.WorldID == w.ID).ToList();
 
                     using (var p = new OutPacket(LoginSendOperations.ViewAllCharResult))
                     {
@@ -540,9 +550,10 @@ namespace Edelstein.WvsLogin.Sockets
             {
                 using (var db = _container.GetInstance<DataContext>())
                 {
-                    var character = Account.Characters.Single(c => c.ID == characterID);
+                    var data = Account.Data.Single(a => a.WorldID == _selectedWorld.ID);
+                    var character = data.Characters.Single(c => c.ID == characterID);
 
-                    Account.Characters.Remove(character);
+                    data.Characters.Remove(character);
                     db.Characters.Remove(character);
                     db.Update(Account);
                     db.SaveChanges();

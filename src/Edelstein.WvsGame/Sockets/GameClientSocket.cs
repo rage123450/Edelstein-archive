@@ -66,14 +66,15 @@ namespace Edelstein.WvsGame.Sockets
             using (var db = _container.GetInstance<DataContext>())
             {
                 var character = db.Characters
-                    .Include(c => c.Account)
+                    .Include(c => c.Data)
+                    .ThenInclude(a => a.Account)
                     .Include(c => c.FunctionKeys)
                     .Include(c => c.Inventories)
                     .ThenInclude(c => c.Items)
                     .Include(c => c.SkillRecords)
                     .Single(c => c.ID == characterID);
 
-                character.Account.State = AccountState.LoggedIn;
+                character.Data.Account.State = AccountState.LoggedIn;
                 db.Update(character);
                 db.SaveChanges();
 
@@ -147,7 +148,7 @@ namespace Edelstein.WvsGame.Sockets
             {
                 using (var db = _container.GetInstance<DataContext>())
                 {
-                    var account = u.Character.Account;
+                    var account = u.Character.Data.Account;
 
                     if (account.State != AccountState.MigratingIn)
                         account.State = AccountState.LoggedOut;

@@ -3,14 +3,16 @@ using System;
 using Edelstein.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Edelstein.Database.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20181020031529_MoveCharacterRelationship")]
+    partial class MoveCharacterRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,6 +47,8 @@ namespace Edelstein.Database.Migrations
 
                     b.Property<int?>("AccountID");
 
+                    b.Property<int?>("AccountID1");
+
                     b.Property<int>("SlotCount");
 
                     b.Property<byte>("WorldID");
@@ -52,6 +56,8 @@ namespace Edelstein.Database.Migrations
                     b.HasKey("ID");
 
                     b.HasIndex("AccountID");
+
+                    b.HasIndex("AccountID1");
 
                     b.ToTable("AccountData");
                 });
@@ -349,10 +355,14 @@ namespace Edelstein.Database.Migrations
 
             modelBuilder.Entity("Edelstein.Database.Entities.AccountData", b =>
                 {
-                    b.HasOne("Edelstein.Database.Entities.Account", "Account")
+                    b.HasOne("Edelstein.Database.Entities.Account")
                         .WithMany("Data")
                         .HasForeignKey("AccountID")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Edelstein.Database.Entities.Account", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountID1");
                 });
 
             modelBuilder.Entity("Edelstein.Database.Entities.Character", b =>

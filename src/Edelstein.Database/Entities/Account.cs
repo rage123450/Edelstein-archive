@@ -19,6 +19,5 @@ namespace Edelstein.Database.Entities
         public AccountState State { get; set; }
 
         public ICollection<AccountData> Data { get; set; }
-        public ICollection<Character> Characters { get; set; }
     }
 }

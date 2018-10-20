@@ -12,8 +12,7 @@ namespace Edelstein.Database.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
 
-        public Account Account { get; set; }
-        public byte WorldID { get; set; }
+        public AccountData Data { get; set; }
 
         [MaxLength(13)] public string Name { get; set; }
 
