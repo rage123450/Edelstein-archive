@@ -18,10 +18,11 @@ namespace Edelstein.Network.Packets
         {
         }
 
-        public virtual OutPacket Encode<T>(object value)
+        public virtual OutPacket Encode<T>(T value)
         {
             var type = typeof(T);
 
+            if (type.IsEnum) type = type.GetEnumUnderlyingType();
             if (value == null) value = default(T);
 
             if (PacketMethods.EncodeMethods.ContainsKey(type))

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Edelstein.Database.Entities;
 using Edelstein.Database.Entities.Inventory;
+using Edelstein.Database.Entities.Types;
 using Edelstein.Network.Packets;
 
 namespace Edelstein.Common.Packets
@@ -114,7 +115,7 @@ namespace Edelstein.Common.Packets
                 p.Encode<short>((short) c.SkillRecords.Count);
                 foreach (var skillRecord in c.SkillRecords)
                 {
-                    p.Encode<int>(skillRecord.Skill);
+                    p.Encode<Skill>(skillRecord.Skill);
                     p.Encode<int>(skillRecord.Info);
                     p.Encode<long>(0); // skillRecord.DateExpire;
                     // is_skill_need_master_level
@@ -199,7 +200,7 @@ namespace Edelstein.Common.Packets
                 p.Encode<long>(0); // Pet stuff.
 
             p.Encode<byte>(c.Level);
-            p.Encode<short>(c.Job);
+            p.Encode(c.Job);
             p.Encode<short>(c.STR);
             p.Encode<short>(c.DEX);
             p.Encode<short>(c.INT);

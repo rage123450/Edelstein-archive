@@ -220,7 +220,7 @@ namespace Edelstein.Common.Packets.Stats
             if ((_flag & ModifyStatType.Pet3) != 0) packet.Encode<long>(0);
 
             if ((_flag & ModifyStatType.Level) != 0) packet.Encode<byte>(Level);
-            if ((_flag & ModifyStatType.Job) != 0) packet.Encode<short>(Job);
+            if ((_flag & ModifyStatType.Job) != 0) packet.Encode<Job>(Job);
             if ((_flag & ModifyStatType.STR) != 0) packet.Encode<short>(STR);
             if ((_flag & ModifyStatType.DEX) != 0) packet.Encode<short>(DEX);
             if ((_flag & ModifyStatType.INT) != 0) packet.Encode<short>(INT);

@@ -4,6 +4,7 @@ using System.Timers;
 using Edelstein.Common.Packets;
 using Edelstein.Common.Packets.Messages;
 using Edelstein.Database.Entities;
+using Edelstein.Database.Entities.Types;
 using Edelstein.Network.Packets;
 using Edelstein.WvsGame.Conversations;
 using Edelstein.WvsGame.Fields.Objects.Users.Stats;
@@ -99,7 +100,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
                 TemporaryStat.EncodeForRemote(p, TemporaryStat.Entries.Values);
 
-                p.Encode<short>(Character.Job);
+                p.Encode<Job>(Character.Job);
                 Character.EncodeLook(p);
 
                 p.Encode<int>(0);

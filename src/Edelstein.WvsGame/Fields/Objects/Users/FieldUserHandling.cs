@@ -4,6 +4,7 @@ using System.Linq;
 using Edelstein.Common.Packets;
 using Edelstein.Common.Packets.Stats;
 using Edelstein.Database.Entities.Inventory;
+using Edelstein.Database.Entities.Types;
 using Edelstein.Network.Packets;
 using Edelstein.Provider.Items.Consume;
 using Edelstein.WvsGame.Conversations.Messages;
@@ -602,7 +603,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
                 p.Encode<int>(user.ID);
                 p.Encode<byte>(c.Level);
-                p.Encode<short>(c.Job);
+                p.Encode<Job>(c.Job);
                 p.Encode<short>(c.POP);
 
                 p.Encode<byte>(0);

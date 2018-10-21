@@ -53,7 +53,7 @@ namespace Edelstein.Common.Packets.Skills
             packet.Encode<short>((short) _records.Count);
             foreach (var record in _records) // TODO: extension method to remove redundant code with characterdata
             {
-                packet.Encode<int>(record.Skill);
+                packet.Encode<Skill>(record.Skill);
                 packet.Encode<int>(record.Info);
                 packet.Encode<int>(record.MasterLevel);
                 packet.Encode<long>(0); // skillRecord.DateExpire;
