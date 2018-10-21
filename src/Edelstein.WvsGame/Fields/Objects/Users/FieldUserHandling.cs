@@ -14,7 +14,6 @@ using Edelstein.WvsGame.Fields.Objects.Drops;
 using Edelstein.WvsGame.Fields.Objects.Users.Stats;
 using Edelstein.WvsGame.Packets;
 using MoreLinq.Extensions;
-using Serilog.Core;
 
 namespace Edelstein.WvsGame.Fields.Objects.Users
 {
@@ -436,7 +435,12 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             var position = packet.Decode<short>();
             var templateID = packet.Decode<int>();
             var template = Socket.WvsGame.ItemTemplates.Get(templateID);
+            
+            var inventory = Character.GetInventory(ItemInventoryType.Use);
+            var inventoryItems = inventory.Items;
+            var item = inventoryItems.SingleOrDefault(i => i.Position == position);
 
+            if (item.TemplateID != templateID) return;
             if (!(template is StatChangeItemTemplate scTemplate)) return;
 
             var temporaryStats = new Dictionary<TemporaryStatType, short>();
@@ -482,6 +486,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 }
             }
 
+            ModifyInventory(i => i.Remove(item));
             ModifyStats(exclRequest: true);
         }
 

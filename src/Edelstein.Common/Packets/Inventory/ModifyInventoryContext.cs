@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Edelstein.Common.Packets.Inventory.Exceptions;
@@ -128,23 +129,35 @@ namespace Edelstein.Common.Packets.Inventory
                 item)
             );
         }
-
-        public void Remove(ItemInventoryType type, short slot)
+        
+        public void Remove(ItemInventoryType type, short slot, int count = 1)
         {
             var inventory = _character.GetInventory(type);
             var inventoryItems = inventory.Items;
             var item = inventoryItems.SingleOrDefault(i => i.Position == slot);
 
-            if (item != null) Remove(item);
+            if (item != null) Remove(item, count);
         }
 
-        public void Remove(ItemSlot item)
+        public void Remove(ItemSlot item, int count = 1)
         {
             var inventory = item.ItemInventory;
             var inventoryItems = inventory.Items;
 
             item.ID = 0;
 
+            if (item is ItemSlotBundle bundle)
+            {
+                bundle.Number -= (short) count;
+                bundle.Number = Math.Max((short) 0, bundle.Number);
+
+                if (bundle.Number > 0)
+                {
+                    UpdateQuantity(bundle);
+                    return;
+                }
+            }
+            
             inventoryItems.Remove(item);
             _operations.Add(new InventoryRemoveOperation(
                 inventory.Type,
