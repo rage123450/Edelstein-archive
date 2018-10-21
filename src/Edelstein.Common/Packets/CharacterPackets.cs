@@ -114,7 +114,7 @@ namespace Edelstein.Common.Packets
                 p.Encode<short>((short) c.SkillRecords.Count);
                 foreach (var skillRecord in c.SkillRecords)
                 {
-                    p.Encode<int>(skillRecord.SkillID);
+                    p.Encode<int>(skillRecord.Skill);
                     p.Encode<int>(skillRecord.Info);
                     p.Encode<long>(0); // skillRecord.DateExpire;
                     // is_skill_need_master_level
@@ -167,7 +167,7 @@ namespace Edelstein.Common.Packets
 
             if ((flag & 0x200000) != 0)
             {
-                if (c.Job / 100 == 33)
+                if ((int) c.Job / 100 == 33)
                 {
                     p.Encode<byte>(0);
                     for (var i = 0; i < 5; i++) p.Encode<int>(0);
@@ -210,7 +210,7 @@ namespace Edelstein.Common.Packets
             p.Encode<int>(c.MaxMP);
 
             p.Encode<short>(c.AP);
-            if (c.Job / 1000 != 3 && c.Job / 100 != 22 && c.Job != 2001)
+            if ((int) c.Job / 1000 != 3 && (int) c.Job / 100 != 22 && (int) c.Job != 2001)
                 p.Encode<short>(c.SP);
             else p.Encode<byte>(0); // TODO: extendedSP
 

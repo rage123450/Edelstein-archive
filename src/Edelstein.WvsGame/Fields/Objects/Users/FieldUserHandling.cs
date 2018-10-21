@@ -126,7 +126,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
             using (var p = new OutPacket(GameSendOperations.UserMove))
             {
-                p.Encode(ID);
+                p.Encode<int>(ID);
                 movementPath.Encode(p);
                 Field.BroadcastPacket(this, p);
             }

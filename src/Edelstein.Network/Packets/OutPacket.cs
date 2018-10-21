@@ -18,7 +18,7 @@ namespace Edelstein.Network.Packets
         {
         }
 
-        public virtual OutPacket Encode<T>(T value)
+        public virtual OutPacket Encode<T>(object value)
         {
             var type = typeof(T);
 

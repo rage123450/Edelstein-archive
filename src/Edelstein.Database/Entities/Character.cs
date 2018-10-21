@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using Edelstein.Database.Entities.Inventory;
+using Edelstein.Database.Entities.Types;
 
 namespace Edelstein.Database.Entities
 {
@@ -22,7 +23,7 @@ namespace Edelstein.Database.Entities
         public int Hair { get; set; }
 
         public byte Level { get; set; }
-        public short Job { get; set; }
+        public Job Job { get; set; }
         public short STR { get; set; }
         public short DEX { get; set; }
         public short INT { get; set; }
