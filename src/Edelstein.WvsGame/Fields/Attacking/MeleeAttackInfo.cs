@@ -24,7 +24,7 @@ namespace Edelstein.WvsGame.Fields.Attacking
             packet.Decode<int>();
             packet.Decode<int>();
             SkillID = packet.Decode<int>();
-            SkillLevel = packet.Decode<byte>(); // is this right?
+            packet.Decode<byte>();
             packet.Decode<int>();
             packet.Decode<int>();
             packet.Decode<int>();
@@ -61,9 +61,9 @@ namespace Edelstein.WvsGame.Fields.Attacking
             packet.Encode<byte>((byte) (DamagePerMob | 16 * Count));
             packet.Encode<byte>(Character.Level);
 
-            SkillLevel = (byte) (SkillID > 0 ? 1 : 0); // TODO: hacky
-            packet.Encode<byte>(SkillLevel);
-            if (SkillLevel > 0)
+            var skillLevel = (byte) (SkillID > 0 ? 1 : 0); // TODO: hacky
+            packet.Encode<byte>(skillLevel);
+            if (skillLevel > 0)
                 packet.Encode<int>(SkillID);
 
             packet.Encode<byte>(0x20); // bSerialAttack

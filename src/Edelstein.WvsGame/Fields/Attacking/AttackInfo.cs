@@ -11,7 +11,7 @@ namespace Edelstein.WvsGame.Fields.Attacking
         public int DamagePerMob { get; set; }
         public int Count { get; set; }
         public int SkillID { get; set; }
-        public byte SkillLevel { get; set; }
+        public int KeyDown { get; set; }
         public short AttackAction { get; set; }
         public bool IsLeft { get; set; }
         public byte AttackActionType { get; set; }
