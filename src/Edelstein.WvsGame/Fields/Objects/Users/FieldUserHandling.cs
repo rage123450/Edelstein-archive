@@ -38,6 +38,15 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 case GameRecvOperations.UserMeleeAttack:
                     OnUserMeleeAttack(packet);
                     break;
+                case GameRecvOperations.UserShootAttack:
+                    OnUserShootAttack(packet);
+                    break;
+                case GameRecvOperations.UserMagicAttack:
+                    OnUserMagicAttack(packet);
+                    break;
+                case GameRecvOperations.UserBodyAttack:
+                    OnUserBodyAttack(packet);
+                    break;
                 case GameRecvOperations.UserChat:
                     OnUserChat(packet);
                     break;
@@ -187,7 +196,36 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             var attackInfo = new MeleeAttackInfo(Character);
 
             attackInfo.Decode(packet);
-            attackInfo.Entries.ForEach(e =>
+            OnUserAttack(attackInfo);
+        }
+
+        private void OnUserShootAttack(InPacket packet)
+        {
+            var attackInfo = new ShootAttackInfo(Character);
+
+            attackInfo.Decode(packet);
+            OnUserAttack(attackInfo);
+        }
+
+        private void OnUserMagicAttack(InPacket packet)
+        {
+            var attackInfo = new MagicAttackInfo(Character);
+
+            attackInfo.Decode(packet);
+            OnUserAttack(attackInfo);
+        }
+
+        private void OnUserBodyAttack(InPacket packet)
+        {
+            var attackInfo = new BodyAttackInfo(Character);
+
+            attackInfo.Decode(packet);
+            OnUserAttack(attackInfo);
+        }
+
+        private void OnUserAttack(AttackInfo info)
+        {
+            info.Entries.ForEach(e =>
             {
                 var fieldObject = Field.GetObject(e.MobID);
                 var totalDamage = e.Damage.Sum();
@@ -196,10 +234,16 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                     mob.Damage(this, totalDamage);
             });
 
-            using (var p = new OutPacket(GameSendOperations.UserMeleeAttack))
+            using (var p = new OutPacket(
+                info is MeleeAttackInfo ? GameSendOperations.UserMeleeAttack :
+                info is ShootAttackInfo ? GameSendOperations.UserShootAttack :
+                info is MagicAttackInfo ? GameSendOperations.UserMagicAttack :
+                info is BodyAttackInfo ? GameSendOperations.UserBodyAttack :
+                GameSendOperations.UserMeleeAttack
+            ))
             {
                 p.Encode<int>(ID);
-                attackInfo.Encode(p);
+                info.Encode(p);
 
                 Field.BroadcastPacket(this, p);
             }
