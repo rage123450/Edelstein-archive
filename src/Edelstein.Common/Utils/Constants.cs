@@ -28,7 +28,16 @@ namespace Edelstein.Common.Utils
             var job = (Job) (id / 10000);
             var v4 = (int) job / 10;
 
-            // TODO: evan
+            if (v4 == 22 || (int) job == 2001)
+            {
+                var jobLevel = GetJobLevel(job);
+
+                return jobLevel == 9 ||
+                       jobLevel == 10 ||
+                       skill == Skill.EvanMagicGuard ||
+                       skill == Skill.EvanMagicBooster ||
+                       skill == Skill.EvanMagicCritical;
+            }
             // TODO: dual-blade
 
             if ((int) job == 100 * v4) return false;
