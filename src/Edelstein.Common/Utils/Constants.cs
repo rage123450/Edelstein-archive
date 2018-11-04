@@ -28,7 +28,7 @@ namespace Edelstein.Common.Utils
             var job = (Job) (id / 10000);
             var v4 = (int) job / 10;
 
-            if (v4 == 22 || (int) job == 2001)
+            if (v4 == 22 || job == Job.Evanjr)
             {
                 var jobLevel = GetJobLevel(job);
 
