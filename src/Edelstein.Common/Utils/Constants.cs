@@ -38,7 +38,15 @@ namespace Edelstein.Common.Utils
                        skill == Skill.EvanMagicBooster ||
                        skill == Skill.EvanMagicCritical;
             }
-            // TODO: dual-blade
+
+            if (v4 == 43)
+            {
+                return GetJobLevel(job) == 4 ||
+                       skill == Skill.Dual2SlashStorm ||
+                       skill == Skill.Dual3HustleDash ||
+                       skill == Skill.Dual4MirrorImaging ||
+                       skill == Skill.Dual4FlyingAssaulter;
+            }
 
             if ((int) job == 100 * v4) return false;
             return (int) job % 10 == 2;
