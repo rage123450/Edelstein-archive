@@ -184,7 +184,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
         private void OnUserMeleeAttack(InPacket packet)
         {
-            var attackInfo = new AttackInfo();
+            var attackInfo = new MeleeAttackInfo(Character);
 
             attackInfo.Decode(packet);
             attackInfo.Entries.ForEach(e =>
@@ -199,41 +199,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             using (var p = new OutPacket(GameSendOperations.UserMeleeAttack))
             {
                 p.Encode<int>(ID);
-                p.Encode<byte>((byte) (attackInfo.DamagePerMob | 16 * attackInfo.Count));
-                p.Encode<byte>(Character.Level);
-
-                attackInfo.SkillLevel = (byte) (attackInfo.SkillID > 0 ? 1 : 0); // TODO: hacky
-                p.Encode<byte>(attackInfo.SkillLevel);
-                if (attackInfo.SkillLevel > 0)
-                    p.Encode<int>(attackInfo.SkillID);
-                
-                p.Encode<byte>(0x20); // bSerialAttack
-                p.Encode<short>((short) (attackInfo.AttackAction & 0x7FFF | ((attackInfo.IsLeft ? 1 : 0) << 15)));
-
-                if (attackInfo.AttackAction <= 0x110)
-                {
-                    p.Encode<byte>(0); // nMastery
-                    p.Encode<byte>(0); // v82
-                    p.Encode<int>(0); // bMovingShoot
-
-                    attackInfo.Entries.ForEach(e =>
-                    {
-                        p.Encode<int>(e.MobID);
-
-                        if (e.MobID > 0)
-                        {
-                            p.Encode<byte>(e.HitAction);
-
-                            // check 4211006
-
-                            e.Damage.ForEach(d =>
-                            {
-                                p.Encode<bool>(false);
-                                p.Encode<int>(d);
-                            });
-                        }
-                    });
-                }
+                attackInfo.Encode(p);
 
                 Field.BroadcastPacket(this, p);
             }
@@ -435,7 +401,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             var position = packet.Decode<short>();
             var templateID = packet.Decode<int>();
             var template = Socket.WvsGame.ItemTemplates.Get(templateID);
-            
+
             var inventory = Character.GetInventory(ItemInventoryType.Use);
             var inventoryItems = inventory.Items;
             var item = inventoryItems.SingleOrDefault(i => i.Position == position);
