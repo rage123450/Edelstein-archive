@@ -19,7 +19,8 @@ namespace Edelstein.Network.Packets
                 {typeof(int), buffer => buffer.ReadIntLE()},
                 {typeof(uint), buffer => buffer.ReadUnsignedIntLE()},
                 {typeof(long), buffer => buffer.ReadLongLE()},
-                {typeof(string), buffer => buffer.ReadString(buffer.ReadShortLE(), StringEncoding)}
+                {typeof(string), buffer => buffer.ReadString(buffer.ReadShortLE(), StringEncoding)},
+                {typeof(DateTime), buffer => DateTime.FromFileTimeUtc(buffer.ReadLongLE())}
             };
 
         internal static readonly Dictionary<Type, Action<IByteBuffer, object>> EncodeMethods =
@@ -38,7 +39,8 @@ namespace Edelstein.Network.Packets
                         buffer.WriteShortLE(str.Length);
                         buffer.WriteBytes(StringEncoding.GetBytes(str));
                     }
-                }
+                },
+                {typeof(DateTime), (buffer, value) => buffer.WriteLongLE(((DateTime) value).ToFileTimeUtc())}
             };
     }
 }

@@ -118,7 +118,9 @@ namespace Edelstein.Common.Packets
                 {
                     p.Encode<Skill>(skillRecord.Skill);
                     p.Encode<int>(skillRecord.Info);
-                    p.Encode<long>(0); // skillRecord.DateExpire;
+                    
+                    if (skillRecord.DateExpire == null) p.Encode<long>(0);
+                    else p.Encode<DateTime>(skillRecord.DateExpire.Value);
 
                     if (Constants.IsSkillNeedMasterLevel(skillRecord.Skill))
                         p.Encode<int>(skillRecord.MasterLevel);

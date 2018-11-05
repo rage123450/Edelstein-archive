@@ -14,6 +14,6 @@ namespace Edelstein.Database.Entities
         public Skill Skill { get; set; }
         public int Info { get; set; }
         public int MasterLevel { get; set; }
-        public DateTime DateExpire { get; set; }
+        public DateTime? DateExpire { get; set; }
     }
 }
