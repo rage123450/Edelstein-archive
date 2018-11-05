@@ -50,6 +50,9 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 case GameRecvOperations.UserChat:
                     OnUserChat(packet);
                     break;
+                case GameRecvOperations.UserADBoardClose:
+                    OnUserADBoardClose(packet);
+                    break;
                 case GameRecvOperations.UserEmotion:
                     OnUserEmotion(packet);
                     break;
@@ -282,6 +285,11 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 p.Encode<bool>(onlyBalloon);
                 Field.BroadcastPacket(p);
             }
+        }
+
+        private void OnUserADBoardClose(InPacket packet)
+        {
+            ADBoard = null;
         }
 
         private void OnUserEmotion(InPacket packet)
