@@ -78,6 +78,8 @@ namespace Edelstein.WvsGame.Interactions.Dialogue
                                         shopItem.TokenPrice * count
                                     ));
                                 if (shopItem.Stock > 0) shopItem.Stock--;
+                                if (shopItem.ItemPeriod > 0)
+                                    item.DateExpire = DateTime.Now.AddMinutes(shopItem.ItemPeriod);
 
                                 user.ModifyInventory(i => i.Add(item));
                             }
@@ -87,6 +89,7 @@ namespace Edelstein.WvsGame.Interactions.Dialogue
                         p.Encode<byte>(result);
                         user.SendPacket(p);
                     }
+                    
 
                     break;
                 }
