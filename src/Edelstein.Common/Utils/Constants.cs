@@ -4,7 +4,7 @@ namespace Edelstein.Common.Utils
 {
     public static class Constants
     {
-        public static int GetJobLevel(Job job)
+        public static int GetJobLevel(this Job job)
         {
             var id = (int) job;
             var result = 0;

@@ -37,7 +37,7 @@ namespace Edelstein.Common.Utils.Skills
 
             if (v4 == 22 || job == Job.Evanjr)
             {
-                var jobLevel = Constants.GetJobLevel(job);
+                var jobLevel = job.GetJobLevel();
 
                 return jobLevel == 9 ||
                        jobLevel == 10 ||
@@ -48,7 +48,7 @@ namespace Edelstein.Common.Utils.Skills
 
             if (v4 == 43)
             {
-                return Constants.GetJobLevel(job) == 4 ||
+                return job.GetJobLevel() == 4 ||
                        skill == Skill.Dual2SlashStorm ||
                        skill == Skill.Dual3HustleDash ||
                        skill == Skill.Dual4MirrorImaging ||
