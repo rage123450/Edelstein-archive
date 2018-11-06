@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Edelstein.Common.Packets.Stats;
 using Edelstein.WvsGame.Fields.Objects.Users.Stats;
 
 namespace Edelstein.WvsGame.Commands.Impl

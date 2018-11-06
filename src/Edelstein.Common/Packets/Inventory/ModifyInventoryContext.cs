@@ -91,7 +91,7 @@ namespace Edelstein.Common.Packets.Inventory
 
         public void Add(ItemTemplate template, short quantity = 1, ItemVariationType type = ItemVariationType.None)
         {
-            var item = ItemInfo.FromTemplate(template);
+            var item = template.ToItemSlot();
 
             if (item is ItemSlotBundle bundle)
             {
@@ -100,12 +100,12 @@ namespace Edelstein.Common.Packets.Inventory
             }
             else
                 for (var i = 0; i < quantity; i++)
-                    Add(ItemInfo.FromTemplate(template, type));
+                    Add(template.ToItemSlot(type));
         }
 
         public void Set(ItemTemplate template, short slot)
         {
-            Set((ItemInventoryType) (template.TemplateID / 1000000), ItemInfo.FromTemplate(template), slot);
+            Set((ItemInventoryType) (template.TemplateID / 1000000), template.ToItemSlot(), slot);
         }
 
         public void Set(ItemInventoryType type, ItemSlot item, short slot)

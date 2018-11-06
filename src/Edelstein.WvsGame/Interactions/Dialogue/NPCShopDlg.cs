@@ -63,7 +63,7 @@ namespace Edelstein.WvsGame.Interactions.Dialogue
                             // TODO: level limits
 
                             var templates = user.Socket.WvsGame.ItemTemplates;
-                            var item = ItemInfo.FromTemplate(templates.Get(shopItem.TemplateID));
+                            var item = templates.Get(shopItem.TemplateID).ToItemSlot();
 
                             if (item is ItemSlotBundle bundle) bundle.Number = (short) (count * shopItem.Quantity);
                             if (!user.Character.HasSlotFor(item)) result = 0x3;
