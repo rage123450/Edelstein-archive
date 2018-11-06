@@ -108,11 +108,14 @@ namespace Edelstein.WvsGame.Interactions.Dialogue
                             {
                                 if (item is ItemSlotBundle bundle)
                                 {
-                                    if (count < bundle.Number)
+                                    if (!ItemInfo.IsRechargeableItem(item.TemplateID))
                                     {
-                                        bundle.Number -= count;
-                                        i.UpdateQuantity(bundle);
-                                        return;
+                                        if (count < bundle.Number)
+                                        {
+                                            bundle.Number -= count;
+                                            i.UpdateQuantity(bundle);
+                                            return;
+                                        }
                                     }
                                 }
 
@@ -123,6 +126,9 @@ namespace Edelstein.WvsGame.Interactions.Dialogue
                             var templates = user.Socket.WvsGame.ItemTemplates;
                             var template = templates.Get(item.TemplateID);
                             var price = template.SellPrice * count;
+
+                            if (ItemInfo.IsRechargeableItem(item.TemplateID))
+                                price += ((ItemSlotBundle) item).Number;
 
                             user.ModifyStats(s => s.Money += price);
                         }
@@ -172,8 +178,7 @@ namespace Edelstein.WvsGame.Interactions.Dialogue
                         p.Encode<int>(i.ItemPeriod);
                         p.Encode<int>(i.LevelLimited);
 
-                        var type = i.TemplateID / 10000;
-                        if (type != 207 && type != 233) p.Encode<short>(i.Quantity);
+                        if (!ItemInfo.IsRechargeableItem(i.TemplateID)) p.Encode<short>(i.Quantity);
                         else p.Encode<double>(i.UnitPrice);
 
                         p.Encode<short>(i.MaxPerSlot);
