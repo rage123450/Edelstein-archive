@@ -16,9 +16,7 @@ namespace Edelstein.WvsGame.Conversations.Speakers
         }
 
         public Speaker AsSpeaker(int templateID, SpeakerParamType param = SpeakerParamType.NPCReplacedByNPC)
-        {
-            return new NPCSpeaker(Context, templateID, param);
-        }
+            => new NPCSpeaker(Context, templateID, param);
 
         public int Say(string text, bool prev = false, bool next = false)
             => Context.Send(new Say(SpeakerTypeID, SpeakerTemplateID, SpeakerParam, text, prev, next));
