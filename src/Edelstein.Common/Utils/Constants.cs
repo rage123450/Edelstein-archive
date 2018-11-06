@@ -21,9 +21,31 @@ namespace Edelstein.Common.Utils
 
             return result;
         }
+        
+        public static bool IsIgnoreMasterLevelForCommon(Skill skill)
+        {
+            return skill == Skill.HeroCombatMastery ||
+                   skill == Skill.PaladinBlessingArmor ||
+                   skill == Skill.DarkknightBeholdersRevenge ||
+                   skill == Skill.Archmage1MasterMagic ||
+                   skill == Skill.Archmage2MasterMagic ||
+                   skill == Skill.BishopMasterMagic ||
+                   skill == Skill.BowmasterVengeance ||
+                   skill == Skill.BowmasterMarkmanShip ||
+                   skill == Skill.CrossbowmasterUltimateStrafe ||
+                   skill == Skill.CrossbowmasterMarkmanShip ||
+                   skill == Skill.NightlordSpiritJavelin ||
+                   skill == Skill.ShadowerGrid ||
+                   skill == Skill.ViperCounterAttack ||
+                   skill == Skill.CaptainCounterAttack ||
+                   skill == Skill.BmageEnergize ||
+                   skill == Skill.WildhunterWildInstinct;
+        }
 
         public static bool IsSkillNeedMasterLevel(Skill skill)
         {
+            if (IsIgnoreMasterLevelForCommon(skill)) return false;
+
             var id = (int) skill;
             var job = (Job) (id / 10000);
             var v4 = (int) job / 10;
