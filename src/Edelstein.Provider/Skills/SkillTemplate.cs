@@ -16,7 +16,7 @@ namespace Edelstein.Provider.Skills
 
         public static SkillTemplate Parse(int templateId, PackageCollection collection)
         {
-            var entry = collection.Resolve($"Skill/{templateId / 10000}.img/skill/{templateId:D7}");
+            var entry = collection.Resolve($"Skill/{templateId / 10000:D3}.img/skill/{templateId:D7}");
             return Parse(templateId, entry);
         }
 
@@ -30,7 +30,7 @@ namespace Edelstein.Provider.Skills
                 var maxLevel = entry.ResolveFor<int>("maxLevel");
 
                 for (var i = 1; i <= maxLevel; i++)
-                    levelData.Add(i, SkillLevelTemplate.Parse(i, entry));
+                    levelData.Add(i, SkillLevelTemplate.Parse(templateId, i, entry));
             }
             else
             {
@@ -38,7 +38,7 @@ namespace Edelstein.Provider.Skills
                 levelData = entry.Children
                     .ToDictionary(
                         c => Convert.ToInt32(c.Name),
-                        c => SkillLevelTemplate.Parse(Convert.ToInt32(c.Name), c)
+                        c => SkillLevelTemplate.Parse(templateId, Convert.ToInt32(c.Name), c)
                     );
             }
 

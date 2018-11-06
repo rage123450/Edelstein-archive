@@ -1,7 +1,7 @@
 using System.Linq;
-using Edelstein.Common.Packets.Inventory.Exceptions;
 using Edelstein.Database.Entities;
 using Edelstein.Database.Entities.Inventory;
+using Edelstein.Database.Entities.Types;
 
 namespace Edelstein.Common.Utils.Extensions
 {
@@ -66,6 +66,16 @@ namespace Edelstein.Common.Utils.Extensions
                     return 1;
                 })
                 .Sum();
+        }
+
+        public static int GetSkillLevel(this Character c, Skill skill)
+        {
+            return c.SkillRecords.FirstOrDefault(r => r.Skill == skill)?.Info ?? 0;
+        }
+
+        public static int GetSkillMasterLevel(this Character c, Skill skill)
+        {
+            return c.SkillRecords.FirstOrDefault(r => r.Skill == skill)?.MasterLevel ?? 0;
         }
     }
 }

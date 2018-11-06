@@ -1,12 +1,21 @@
+using System.Collections.Generic;
+using Edelstein.Common.Packets.Stats;
 using Edelstein.Database.Entities.Inventory;
 using Edelstein.Provider.Items;
 using Edelstein.Provider.Items.Cash;
+using Edelstein.Provider.Items.Consume;
 
 namespace Edelstein.Common.Utils.Items
 {
     public static class ItemInfo
     {
-        private static ItemSlotEquip FromTemplate(ItemEquipTemplate template,
+        public static bool IsRechargeableItem(int templateID)
+        {
+            var type = templateID / 10000;
+            return type == 207 || type == 233;
+        }
+
+        private static ItemSlotEquip ToItemSlot(this ItemEquipTemplate template,
             ItemVariationType type = ItemVariationType.None)
         {
             var variation = new ItemVariation(Rand32.Create(), type);
@@ -34,7 +43,7 @@ namespace Edelstein.Common.Utils.Items
             };
         }
 
-        private static ItemSlotBundle FromTemplate(ItemBundleTemplate template)
+        private static ItemSlotBundle ToItemSlot(this ItemBundleTemplate template)
         {
             return new ItemSlotBundle
             {
@@ -43,7 +52,7 @@ namespace Edelstein.Common.Utils.Items
             };
         }
 
-        private static ItemSlotPet FromTemplate(PetItemTemplate template)
+        private static ItemSlotPet ToItemSlot(this PetItemTemplate template)
         {
             return new ItemSlotPet
             {
@@ -51,20 +60,38 @@ namespace Edelstein.Common.Utils.Items
             };
         }
 
-        public static ItemSlot FromTemplate(ItemTemplate template,
+        public static ItemSlot ToItemSlot(this ItemTemplate template,
             ItemVariationType type = ItemVariationType.None)
         {
             switch (template)
             {
                 case ItemEquipTemplate equipTemplate:
-                    return FromTemplate(equipTemplate, type);
+                    return equipTemplate.ToItemSlot(type);
                 case ItemBundleTemplate bundleTemplate:
-                    return FromTemplate(bundleTemplate);
+                    return bundleTemplate.ToItemSlot();
                 case PetItemTemplate petTemplate:
-                    return FromTemplate(petTemplate);
+                    return petTemplate.ToItemSlot();
             }
 
             return null;
+        }
+
+        public static IDictionary<TemporaryStatType, short> GetTemporaryStats(this StatChangeItemTemplate template)
+        {
+            var temporaryStats = new Dictionary<TemporaryStatType, short>();
+
+            if (template.PAD > 0) temporaryStats.Add(TemporaryStatType.PAD, template.PAD);
+            if (template.PDD > 0) temporaryStats.Add(TemporaryStatType.PDD, template.PDD);
+            if (template.MAD > 0) temporaryStats.Add(TemporaryStatType.MAD, template.MAD);
+            if (template.MDD > 0) temporaryStats.Add(TemporaryStatType.MDD, template.MDD);
+            if (template.ACC > 0) temporaryStats.Add(TemporaryStatType.ACC, template.ACC);
+            if (template.EVA > 0) temporaryStats.Add(TemporaryStatType.EVA, template.EVA);
+            if (template.Craft > 0) temporaryStats.Add(TemporaryStatType.Craft, template.Craft);
+            if (template.Speed > 0) temporaryStats.Add(TemporaryStatType.Speed, template.Speed);
+            if (template.Jump > 0) temporaryStats.Add(TemporaryStatType.Jump, template.Jump);
+            if (template.Morph > 0) temporaryStats.Add(TemporaryStatType.Morph, template.Morph);
+
+            return temporaryStats;
         }
     }
 }

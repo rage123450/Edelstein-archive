@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Edelstein.Database.Entities;
+using Edelstein.Database.Entities.Types;
 using Edelstein.Network.Packets;
 using Edelstein.Provider.Skills;
 
@@ -20,24 +21,23 @@ namespace Edelstein.Common.Packets.Skills
 
         public void Add(SkillTemplate template)
         {
-            var record = _character.SkillRecords.SingleOrDefault(r => r.SkillID == template.TemplateID);
+            var record = _character.SkillRecords.SingleOrDefault(r => (int) r.Skill == template.TemplateID);
 
             Set(template, record?.Info + 1 ?? 1);
         }
 
-        public void Set(SkillTemplate template, int level)
+        public void Set(SkillTemplate template, int level, int masterLevel = 0)
         {
-            var record = _character.SkillRecords.SingleOrDefault(r => r.SkillID == template.TemplateID);
+            var record = _character.SkillRecords.SingleOrDefault(r => (int) r.Skill == template.TemplateID);
 
             if (!template.LevelData.ContainsKey(level)) return;
             if (record == null)
             {
                 record = new SkillRecord
                 {
-                    SkillID = template.TemplateID,
+                    Skill = (Skill) template.TemplateID,
                     Info = level,
-                    MasterLevel = 0, // TODO
-                    DateExpire = DateTime.Now // TODO
+                    MasterLevel = masterLevel
                 };
 
                 _character.SkillRecords.Add(record);
@@ -50,12 +50,14 @@ namespace Edelstein.Common.Packets.Skills
         public void Encode(OutPacket packet)
         {
             packet.Encode<short>((short) _records.Count);
-            foreach (var record in _records) // TODO: extension method to remove redundant code with characterdata
+            foreach (var record in _records)
             {
-                packet.Encode<int>(record.SkillID);
+                packet.Encode<Skill>(record.Skill);
                 packet.Encode<int>(record.Info);
                 packet.Encode<int>(record.MasterLevel);
-                packet.Encode<long>(0); // skillRecord.DateExpire;
+                
+                if (record.DateExpire == null) packet.Encode<long>(0);
+                else packet.Encode<DateTime>(record.DateExpire.Value);
             }
         }
     }

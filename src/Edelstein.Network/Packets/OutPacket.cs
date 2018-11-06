@@ -22,6 +22,7 @@ namespace Edelstein.Network.Packets
         {
             var type = typeof(T);
 
+            if (type.IsEnum) type = type.GetEnumUnderlyingType();
             if (value == null) value = default(T);
 
             if (PacketMethods.EncodeMethods.ContainsKey(type))

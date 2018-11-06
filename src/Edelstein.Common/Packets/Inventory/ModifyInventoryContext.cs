@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Edelstein.Common.Packets.Inventory.Exceptions;
@@ -29,12 +30,14 @@ namespace Edelstein.Common.Packets.Inventory
             switch (item)
             {
                 case ItemSlotBundle bundle:
+                    if (ItemInfo.IsRechargeableItem(bundle.TemplateID)) goto default;
                     if (bundle.Number < 1) bundle.Number = 1;
                     if (bundle.MaxNumber < 1) bundle.MaxNumber = 1;
 
                     var mergeableSlots = inventory.Items
                         .OfType<ItemSlotBundle>()
                         .Where(b => b.TemplateID == bundle.TemplateID)
+                        .Where(b => b.DateExpire == bundle.DateExpire)
                         .Where(b => b.Attribute == bundle.Attribute)
                         .Where(b => b.Title == bundle.Title)
                         .Where(b => b.Number != b.MaxNumber)
@@ -90,21 +93,22 @@ namespace Edelstein.Common.Packets.Inventory
 
         public void Add(ItemTemplate template, short quantity = 1, ItemVariationType type = ItemVariationType.None)
         {
-            var item = ItemInfo.FromTemplate(template);
+            var item = template.ToItemSlot();
 
-            if (item is ItemSlotBundle bundle)
+            if (item is ItemSlotBundle bundle &&
+                !ItemInfo.IsRechargeableItem(bundle.TemplateID))
             {
                 bundle.Number = quantity;
                 Add(bundle);
             }
             else
                 for (var i = 0; i < quantity; i++)
-                    Add(ItemInfo.FromTemplate(template, type));
+                    Add(template.ToItemSlot(type));
         }
 
         public void Set(ItemTemplate template, short slot)
         {
-            Set((ItemInventoryType) (template.TemplateID / 1000000), ItemInfo.FromTemplate(template), slot);
+            Set((ItemInventoryType) (template.TemplateID / 1000000), template.ToItemSlot(), slot);
         }
 
         public void Set(ItemInventoryType type, ItemSlot item, short slot)
@@ -129,21 +133,34 @@ namespace Edelstein.Common.Packets.Inventory
             );
         }
 
-        public void Remove(ItemInventoryType type, short slot)
+        public void Remove(ItemInventoryType type, short slot, int count = 1)
         {
             var inventory = _character.GetInventory(type);
             var inventoryItems = inventory.Items;
             var item = inventoryItems.SingleOrDefault(i => i.Position == slot);
 
-            if (item != null) Remove(item);
+            if (item != null) Remove(item, count);
         }
 
-        public void Remove(ItemSlot item)
+        public void Remove(ItemSlot item, int count = 1)
         {
             var inventory = item.ItemInventory;
             var inventoryItems = inventory.Items;
 
             item.ID = 0;
+
+            if (item is ItemSlotBundle bundle &&
+                !ItemInfo.IsRechargeableItem(bundle.TemplateID))
+            {
+                bundle.Number -= (short) count;
+                bundle.Number = Math.Max((short) 0, bundle.Number);
+
+                if (bundle.Number > 0)
+                {
+                    UpdateQuantity(bundle);
+                    return;
+                }
+            }
 
             inventoryItems.Remove(item);
             _operations.Add(new InventoryRemoveOperation(
@@ -168,7 +185,8 @@ namespace Edelstein.Common.Packets.Inventory
                 .ForEach(i =>
                 {
                     if (removed >= count) return;
-                    if (i is ItemSlotBundle bundle)
+                    if (i is ItemSlotBundle bundle &&
+                        !ItemInfo.IsRechargeableItem(bundle.TemplateID))
                     {
                         var diff = count - removed;
 
@@ -207,7 +225,8 @@ namespace Edelstein.Common.Packets.Inventory
             var existingItem = inventory.Items.SingleOrDefault(i => i.Position == toSlot);
             var fromSlot = item.Position;
 
-            if (item is ItemSlotBundle bundle)
+            if (item is ItemSlotBundle bundle &&
+                !ItemInfo.IsRechargeableItem(bundle.TemplateID))
             {
                 if (existingItem is ItemSlotBundle existingBundle)
                 {

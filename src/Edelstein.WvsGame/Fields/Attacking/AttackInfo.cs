@@ -1,15 +1,20 @@
-using System;
 using System.Collections.Generic;
+using Edelstein.Common.Utils.Extensions;
+using Edelstein.Database.Entities;
+using Edelstein.Database.Entities.Types;
 using Edelstein.Network.Packets;
+using MoreLinq.Extensions;
 
 namespace Edelstein.WvsGame.Fields.Attacking
 {
-    public class AttackInfo : IDecodable
+    public abstract class AttackInfo : IDecodable, IEncodable
     {
+        public Character Character { get; set; }
+
         public int DamagePerMob { get; set; }
         public int Count { get; set; }
         public int SkillID { get; set; }
-        public byte SkillLevel { get; set; }
+        public int KeyDown { get; set; }
         public short AttackAction { get; set; }
         public bool IsLeft { get; set; }
         public byte AttackActionType { get; set; }
@@ -18,49 +23,47 @@ namespace Edelstein.WvsGame.Fields.Attacking
 
         public ICollection<AttackInfoEntry> Entries { get; set; }
 
-        public void Decode(InPacket packet)
+        public AttackInfo(Character character)
         {
-            packet.Decode<byte>();
-            packet.Decode<int>();
-            packet.Decode<int>();
+            Character = character;
+        }
 
-            var damagePerMobAndCount = packet.Decode<byte>();
-            DamagePerMob = damagePerMobAndCount & 0xF;
-            Count = damagePerMobAndCount >> 4;
+        public abstract void Decode(InPacket packet);
 
-            packet.Decode<int>();
-            packet.Decode<int>();
-            SkillID = packet.Decode<int>();
-            SkillLevel = packet.Decode<byte>(); // is this right?
-            packet.Decode<int>();
-            packet.Decode<int>();
-            packet.Decode<int>();
-            packet.Decode<int>();
-            // if Keydown - int // KeyDown
-            packet.Decode<byte>();
+        public virtual void Encode(OutPacket packet)
+        {
+            packet.Encode<byte>((byte) (DamagePerMob | 16 * Count));
+            packet.Encode<byte>(Character.Level);
 
-            var attackActionAndIsLeft = packet.Decode<short>();
-            AttackAction = (short) (attackActionAndIsLeft & 0x7FFF);
-            IsLeft = ((attackActionAndIsLeft >> 15) & 1) != 0;
+            var skillLevel = (byte) (SkillID > 0 ? Character.GetSkillLevel((Skill) SkillID) : 0);
+            packet.Encode<byte>(skillLevel);
+            if (skillLevel > 0)
+                packet.Encode<int>(SkillID);
 
-            packet.Decode<int>();
-            AttackActionType = packet.Decode<byte>();
-            AttackSpeed = packet.Decode<byte>();
-            AttackTime = packet.Decode<int>();
-            packet.Decode<int>();
+            packet.Encode<byte>(0x20); // bSerialAttack
+            packet.Encode<short>((short) (AttackAction & 0x7FFF | ((IsLeft ? 1 : 0) << 15)));
 
-            Entries = new List<AttackInfoEntry>();
-            for (var i = 0; i < Count; i++)
+            if (AttackAction > 0x110) return;
+            packet.Encode<byte>(0); // nMastery
+            packet.Encode<byte>(0); // v82
+            packet.Encode<int>(2070000); // bMovingShoot
+
+            Entries.ForEach(e =>
             {
-                var entry = new AttackInfoEntry();
+                packet.Encode<int>(e.MobID);
 
-                entry.Decode(packet, DamagePerMob);
-                Entries.Add(entry);
-            }
+                if (e.MobID <= 0) return;
 
-            packet.Decode<short>();
-            packet.Decode<short>();
-            // if Grenade - short, short // Position
+                packet.Encode<byte>(e.HitAction);
+
+                // check 4211006
+
+                e.Damage.ForEach(d =>
+                {
+                    packet.Encode<bool>(false);
+                    packet.Encode<int>(d);
+                });
+            });
         }
     }
 }

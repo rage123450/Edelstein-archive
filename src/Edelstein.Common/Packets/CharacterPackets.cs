@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Edelstein.Common.Utils;
+using Edelstein.Common.Utils.Skills;
 using Edelstein.Database.Entities;
 using Edelstein.Database.Entities.Inventory;
+using Edelstein.Database.Entities.Types;
 using Edelstein.Network.Packets;
 
 namespace Edelstein.Common.Packets
@@ -114,11 +117,14 @@ namespace Edelstein.Common.Packets
                 p.Encode<short>((short) c.SkillRecords.Count);
                 foreach (var skillRecord in c.SkillRecords)
                 {
-                    p.Encode<int>(skillRecord.SkillID);
+                    p.Encode<Skill>(skillRecord.Skill);
                     p.Encode<int>(skillRecord.Info);
-                    p.Encode<long>(0); // skillRecord.DateExpire;
-                    // is_skill_need_master_level
-                    // skillRecord.MasterLevel;
+
+                    if (skillRecord.DateExpire == null) p.Encode<long>(0);
+                    else p.Encode<DateTime>(skillRecord.DateExpire.Value);
+
+                    if (skillRecord.Skill.IsSkillNeedMasterLevel())
+                        p.Encode<int>(skillRecord.MasterLevel);
                 }
             }
 
@@ -167,7 +173,7 @@ namespace Edelstein.Common.Packets
 
             if ((flag & 0x200000) != 0)
             {
-                if (c.Job / 100 == 33)
+                if ((int) c.Job / 100 == 33)
                 {
                     p.Encode<byte>(0);
                     for (var i = 0; i < 5; i++) p.Encode<int>(0);
@@ -199,7 +205,7 @@ namespace Edelstein.Common.Packets
                 p.Encode<long>(0); // Pet stuff.
 
             p.Encode<byte>(c.Level);
-            p.Encode<short>(c.Job);
+            p.Encode(c.Job);
             p.Encode<short>(c.STR);
             p.Encode<short>(c.DEX);
             p.Encode<short>(c.INT);
@@ -210,7 +216,7 @@ namespace Edelstein.Common.Packets
             p.Encode<int>(c.MaxMP);
 
             p.Encode<short>(c.AP);
-            if (c.Job / 1000 != 3 && c.Job / 100 != 22 && c.Job != 2001)
+            if ((int) c.Job / 1000 != 3 && (int) c.Job / 100 != 22 && (int) c.Job != 2001)
                 p.Encode<short>(c.SP);
             else p.Encode<byte>(0); // TODO: extendedSP
 

@@ -15,6 +15,6 @@ namespace Edelstein.Database.Entities.Inventory
         public short Position { get; set; }
 
         public int TemplateID { get; set; }
-        public DateTime DateExpire { get; set; }
+        public DateTime? DateExpire { get; set; }
     }
 }

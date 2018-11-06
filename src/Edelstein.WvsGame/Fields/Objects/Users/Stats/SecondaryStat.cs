@@ -129,7 +129,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
                 }
             });
 
-            if (character.Job % 1000 / 100 == 5)
+            if ((int) character.Job % 1000 / 100 == 5)
             {
                 var weapon = character.GetInventory(ItemInventoryType.Equip).Items
                     .OfType<ItemSlotEquip>()

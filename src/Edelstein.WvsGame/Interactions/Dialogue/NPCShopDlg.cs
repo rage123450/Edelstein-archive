@@ -63,7 +63,7 @@ namespace Edelstein.WvsGame.Interactions.Dialogue
                             // TODO: level limits
 
                             var templates = user.Socket.WvsGame.ItemTemplates;
-                            var item = ItemInfo.FromTemplate(templates.Get(shopItem.TemplateID));
+                            var item = templates.Get(shopItem.TemplateID).ToItemSlot();
 
                             if (item is ItemSlotBundle bundle) bundle.Number = (short) (count * shopItem.Quantity);
                             if (!user.Character.HasSlotFor(item)) result = 0x3;
@@ -78,6 +78,8 @@ namespace Edelstein.WvsGame.Interactions.Dialogue
                                         shopItem.TokenPrice * count
                                     ));
                                 if (shopItem.Stock > 0) shopItem.Stock--;
+                                if (shopItem.ItemPeriod > 0)
+                                    item.DateExpire = DateTime.Now.AddMinutes(shopItem.ItemPeriod);
 
                                 user.ModifyInventory(i => i.Add(item));
                             }
@@ -87,6 +89,7 @@ namespace Edelstein.WvsGame.Interactions.Dialogue
                         p.Encode<byte>(result);
                         user.SendPacket(p);
                     }
+                    
 
                     break;
                 }
@@ -108,11 +111,14 @@ namespace Edelstein.WvsGame.Interactions.Dialogue
                             {
                                 if (item is ItemSlotBundle bundle)
                                 {
-                                    if (count < bundle.Number)
+                                    if (!ItemInfo.IsRechargeableItem(item.TemplateID))
                                     {
-                                        bundle.Number -= count;
-                                        i.UpdateQuantity(bundle);
-                                        return;
+                                        if (count < bundle.Number)
+                                        {
+                                            bundle.Number -= count;
+                                            i.UpdateQuantity(bundle);
+                                            return;
+                                        }
                                     }
                                 }
 
@@ -123,6 +129,9 @@ namespace Edelstein.WvsGame.Interactions.Dialogue
                             var templates = user.Socket.WvsGame.ItemTemplates;
                             var template = templates.Get(item.TemplateID);
                             var price = template.SellPrice * count;
+
+                            if (ItemInfo.IsRechargeableItem(item.TemplateID))
+                                price += ((ItemSlotBundle) item).Number;
 
                             user.ModifyStats(s => s.Money += price);
                         }
@@ -172,8 +181,7 @@ namespace Edelstein.WvsGame.Interactions.Dialogue
                         p.Encode<int>(i.ItemPeriod);
                         p.Encode<int>(i.LevelLimited);
 
-                        var type = i.TemplateID / 10000;
-                        if (type != 207 && type != 233) p.Encode<short>(i.Quantity);
+                        if (!ItemInfo.IsRechargeableItem(i.TemplateID)) p.Encode<short>(i.Quantity);
                         else p.Encode<double>(i.UnitPrice);
 
                         p.Encode<short>(i.MaxPerSlot);

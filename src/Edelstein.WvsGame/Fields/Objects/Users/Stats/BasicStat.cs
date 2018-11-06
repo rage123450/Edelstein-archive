@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Edelstein.Database.Entities.Inventory;
+using Edelstein.Database.Entities.Types;
 using Edelstein.Provider;
 using Edelstein.Provider.Items;
 using Edelstein.Provider.Items.Options;
@@ -15,7 +16,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
 
         public byte Gender { get; set; }
         public byte Level { get; set; }
-        public int Job { get; set; }
+        public Job Job { get; set; }
 
         public int STR { get; set; }
         public int DEX { get; set; }

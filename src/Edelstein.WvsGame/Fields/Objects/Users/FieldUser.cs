@@ -3,7 +3,9 @@ using System.Threading.Tasks;
 using System.Timers;
 using Edelstein.Common.Packets;
 using Edelstein.Common.Packets.Messages;
+using Edelstein.Common.Packets.Stats;
 using Edelstein.Database.Entities;
+using Edelstein.Database.Entities.Types;
 using Edelstein.Network.Packets;
 using Edelstein.WvsGame.Conversations;
 using Edelstein.WvsGame.Fields.Objects.Users.Stats;
@@ -26,6 +28,27 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
         public int? PortableChairID { get; set; }
         public int? CompletedSetItemID { get; set; }
+
+        private string _adBoard;
+
+        public string ADBoard
+        {
+            get => _adBoard;
+            set
+            {
+                _adBoard = value;
+
+                using (var p = new OutPacket(GameSendOperations.UserADBoard))
+                {
+                    var result = _adBoard != null;
+
+                    p.Encode<int>(ID);
+                    p.Encode<bool>(result);
+                    if (result) p.Encode<string>(_adBoard);
+                    Field?.BroadcastPacket(p);
+                }
+            }
+        }
 
         private Dialogue _dialogue;
 
@@ -66,7 +89,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             if (Character.HP > BasicStat.MaxHP) ModifyStats(s => s.HP = BasicStat.MaxHP);
             if (Character.MP > BasicStat.MaxMP) ModifyStats(s => s.MP = BasicStat.MaxMP);
         }
-        
+
         public Task Message(string text)
         {
             return Message(new SystemMessage(text));
@@ -99,7 +122,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
                 TemporaryStat.EncodeForRemote(p, TemporaryStat.Entries.Values);
 
-                p.Encode<short>(Character.Job);
+                p.Encode<Job>(Character.Job);
                 Character.EncodeLook(p);
 
                 p.Encode<int>(0);
@@ -123,7 +146,13 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
                 p.Encode<byte>(0);
 
-                p.Encode<byte>(0);
+                if (ADBoard != null)
+                {
+                    p.Encode<bool>(true);
+                    p.Encode<string>(ADBoard);
+                }
+                else p.Encode<bool>(false);
+
                 p.Encode<byte>(0);
                 p.Encode<byte>(0);
                 p.Encode<byte>(0);

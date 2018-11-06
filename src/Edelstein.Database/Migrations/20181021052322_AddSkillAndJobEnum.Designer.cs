@@ -3,14 +3,16 @@ using System;
 using Edelstein.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Edelstein.Database.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20181021052322_AddSkillAndJobEnum")]
+    partial class AddSkillAndJobEnum
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -164,7 +166,7 @@ namespace Edelstein.Database.Migrations
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime?>("DateExpire");
+                    b.Property<DateTime>("DateExpire");
 
                     b.Property<string>("Discriminator")
                         .IsRequired();
@@ -241,7 +243,7 @@ namespace Edelstein.Database.Migrations
 
                     b.Property<int?>("CharacterID");
 
-                    b.Property<DateTime?>("DateExpire");
+                    b.Property<DateTime>("DateExpire");
 
                     b.Property<int>("Info");
 
@@ -354,7 +356,7 @@ namespace Edelstein.Database.Migrations
                     b.Property<short>("Attribute")
                         .HasColumnName("ItemSlotPet_Attribute");
 
-                    b.Property<DateTime?>("DateDead");
+                    b.Property<DateTime>("DateDead");
 
                     b.Property<byte>("Level")
                         .HasColumnName("ItemSlotPet_Level");

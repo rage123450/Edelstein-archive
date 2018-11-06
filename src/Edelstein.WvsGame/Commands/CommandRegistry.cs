@@ -16,6 +16,8 @@ namespace Edelstein.WvsGame.Commands
             Commands.Add(new BuffCommand());
             Commands.Add(new ShopCommand());
             Commands.Add(new MsgBoxCommand());
+            Commands.Add(new MapCommand());
+            Commands.Add(new ADBoardCommand());
         }
 
         protected override Task Execute(CommandContext ctx)

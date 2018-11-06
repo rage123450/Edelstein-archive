@@ -1,7 +1,7 @@
 using System;
 using Edelstein.Network.Packets;
 
-namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
+namespace Edelstein.Common.Packets.Stats
 {
     public class TemporaryStatEntry
     {

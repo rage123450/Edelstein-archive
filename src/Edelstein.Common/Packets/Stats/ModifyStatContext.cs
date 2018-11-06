@@ -1,4 +1,5 @@
 using Edelstein.Database.Entities;
+using Edelstein.Database.Entities.Types;
 using Edelstein.Network.Packets;
 
 namespace Edelstein.Common.Packets.Stats
@@ -51,7 +52,7 @@ namespace Edelstein.Common.Packets.Stats
             }
         }
 
-        public short Job
+        public Job Job
         {
             get => _character.Job;
             set
@@ -219,7 +220,7 @@ namespace Edelstein.Common.Packets.Stats
             if ((_flag & ModifyStatType.Pet3) != 0) packet.Encode<long>(0);
 
             if ((_flag & ModifyStatType.Level) != 0) packet.Encode<byte>(Level);
-            if ((_flag & ModifyStatType.Job) != 0) packet.Encode<short>(Job);
+            if ((_flag & ModifyStatType.Job) != 0) packet.Encode<Job>(Job);
             if ((_flag & ModifyStatType.STR) != 0) packet.Encode<short>(STR);
             if ((_flag & ModifyStatType.DEX) != 0) packet.Encode<short>(DEX);
             if ((_flag & ModifyStatType.INT) != 0) packet.Encode<short>(INT);
@@ -233,7 +234,7 @@ namespace Edelstein.Common.Packets.Stats
             if ((_flag & ModifyStatType.AP) != 0) packet.Encode<short>(AP);
             if ((_flag & ModifyStatType.SP) != 0)
             {
-                if (Job / 1000 != 3 && Job / 100 != 22 && Job != 2001)
+                if ((int) Job / 1000 != 3 && (int) Job / 100 != 22 && (int) Job != 2001)
                     packet.Encode<short>(SP);
                 else packet.Encode<byte>(0);
             }

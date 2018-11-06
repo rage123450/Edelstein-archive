@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Edelstein.Common.Packets.Stats;
+using Edelstein.Database.Entities.Types;
 
 namespace Edelstein.WvsGame.Commands.Impl
 {
@@ -44,7 +45,7 @@ namespace Edelstein.WvsGame.Commands.Impl
                             s.Level = Convert.ToByte(value);
                             break;
                         case ModifyStatType.Job:
-                            s.Job = Convert.ToInt16(value);
+                            s.Job = (Job) Convert.ToInt16(value);
                             break;
                         case ModifyStatType.STR:
                             s.STR = Convert.ToInt16(value);

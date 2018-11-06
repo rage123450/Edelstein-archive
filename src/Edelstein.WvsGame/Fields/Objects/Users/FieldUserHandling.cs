@@ -3,7 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Edelstein.Common.Packets;
 using Edelstein.Common.Packets.Stats;
+using Edelstein.Common.Utils;
+using Edelstein.Common.Utils.Extensions;
+using Edelstein.Common.Utils.Items;
+using Edelstein.Common.Utils.Skills;
 using Edelstein.Database.Entities.Inventory;
+using Edelstein.Database.Entities.Types;
 using Edelstein.Network.Packets;
 using Edelstein.Provider.Items.Consume;
 using Edelstein.WvsGame.Conversations.Messages;
@@ -13,7 +18,6 @@ using Edelstein.WvsGame.Fields.Objects.Drops;
 using Edelstein.WvsGame.Fields.Objects.Users.Stats;
 using Edelstein.WvsGame.Packets;
 using MoreLinq.Extensions;
-using Serilog.Core;
 
 namespace Edelstein.WvsGame.Fields.Objects.Users
 {
@@ -38,8 +42,20 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 case GameRecvOperations.UserMeleeAttack:
                     OnUserMeleeAttack(packet);
                     break;
+                case GameRecvOperations.UserShootAttack:
+                    OnUserShootAttack(packet);
+                    break;
+                case GameRecvOperations.UserMagicAttack:
+                    OnUserMagicAttack(packet);
+                    break;
+                case GameRecvOperations.UserBodyAttack:
+                    OnUserBodyAttack(packet);
+                    break;
                 case GameRecvOperations.UserChat:
                     OnUserChat(packet);
+                    break;
+                case GameRecvOperations.UserADBoardClose:
+                    OnUserADBoardClose(packet);
                     break;
                 case GameRecvOperations.UserEmotion:
                     OnUserEmotion(packet);
@@ -79,6 +95,12 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                     break;
                 case GameRecvOperations.UserSkillUpRequest:
                     OnUserSkillUpRequest(packet);
+                    break;
+                case GameRecvOperations.UserSkillUseRequest:
+                    OnUserSkillUseRequest(packet);
+                    break;
+                case GameRecvOperations.UserSkillCancelRequest:
+                    OnUserSkillCancelRequest(packet);
                     break;
                 case GameRecvOperations.UserDropMoneyRequest:
                     OnUserDropMoneyRequest(packet);
@@ -126,7 +148,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
             using (var p = new OutPacket(GameSendOperations.UserMove))
             {
-                p.Encode(ID);
+                p.Encode<int>(ID);
                 movementPath.Encode(p);
                 Field.BroadcastPacket(this, p);
             }
@@ -184,59 +206,64 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
         private void OnUserMeleeAttack(InPacket packet)
         {
-            var attackInfo = new AttackInfo();
+            packet.Decode<byte>();
+            var attackInfo = new MeleeAttackInfo(Character);
 
             attackInfo.Decode(packet);
-            attackInfo.Entries.ForEach(e =>
+            OnUserAttack(attackInfo);
+        }
+
+        private void OnUserShootAttack(InPacket packet)
+        {
+            packet.Decode<byte>();
+            var attackInfo = new ShootAttackInfo(Character);
+
+            attackInfo.Decode(packet);
+            OnUserAttack(attackInfo);
+        }
+
+        private void OnUserMagicAttack(InPacket packet)
+        {
+            packet.Decode<byte>();
+            var attackInfo = new MagicAttackInfo(Character);
+
+            attackInfo.Decode(packet);
+            OnUserAttack(attackInfo);
+        }
+
+        private void OnUserBodyAttack(InPacket packet)
+        {
+            packet.Decode<byte>();
+            var attackInfo = new BodyAttackInfo(Character);
+
+            attackInfo.Decode(packet);
+            OnUserAttack(attackInfo);
+        }
+
+        private void OnUserAttack(AttackInfo info)
+        {
+            using (var p = new OutPacket(
+                info is MeleeAttackInfo ? GameSendOperations.UserMeleeAttack :
+                info is ShootAttackInfo ? GameSendOperations.UserShootAttack :
+                info is MagicAttackInfo ? GameSendOperations.UserMagicAttack :
+                info is BodyAttackInfo ? GameSendOperations.UserBodyAttack :
+                GameSendOperations.UserMeleeAttack
+            ))
+            {
+                p.Encode<int>(ID);
+                info.Encode(p);
+
+                Field.BroadcastPacket(this, p);
+            }
+
+            info.Entries.ForEach(e =>
             {
                 var fieldObject = Field.GetObject(e.MobID);
                 var totalDamage = e.Damage.Sum();
 
                 if (fieldObject is FieldMob mob)
-                    mob.Damage(this, totalDamage);
+                    mob.Damage(this, Math.Min(mob.HP, totalDamage));
             });
-
-            using (var p = new OutPacket(GameSendOperations.UserMeleeAttack))
-            {
-                p.Encode<int>(ID);
-                p.Encode<byte>((byte) (attackInfo.DamagePerMob | 16 * attackInfo.Count));
-                p.Encode<byte>(Character.Level);
-
-                attackInfo.SkillLevel = (byte) (attackInfo.SkillID > 0 ? 1 : 0); // TODO: hacky
-                p.Encode<byte>(attackInfo.SkillLevel);
-                if (attackInfo.SkillLevel > 0)
-                    p.Encode<int>(attackInfo.SkillID);
-                
-                p.Encode<byte>(0x20); // bSerialAttack
-                p.Encode<short>((short) (attackInfo.AttackAction & 0x7FFF | ((attackInfo.IsLeft ? 1 : 0) << 15)));
-
-                if (attackInfo.AttackAction <= 0x110)
-                {
-                    p.Encode<byte>(0); // nMastery
-                    p.Encode<byte>(0); // v82
-                    p.Encode<int>(0); // bMovingShoot
-
-                    attackInfo.Entries.ForEach(e =>
-                    {
-                        p.Encode<int>(e.MobID);
-
-                        if (e.MobID > 0)
-                        {
-                            p.Encode<byte>(e.HitAction);
-
-                            // check 4211006
-
-                            e.Damage.ForEach(d =>
-                            {
-                                p.Encode<bool>(false);
-                                p.Encode<int>(d);
-                            });
-                        }
-                    });
-                }
-
-                Field.BroadcastPacket(this, p);
-            }
         }
 
         private void OnUserChat(InPacket packet)
@@ -272,6 +299,11 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 p.Encode<bool>(onlyBalloon);
                 Field.BroadcastPacket(p);
             }
+        }
+
+        private void OnUserADBoardClose(InPacket packet)
+        {
+            ADBoard = null;
         }
 
         private void OnUserEmotion(InPacket packet)
@@ -436,30 +468,23 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             var templateID = packet.Decode<int>();
             var template = Socket.WvsGame.ItemTemplates.Get(templateID);
 
+            var inventory = Character.GetInventory(ItemInventoryType.Use);
+            var inventoryItems = inventory.Items;
+            var item = inventoryItems.SingleOrDefault(i => i.Position == position);
+
+            if (item == null) return;
+            if (item.TemplateID != templateID) return;
             if (!(template is StatChangeItemTemplate scTemplate)) return;
 
-            var temporaryStats = new Dictionary<TemporaryStatType, short>();
-
-            if (scTemplate.PAD > 0) temporaryStats.Add(TemporaryStatType.PAD, scTemplate.PAD);
-            if (scTemplate.PDD > 0) temporaryStats.Add(TemporaryStatType.PDD, scTemplate.PDD);
-            if (scTemplate.MAD > 0) temporaryStats.Add(TemporaryStatType.MAD, scTemplate.MAD);
-            if (scTemplate.MDD > 0) temporaryStats.Add(TemporaryStatType.MDD, scTemplate.MDD);
-            if (scTemplate.ACC > 0) temporaryStats.Add(TemporaryStatType.ACC, scTemplate.ACC);
-            if (scTemplate.EVA > 0) temporaryStats.Add(TemporaryStatType.EVA, scTemplate.EVA);
-            if (scTemplate.Craft > 0) temporaryStats.Add(TemporaryStatType.Craft, scTemplate.Craft);
-            if (scTemplate.Speed > 0) temporaryStats.Add(TemporaryStatType.Speed, scTemplate.Speed);
-            if (scTemplate.Jump > 0) temporaryStats.Add(TemporaryStatType.Jump, scTemplate.Jump);
-            if (scTemplate.Morph > 0) temporaryStats.Add(TemporaryStatType.Morph, scTemplate.Morph);
+            var temporaryStats = scTemplate.GetTemporaryStats();
 
             if (temporaryStats.Count > 0)
+            {
+                var expire = DateTime.Now.AddMilliseconds(scTemplate.Time);
                 ModifyTemporaryStat(ts => temporaryStats.ForEach(t =>
-                    ts.Set(
-                        t.Key,
-                        -templateID,
-                        t.Value,
-                        DateTime.Now.AddMilliseconds(scTemplate.Time)
-                    )
+                    ts.Set(t.Key, -templateID, t.Value, expire)
                 ));
+            }
 
             if (!temporaryStats.ContainsKey(TemporaryStatType.Morph))
             {
@@ -481,6 +506,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 }
             }
 
+            ModifyInventory(i => i.Remove(item));
             ModifyStats(exclRequest: true);
         }
 
@@ -570,9 +596,63 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
         {
             packet.Decode<int>();
             var templateID = packet.Decode<int>();
+            var template = Socket.WvsGame.SkillTemplates.Get(templateID);
+            var skill = (Skill) templateID;
+
+            if (template == null) return;
+            if (Character.SP <= 0) return;
+            // TODO: hidden skill check
+
+            int maxLevel = template.MaxLevel;
+            if (skill.IsSkillNeedMasterLevel())
+                maxLevel = Character.GetSkillMasterLevel(skill);
+
+            if (Character.GetSkillLevel(skill) >= maxLevel) return;
 
             ModifyStats(s => s.SP--);
             ModifySkill(s => s.Add(Socket.WvsGame.SkillTemplates.Get(templateID)), true);
+        }
+
+        private void OnUserSkillUseRequest(InPacket packet)
+        {
+            packet.Decode<int>();
+            var templateID = packet.Decode<int>();
+            var template = Socket.WvsGame.SkillTemplates.Get(templateID);
+            var skillLevel = Character.GetSkillLevel((Skill) templateID);
+
+            if (template == null) return;
+            if (skillLevel <= 0) return;
+
+            var levelTemplate = template.LevelData[skillLevel];
+            var temporaryStats = levelTemplate.GetTemporaryStats();
+
+            if (temporaryStats.Count > 0)
+            {
+                ModifyTemporaryStat(ts =>
+                {
+                    if (levelTemplate.Time > 0)
+                    {
+                        var expire = DateTime.Now.AddSeconds(levelTemplate.Time);
+                        temporaryStats.ForEach(t => ts.Set(t.Key, templateID, t.Value, expire));
+                    }
+                    else
+                        temporaryStats.ForEach(t => ts.Set(t.Key, templateID, t.Value));
+                });
+            }
+
+            // TODO: party/map buffs
+            // TODO: remote effects
+            ModifyStats(exclRequest: true);
+        }
+
+        private void OnUserSkillCancelRequest(InPacket packet)
+        {
+            var templateID = packet.Decode<int>();
+            var template = Socket.WvsGame.SkillTemplates.Get(templateID);
+
+            if (template == null) return;
+
+            ModifyTemporaryStat(ts => ts.Reset(templateID));
         }
 
         private void OnUserDropMoneyRequest(InPacket packet)
@@ -602,7 +682,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
                 p.Encode<int>(user.ID);
                 p.Encode<byte>(c.Level);
-                p.Encode<short>(c.Job);
+                p.Encode<Job>(c.Job);
                 p.Encode<short>(c.POP);
 
                 p.Encode<byte>(0);

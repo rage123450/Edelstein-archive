@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Edelstein.Common.Packets.Stats;
 using Edelstein.Network.Packets;
 using MoreLinq.Extensions;
 
