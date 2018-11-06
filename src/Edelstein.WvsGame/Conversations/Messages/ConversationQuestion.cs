@@ -2,9 +2,9 @@ using Edelstein.Network.Packets;
 
 namespace Edelstein.WvsGame.Conversations.Messages
 {
-    public abstract class ConversationQuestion : IEncodable
+    public abstract class ConversationQuestion<T> : IEncodable
     {
-        protected abstract byte MessageType { get; }
+        protected abstract ScriptMessageType MessageType { get; }
 
         protected readonly byte SpeakerTypeID;
         protected readonly int SpeakerTemplateID;
@@ -21,7 +21,7 @@ namespace Edelstein.WvsGame.Conversations.Messages
         {
             packet.Encode<byte>(SpeakerTypeID);
             packet.Encode<int>(SpeakerTemplateID);
-            packet.Encode<byte>(MessageType);
+            packet.Encode<byte>((byte) MessageType);
             packet.Encode<byte>((byte) SpeakerParam);
         }
     }

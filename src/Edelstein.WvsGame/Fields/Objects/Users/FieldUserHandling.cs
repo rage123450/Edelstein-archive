@@ -379,7 +379,30 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
         private void OnUserScriptMessageAnswer(InPacket packet)
         {
-            ConversationContext?.Answers.Add(new ConversationAnswer());
+            if (ConversationContext == null) return;
+            var messageType = (ScriptMessageType) packet.Decode<byte>();
+            var answers = ConversationContext.Answers;
+            var answer = packet.Decode<byte>();
+
+            if (answer == 0)
+            {
+                ConversationContext.TokenSource.Cancel();
+                return;
+            }
+
+            switch (messageType)
+            {
+                case ScriptMessageType.AskText:
+                case ScriptMessageType.AskBoxText:
+                    answers.Add(packet.Decode<string>());
+                    break;
+                case ScriptMessageType.AskNumber:
+                    answers.Add(packet.Decode<int>());
+                    break;
+                default:
+                    answers.Add(answer);
+                    break;
+            }
         }
 
         private void OnUserGatherItemRequest(InPacket packet)

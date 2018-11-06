@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using Edelstein.Network;
@@ -9,18 +10,18 @@ namespace Edelstein.WvsGame.Conversations
 {
     public class ConversationContext
     {
-        public readonly BlockingCollection<ConversationAnswer> Answers;
+        public readonly BlockingCollection<object> Answers;
         public readonly CancellationTokenSource TokenSource;
         protected readonly Socket Socket;
 
         public ConversationContext(CancellationTokenSource tokenSource, Socket socket)
         {
-            Answers = new BlockingCollection<ConversationAnswer>();
+            Answers = new BlockingCollection<object>();
             TokenSource = tokenSource;
             Socket = socket;
         }
 
-        public ConversationAnswer Send(ConversationQuestion request)
+        public T Send<T>(ConversationQuestion<T> request)
         {
             using (var p = new OutPacket(GameSendOperations.ScriptMessage))
             {
@@ -28,7 +29,7 @@ namespace Edelstein.WvsGame.Conversations
                 Socket.SendPacket(p);
             }
 
-            return Answers.Take(TokenSource.Token);
+            return (T) Answers.Take(TokenSource.Token);
         }
     }
 }

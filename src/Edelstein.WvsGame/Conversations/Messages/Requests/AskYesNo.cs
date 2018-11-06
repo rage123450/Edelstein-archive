@@ -2,9 +2,12 @@ using Edelstein.Network.Packets;
 
 namespace Edelstein.WvsGame.Conversations.Messages.Requests
 {
-    public class AskYesNo : ConversationQuestion
+    public class AskYesNo : ConversationQuestion<byte>
     {
-        protected override byte MessageType => (byte) (_quest ? 0xD : 0x2);
+        protected override ScriptMessageType MessageType =>
+            _quest
+                ? ScriptMessageType.AskAccept
+                : ScriptMessageType.AskYesNo;
 
         private readonly string _text;
         private readonly bool _quest;

@@ -2,9 +2,9 @@ using Edelstein.Network.Packets;
 
 namespace Edelstein.WvsGame.Conversations.Messages.Requests
 {
-    public class AskText : ConversationQuestion
+    public class AskText : ConversationQuestion<string>
     {
-        protected override byte MessageType => 0x3;
+        protected override ScriptMessageType MessageType => ScriptMessageType.AskText;
 
         private readonly string _text;
         private readonly string _textDefault;
