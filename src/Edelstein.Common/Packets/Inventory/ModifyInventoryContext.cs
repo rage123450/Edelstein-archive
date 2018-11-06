@@ -30,6 +30,7 @@ namespace Edelstein.Common.Packets.Inventory
             switch (item)
             {
                 case ItemSlotBundle bundle:
+                    if (ItemInfo.IsRechargeableItem(bundle.TemplateID)) goto default;
                     if (bundle.Number < 1) bundle.Number = 1;
                     if (bundle.MaxNumber < 1) bundle.MaxNumber = 1;
 
@@ -94,7 +95,8 @@ namespace Edelstein.Common.Packets.Inventory
         {
             var item = template.ToItemSlot();
 
-            if (item is ItemSlotBundle bundle)
+            if (item is ItemSlotBundle bundle &&
+                !ItemInfo.IsRechargeableItem(bundle.TemplateID))
             {
                 bundle.Number = quantity;
                 Add(bundle);
@@ -130,7 +132,7 @@ namespace Edelstein.Common.Packets.Inventory
                 item)
             );
         }
-        
+
         public void Remove(ItemInventoryType type, short slot, int count = 1)
         {
             var inventory = _character.GetInventory(type);
@@ -147,7 +149,8 @@ namespace Edelstein.Common.Packets.Inventory
 
             item.ID = 0;
 
-            if (item is ItemSlotBundle bundle)
+            if (item is ItemSlotBundle bundle &&
+                !ItemInfo.IsRechargeableItem(bundle.TemplateID))
             {
                 bundle.Number -= (short) count;
                 bundle.Number = Math.Max((short) 0, bundle.Number);
@@ -158,7 +161,7 @@ namespace Edelstein.Common.Packets.Inventory
                     return;
                 }
             }
-            
+
             inventoryItems.Remove(item);
             _operations.Add(new InventoryRemoveOperation(
                 inventory.Type,
@@ -182,7 +185,8 @@ namespace Edelstein.Common.Packets.Inventory
                 .ForEach(i =>
                 {
                     if (removed >= count) return;
-                    if (i is ItemSlotBundle bundle)
+                    if (i is ItemSlotBundle bundle &&
+                        !ItemInfo.IsRechargeableItem(bundle.TemplateID))
                     {
                         var diff = count - removed;
 
@@ -221,7 +225,8 @@ namespace Edelstein.Common.Packets.Inventory
             var existingItem = inventory.Items.SingleOrDefault(i => i.Position == toSlot);
             var fromSlot = item.Position;
 
-            if (item is ItemSlotBundle bundle)
+            if (item is ItemSlotBundle bundle &&
+                !ItemInfo.IsRechargeableItem(bundle.TemplateID))
             {
                 if (existingItem is ItemSlotBundle existingBundle)
                 {

@@ -1,4 +1,5 @@
 using System;
+using Edelstein.Common.Utils.Items;
 using Edelstein.Database.Entities.Inventory;
 using Edelstein.Network.Packets;
 
@@ -73,6 +74,9 @@ namespace Edelstein.Common.Packets
             p.Encode<short>(i.Number);
             p.Encode<string>(i.Title);
             p.Encode<short>(i.Attribute);
+
+            if (ItemInfo.IsRechargeableItem(i.TemplateID))
+                p.Encode<long>(0);
         }
 
         public static void Encode(this ItemSlotPet i, OutPacket p)
@@ -85,10 +89,10 @@ namespace Edelstein.Common.Packets
             p.Encode<byte>(i.Level);
             p.Encode<short>(i.Tameness);
             p.Encode<byte>(i.Repleteness);
-            
+
             if (i.DateDead == null) p.Encode<long>(0);
             else p.Encode<DateTime>(i.DateDead.Value);
-            
+
             p.Encode<short>(i.PetAttribute);
             p.Encode<short>(i.PetSkill);
             p.Encode<int>(i.RemainLife);

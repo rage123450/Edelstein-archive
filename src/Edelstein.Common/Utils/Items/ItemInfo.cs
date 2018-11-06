@@ -9,6 +9,12 @@ namespace Edelstein.Common.Utils.Items
 {
     public static class ItemInfo
     {
+        public static bool IsRechargeableItem(int templateID)
+        {
+            var type = templateID / 10000;
+            return type == 207 || type == 233;
+        }
+
         private static ItemSlotEquip ToItemSlot(this ItemEquipTemplate template,
             ItemVariationType type = ItemVariationType.None)
         {
