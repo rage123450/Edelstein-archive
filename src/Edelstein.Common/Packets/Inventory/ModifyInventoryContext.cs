@@ -36,6 +36,7 @@ namespace Edelstein.Common.Packets.Inventory
                     var mergeableSlots = inventory.Items
                         .OfType<ItemSlotBundle>()
                         .Where(b => b.TemplateID == bundle.TemplateID)
+                        .Where(b => b.DateExpire == bundle.DateExpire)
                         .Where(b => b.Attribute == bundle.Attribute)
                         .Where(b => b.Title == bundle.Title)
                         .Where(b => b.Number != b.MaxNumber)
