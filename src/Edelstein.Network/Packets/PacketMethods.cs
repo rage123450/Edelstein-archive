@@ -19,6 +19,8 @@ namespace Edelstein.Network.Packets
                 {typeof(int), buffer => buffer.ReadIntLE()},
                 {typeof(uint), buffer => buffer.ReadUnsignedIntLE()},
                 {typeof(long), buffer => buffer.ReadLongLE()},
+                {typeof(float), buffer => buffer.ReadFloatLE()},
+                {typeof(double), buffer => buffer.ReadDoubleLE()},
                 {typeof(string), buffer => buffer.ReadString(buffer.ReadShortLE(), StringEncoding)},
                 {typeof(DateTime), buffer => DateTime.FromFileTimeUtc(buffer.ReadLongLE())}
             };
@@ -40,6 +42,8 @@ namespace Edelstein.Network.Packets
                         buffer.WriteBytes(StringEncoding.GetBytes(str));
                     }
                 },
+                {typeof(float), (buffer, value) => buffer.WriteFloatLE((float) value)},
+                {typeof(double), (buffer, value) => buffer.WriteDoubleLE((double) value)},
                 {typeof(DateTime), (buffer, value) => buffer.WriteLongLE(((DateTime) value).ToFileTimeUtc())}
             };
     }
