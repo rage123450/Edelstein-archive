@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Edelstein.Common.Packets;
 using Edelstein.Common.Packets.Stats;
+using Edelstein.Common.Utils.Items;
 using Edelstein.Database.Entities.Inventory;
 using Edelstein.Database.Entities.Types;
 using Edelstein.Network.Packets;
@@ -458,21 +459,11 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             var inventoryItems = inventory.Items;
             var item = inventoryItems.SingleOrDefault(i => i.Position == position);
 
+            if (item == null) return;
             if (item.TemplateID != templateID) return;
             if (!(template is StatChangeItemTemplate scTemplate)) return;
 
-            var temporaryStats = new Dictionary<TemporaryStatType, short>();
-
-            if (scTemplate.PAD > 0) temporaryStats.Add(TemporaryStatType.PAD, scTemplate.PAD);
-            if (scTemplate.PDD > 0) temporaryStats.Add(TemporaryStatType.PDD, scTemplate.PDD);
-            if (scTemplate.MAD > 0) temporaryStats.Add(TemporaryStatType.MAD, scTemplate.MAD);
-            if (scTemplate.MDD > 0) temporaryStats.Add(TemporaryStatType.MDD, scTemplate.MDD);
-            if (scTemplate.ACC > 0) temporaryStats.Add(TemporaryStatType.ACC, scTemplate.ACC);
-            if (scTemplate.EVA > 0) temporaryStats.Add(TemporaryStatType.EVA, scTemplate.EVA);
-            if (scTemplate.Craft > 0) temporaryStats.Add(TemporaryStatType.Craft, scTemplate.Craft);
-            if (scTemplate.Speed > 0) temporaryStats.Add(TemporaryStatType.Speed, scTemplate.Speed);
-            if (scTemplate.Jump > 0) temporaryStats.Add(TemporaryStatType.Jump, scTemplate.Jump);
-            if (scTemplate.Morph > 0) temporaryStats.Add(TemporaryStatType.Morph, scTemplate.Morph);
+            var temporaryStats = scTemplate.GetTemporaryStats();
 
             if (temporaryStats.Count > 0)
                 ModifyTemporaryStat(ts => temporaryStats.ForEach(t =>
