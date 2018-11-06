@@ -125,6 +125,7 @@ namespace Edelstein.WvsGame
 
             UserData.RegisterType<FieldUserSpeaker>();
             UserData.RegisterType<FieldNPCSpeaker>();
+            UserData.RegisterType<NPCSpeaker>();
             NPCConversationManager = _container.GetInstance<ConversationManager<FieldUser, FieldNPC>>();
 
             InteropClient = new Client<CenterServerSocket>(
