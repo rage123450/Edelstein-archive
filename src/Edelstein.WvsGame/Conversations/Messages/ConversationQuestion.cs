@@ -4,7 +4,7 @@ namespace Edelstein.WvsGame.Conversations.Messages
 {
     public abstract class ConversationQuestion<T> : IEncodable
     {
-        protected abstract ScriptMessageType MessageType { get; }
+        public abstract ScriptMessageType MessageType { get; }
 
         protected readonly byte SpeakerTypeID;
         protected readonly int SpeakerTemplateID;

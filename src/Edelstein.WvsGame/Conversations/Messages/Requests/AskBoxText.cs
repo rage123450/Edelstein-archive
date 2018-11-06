@@ -4,7 +4,7 @@ namespace Edelstein.WvsGame.Conversations.Messages.Requests
 {
     public class AskBoxText : ConversationQuestion<string>
     {
-        protected override ScriptMessageType MessageType => ScriptMessageType.AskBoxText;
+        public override ScriptMessageType MessageType => ScriptMessageType.AskBoxText;
 
         private readonly string _text;
         private readonly string _textDefault;

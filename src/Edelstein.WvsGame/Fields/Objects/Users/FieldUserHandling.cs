@@ -381,6 +381,8 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
         {
             if (ConversationContext == null) return;
             var messageType = (ScriptMessageType) packet.Decode<byte>();
+
+            if (messageType != ConversationContext.AwaitingType) return;
             var answers = ConversationContext.Answers;
             var answer = packet.Decode<byte>();
 

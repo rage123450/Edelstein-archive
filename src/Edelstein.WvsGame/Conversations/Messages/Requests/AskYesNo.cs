@@ -4,7 +4,7 @@ namespace Edelstein.WvsGame.Conversations.Messages.Requests
 {
     public class AskYesNo : ConversationQuestion<byte>
     {
-        protected override ScriptMessageType MessageType =>
+        public override ScriptMessageType MessageType =>
             _quest
                 ? ScriptMessageType.AskAccept
                 : ScriptMessageType.AskYesNo;

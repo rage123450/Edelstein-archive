@@ -4,7 +4,7 @@ namespace Edelstein.WvsGame.Conversations.Messages.Requests
 {
     public class Say : ConversationQuestion<byte>
     {
-        protected override ScriptMessageType MessageType => ScriptMessageType.Say;
+        public override ScriptMessageType MessageType => ScriptMessageType.Say;
 
         private readonly string _text;
         private readonly bool _prev;

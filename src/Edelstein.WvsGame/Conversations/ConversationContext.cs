@@ -10,6 +10,7 @@ namespace Edelstein.WvsGame.Conversations
 {
     public class ConversationContext
     {
+        public ScriptMessageType AwaitingType;
         public readonly BlockingCollection<object> Answers;
         public readonly CancellationTokenSource TokenSource;
         protected readonly Socket Socket;
@@ -23,6 +24,7 @@ namespace Edelstein.WvsGame.Conversations
 
         public T Send<T>(ConversationQuestion<T> request)
         {
+            AwaitingType = request.MessageType;
             using (var p = new OutPacket(GameSendOperations.ScriptMessage))
             {
                 request.Encode(p);

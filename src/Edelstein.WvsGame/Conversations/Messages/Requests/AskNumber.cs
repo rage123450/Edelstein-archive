@@ -4,7 +4,7 @@ namespace Edelstein.WvsGame.Conversations.Messages.Requests
 {
     public class AskNumber : ConversationQuestion<int>
     {
-        protected override ScriptMessageType MessageType => ScriptMessageType.AskNumber;
+        public override ScriptMessageType MessageType => ScriptMessageType.AskNumber;
 
         private readonly string _text;
         private readonly int _def;
