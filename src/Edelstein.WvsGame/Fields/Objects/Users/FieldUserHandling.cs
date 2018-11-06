@@ -624,10 +624,17 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
             if (temporaryStats.Count > 0)
             {
-                var expire = DateTime.Now.AddSeconds(levelTemplate.Time);
-                ModifyTemporaryStat(ts => temporaryStats.ForEach(t =>
-                    ts.Set(t.Key, templateID, t.Value, expire)
-                ));
+                if (levelTemplate.Time > 0)
+                {
+                    var expire = DateTime.Now.AddSeconds(levelTemplate.Time);
+                    ModifyTemporaryStat(ts => temporaryStats.ForEach(t =>
+                        ts.Set(t.Key, templateID, t.Value, expire)
+                    ));
+                }
+                else
+                    ModifyTemporaryStat(ts => temporaryStats.ForEach(t =>
+                        ts.Set(t.Key, templateID, t.Value)
+                    ));
             }
 
             // TODO: party/map buffs
