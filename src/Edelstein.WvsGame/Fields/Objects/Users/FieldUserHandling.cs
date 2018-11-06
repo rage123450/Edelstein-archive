@@ -262,7 +262,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 var totalDamage = e.Damage.Sum();
 
                 if (fieldObject is FieldMob mob)
-                    mob.Damage(this, totalDamage);
+                    mob.Damage(this, Math.Min(mob.HP, totalDamage));
             });
         }
 
