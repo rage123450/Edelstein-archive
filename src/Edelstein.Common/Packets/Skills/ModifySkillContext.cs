@@ -26,7 +26,7 @@ namespace Edelstein.Common.Packets.Skills
             Set(template, record?.Info + 1 ?? 1);
         }
 
-        public void Set(SkillTemplate template, int level)
+        public void Set(SkillTemplate template, int level, int masterLevel = 0)
         {
             var record = _character.SkillRecords.SingleOrDefault(r => (int) r.Skill == template.TemplateID);
 
@@ -37,8 +37,7 @@ namespace Edelstein.Common.Packets.Skills
                 {
                     Skill = (Skill) template.TemplateID,
                     Info = level,
-                    MasterLevel = 0, // TODO
-                    DateExpire = DateTime.Now // TODO
+                    MasterLevel = masterLevel
                 };
 
                 _character.SkillRecords.Add(record);
