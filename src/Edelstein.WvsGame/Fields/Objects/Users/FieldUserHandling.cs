@@ -98,6 +98,9 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 case GameRecvOperations.UserSkillUseRequest:
                     OnUserSkillUseRequest(packet);
                     break;
+                case GameRecvOperations.UserSkillCancelRequest:
+                    OnUserSkillCancelRequest(packet);
+                    break;
                 case GameRecvOperations.UserDropMoneyRequest:
                     OnUserDropMoneyRequest(packet);
                     break;
@@ -617,6 +620,16 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             // TODO: party/map buffs
             // TODO: remote effects
             ModifyStats(exclRequest: true);
+        }
+
+        private void OnUserSkillCancelRequest(InPacket packet)
+        {
+            var templateID = packet.Decode<int>();
+            var template = Socket.WvsGame.SkillTemplates.Get(templateID);
+
+            if (template == null) return;
+
+            ModifyTemporaryStat(ts => ts.Reset(templateID));
         }
 
         private void OnUserDropMoneyRequest(InPacket packet)
