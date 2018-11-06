@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Edelstein.Common.Packets;
 using Edelstein.Common.Packets.Stats;
+using Edelstein.Common.Utils;
 using Edelstein.Common.Utils.Extensions;
 using Edelstein.Common.Utils.Items;
 using Edelstein.Common.Utils.Skills;
@@ -591,6 +592,18 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
         {
             packet.Decode<int>();
             var templateID = packet.Decode<int>();
+            var template = Socket.WvsGame.SkillTemplates.Get(templateID);
+            var skill = (Skill) templateID;
+
+            if (template == null) return;
+            if (Character.SP <= 0) return;
+            // TODO: hidden skill check
+
+            int maxLevel = template.MaxLevel;
+            if (Constants.IsSkillNeedMasterLevel(skill))
+                maxLevel = Character.GetSkillMasterLevel(skill);
+
+            if (Character.GetSkillLevel(skill) >= maxLevel) return;
 
             ModifyStats(s => s.SP--);
             ModifySkill(s => s.Add(Socket.WvsGame.SkillTemplates.Get(templateID)), true);
