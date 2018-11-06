@@ -18,13 +18,13 @@ namespace Edelstein.WvsGame.Conversations.Speakers
         public Speaker AsSpeaker(int templateID, SpeakerParamType param = SpeakerParamType.NPCReplacedByNPC)
             => new NPCSpeaker(Context, templateID, param);
 
-        public int Say(string text, bool prev = false, bool next = false)
+        public int Say(string text = "", bool prev = false, bool next = false)
             => Context.Send(new Say(SpeakerTypeID, SpeakerTemplateID, SpeakerParam, text, prev, next));
 
-        public int AskYesNo(string text, bool quest = false)
+        public int AskYesNo(string text = "", bool quest = false)
             => Context.Send(new AskYesNo(SpeakerTypeID, SpeakerTemplateID, SpeakerParam, text, quest));
 
-        public string AskText(string text, string textDefault = "",
+        public string AskText(string text = "", string textDefault = "",
             short lenMin = short.MinValue, short lenMax = short.MaxValue)
             => Context.Send(new AskText(SpeakerTypeID, SpeakerTemplateID, SpeakerParam, text, textDefault,
                 lenMin, lenMax));
