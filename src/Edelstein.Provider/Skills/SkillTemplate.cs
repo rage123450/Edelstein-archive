@@ -16,7 +16,7 @@ namespace Edelstein.Provider.Skills
 
         public static SkillTemplate Parse(int templateId, PackageCollection collection)
         {
-            var entry = collection.Resolve($"Skill/{templateId / 10000}.img/skill/{templateId:D7}");
+            var entry = collection.Resolve($"Skill/{templateId / 10000:D3}.img/skill/{templateId:D7}");
             return Parse(templateId, entry);
         }
 
