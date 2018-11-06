@@ -627,9 +627,13 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 if (levelTemplate.Time > 0)
                 {
                     var expire = DateTime.Now.AddSeconds(levelTemplate.Time);
-                    ModifyTemporaryStat(ts => temporaryStats.ForEach(t =>
-                        ts.Set(t.Key, templateID, t.Value, expire)
-                    ));
+                    ModifyTemporaryStat(ts =>
+                        temporaryStats.ForEach(t =>
+                        {
+                            if (levelTemplate.Time > 0) ts.Set(t.Key, templateID, t.Value, expire);
+                            else ts.Set(t.Key, templateID, t.Value);
+                        })
+                    );
                 }
                 else
                     ModifyTemporaryStat(ts => temporaryStats.ForEach(t =>
