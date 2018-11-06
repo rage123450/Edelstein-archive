@@ -206,6 +206,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
         private void OnUserMeleeAttack(InPacket packet)
         {
+            packet.Decode<byte>();
             var attackInfo = new MeleeAttackInfo(Character);
 
             attackInfo.Decode(packet);
@@ -214,6 +215,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
         private void OnUserShootAttack(InPacket packet)
         {
+            packet.Decode<byte>();
             var attackInfo = new ShootAttackInfo(Character);
 
             attackInfo.Decode(packet);
@@ -222,6 +224,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
         private void OnUserMagicAttack(InPacket packet)
         {
+            packet.Decode<byte>();
             var attackInfo = new MagicAttackInfo(Character);
 
             attackInfo.Decode(packet);
@@ -230,6 +233,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
         private void OnUserBodyAttack(InPacket packet)
         {
+            packet.Decode<byte>();
             var attackInfo = new BodyAttackInfo(Character);
 
             attackInfo.Decode(packet);
@@ -238,15 +242,6 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
         private void OnUserAttack(AttackInfo info)
         {
-            info.Entries.ForEach(e =>
-            {
-                var fieldObject = Field.GetObject(e.MobID);
-                var totalDamage = e.Damage.Sum();
-
-                if (fieldObject is FieldMob mob)
-                    mob.Damage(this, totalDamage);
-            });
-
             using (var p = new OutPacket(
                 info is MeleeAttackInfo ? GameSendOperations.UserMeleeAttack :
                 info is ShootAttackInfo ? GameSendOperations.UserShootAttack :
@@ -260,6 +255,15 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
                 Field.BroadcastPacket(this, p);
             }
+            
+            info.Entries.ForEach(e =>
+            {
+                var fieldObject = Field.GetObject(e.MobID);
+                var totalDamage = e.Damage.Sum();
+
+                if (fieldObject is FieldMob mob)
+                    mob.Damage(this, totalDamage);
+            });
         }
 
         private void OnUserChat(InPacket packet)

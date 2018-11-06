@@ -13,10 +13,5 @@ namespace Edelstein.WvsGame.Fields.Attacking
         {
             throw new System.NotImplementedException();
         }
-
-        public override void Encode(OutPacket packet)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }
