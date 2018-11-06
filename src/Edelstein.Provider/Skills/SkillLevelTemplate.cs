@@ -5,6 +5,8 @@ namespace Edelstein.Provider.Skills
 {
     public class SkillLevelTemplate
     {
+        public int TemplateID { get; set; }
+        
         public short HP { get; set; }
         public short MP { get; set; }
         public short PAD { get; set; }
@@ -50,7 +52,7 @@ namespace Edelstein.Provider.Skills
         public short EPDD { get; set; }
         public short EMDD { get; set; }
 
-        public static SkillLevelTemplate Parse(int level, WZProperty p)
+        public static SkillLevelTemplate Parse(int templateID, int level, WZProperty p)
         {
             var x = new Argument("x", level);
 
@@ -59,6 +61,7 @@ namespace Edelstein.Provider.Skills
 
             return new SkillLevelTemplate
             {
+                TemplateID = templateID,
                 HP = ResolveExpression(p.ResolveForOrNull<string>("hp"), x, u, d),
                 MP = ResolveExpression(p.ResolveForOrNull<string>("mp"), x, u, d),
                 PAD = ResolveExpression(p.ResolveForOrNull<string>("pad"), x, u, d),

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Edelstein.Common.Packets.Stats;
+using Edelstein.Database.Entities.Types;
 using Edelstein.Provider.Skills;
 
 namespace Edelstein.Common.Utils.Skills
@@ -32,6 +33,11 @@ namespace Edelstein.Common.Utils.Skills
             if (template.EPDD > 0) temporaryStats.Add(TemporaryStatType.EPDD, template.EPDD);
             // if (template.EMAD > 0) temporaryStats.Add(TemporaryStatType.EMAD, template.EMAD);
             if (template.EMDD > 0) temporaryStats.Add(TemporaryStatType.EMDD, template.EMDD);
+
+            var skill = (Skill) template.TemplateID;
+            
+            if (skill == Skill.RogueDarkSight)
+                temporaryStats.Add(TemporaryStatType.DarkSight, template.X);
             
             return temporaryStats;
         }
