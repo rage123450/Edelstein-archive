@@ -255,7 +255,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
                 Field.BroadcastPacket(this, p);
             }
-            
+
             info.Entries.ForEach(e =>
             {
                 var fieldObject = Field.GetObject(e.MobID);
@@ -604,7 +604,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             // TODO: hidden skill check
 
             int maxLevel = template.MaxLevel;
-            if (Constants.IsSkillNeedMasterLevel(skill))
+            if (skill.IsSkillNeedMasterLevel())
                 maxLevel = Character.GetSkillMasterLevel(skill);
 
             if (Character.GetSkillLevel(skill) >= maxLevel) return;

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Edelstein.Common.Utils;
+using Edelstein.Common.Utils.Skills;
 using Edelstein.Database.Entities;
 using Edelstein.Database.Entities.Inventory;
 using Edelstein.Database.Entities.Types;
@@ -118,11 +119,11 @@ namespace Edelstein.Common.Packets
                 {
                     p.Encode<Skill>(skillRecord.Skill);
                     p.Encode<int>(skillRecord.Info);
-                    
+
                     if (skillRecord.DateExpire == null) p.Encode<long>(0);
                     else p.Encode<DateTime>(skillRecord.DateExpire.Value);
 
-                    if (Constants.IsSkillNeedMasterLevel(skillRecord.Skill))
+                    if (skillRecord.Skill.IsSkillNeedMasterLevel())
                         p.Encode<int>(skillRecord.MasterLevel);
                 }
             }
