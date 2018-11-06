@@ -66,5 +66,13 @@ namespace Edelstein.WvsGame.Fields.Attacking
             
             // if skill == StrikerSpark int, m_tReserveSpark
         }
+
+        public override void Encode(OutPacket packet)
+        {
+            base.Encode(packet);
+
+            packet.Encode<short>(0);
+            packet.Encode<short>(0);
+        }
     }
 }

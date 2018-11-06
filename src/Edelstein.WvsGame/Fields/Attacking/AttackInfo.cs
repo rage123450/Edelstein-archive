@@ -46,7 +46,7 @@ namespace Edelstein.WvsGame.Fields.Attacking
             if (AttackAction > 0x110) return;
             packet.Encode<byte>(0); // nMastery
             packet.Encode<byte>(0); // v82
-            packet.Encode<int>(0); // bMovingShoot
+            packet.Encode<int>(2070000); // bMovingShoot
 
             Entries.ForEach(e =>
             {
