@@ -70,6 +70,8 @@ namespace Edelstein.Provider.Skills
                 Craft = ResolveExpression(p.ResolveForOrNull<string>("craft"), x, u, d),
                 Speed = ResolveExpression(p.ResolveForOrNull<string>("speed"), x, u, d),
                 Jump = ResolveExpression(p.ResolveForOrNull<string>("jump"), x, u, d),
+                Morph = ResolveExpression(p.ResolveForOrNull<string>("morph"), x, u, d),
+                Time = ResolveExpression(p.ResolveForOrNull<string>("time"), x, u, d),
                 X = ResolveExpression(p.ResolveForOrNull<string>("x"), x, u, d),
                 Y = ResolveExpression(p.ResolveForOrNull<string>("y"), x, u, d),
                 Z = ResolveExpression(p.ResolveForOrNull<string>("z"), x, u, d),

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Edelstein.Common.Packets;
 using Edelstein.Common.Packets.Stats;
+using Edelstein.Common.Utils.Extensions;
 using Edelstein.Common.Utils.Items;
+using Edelstein.Common.Utils.Skills;
 using Edelstein.Database.Entities.Inventory;
 using Edelstein.Database.Entities.Types;
 using Edelstein.Network.Packets;
@@ -92,6 +94,9 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                     break;
                 case GameRecvOperations.UserSkillUpRequest:
                     OnUserSkillUpRequest(packet);
+                    break;
+                case GameRecvOperations.UserSkillUseRequest:
+                    OnUserSkillUseRequest(packet);
                     break;
                 case GameRecvOperations.UserDropMoneyRequest:
                     OnUserDropMoneyRequest(packet);
@@ -466,14 +471,12 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             var temporaryStats = scTemplate.GetTemporaryStats();
 
             if (temporaryStats.Count > 0)
+            {
+                var expire = DateTime.Now.AddMilliseconds(scTemplate.Time);
                 ModifyTemporaryStat(ts => temporaryStats.ForEach(t =>
-                    ts.Set(
-                        t.Key,
-                        -templateID,
-                        t.Value,
-                        DateTime.Now.AddMilliseconds(scTemplate.Time)
-                    )
+                    ts.Set(t.Key, -templateID, t.Value, expire)
                 ));
+            }
 
             if (!temporaryStats.ContainsKey(TemporaryStatType.Morph))
             {
@@ -588,6 +591,32 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
             ModifyStats(s => s.SP--);
             ModifySkill(s => s.Add(Socket.WvsGame.SkillTemplates.Get(templateID)), true);
+        }
+
+        private void OnUserSkillUseRequest(InPacket packet)
+        {
+            packet.Decode<int>();
+            var templateID = packet.Decode<int>();
+            var template = Socket.WvsGame.SkillTemplates.Get(templateID);
+            var skillLevel = Character.GetSkillLevel((Skill) templateID);
+
+            if (template == null) return;
+            if (skillLevel <= 0) return;
+
+            var levelTemplate = template.LevelData[skillLevel];
+            var temporaryStats = levelTemplate.GetTemporaryStats();
+
+            if (temporaryStats.Count > 0)
+            {
+                var expire = DateTime.Now.AddSeconds(levelTemplate.Time);
+                ModifyTemporaryStat(ts => temporaryStats.ForEach(t =>
+                    ts.Set(t.Key, templateID, t.Value, expire)
+                ));
+            }
+
+            // TODO: party/map buffs
+            // TODO: remote effects
+            ModifyStats(exclRequest: true);
         }
 
         private void OnUserDropMoneyRequest(InPacket packet)
