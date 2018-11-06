@@ -14,32 +14,90 @@ namespace Edelstein.Common.Utils.Skills
 
         public static IDictionary<TemporaryStatType, short> GetTemporaryStats(this SkillLevelTemplate template)
         {
-            var temporaryStats = new Dictionary<TemporaryStatType, short>();
+            var stats = new Dictionary<TemporaryStatType, short>();
 
-            if (template.PAD > 0) temporaryStats.Add(TemporaryStatType.PAD, template.PAD);
-            if (template.PDD > 0) temporaryStats.Add(TemporaryStatType.PDD, template.PDD);
-            if (template.MAD > 0) temporaryStats.Add(TemporaryStatType.MAD, template.MAD);
-            if (template.MDD > 0) temporaryStats.Add(TemporaryStatType.MDD, template.MDD);
-            if (template.ACC > 0) temporaryStats.Add(TemporaryStatType.ACC, template.ACC);
-            if (template.EVA > 0) temporaryStats.Add(TemporaryStatType.EVA, template.EVA);
-            if (template.Craft > 0) temporaryStats.Add(TemporaryStatType.Craft, template.Craft);
-            if (template.Speed > 0) temporaryStats.Add(TemporaryStatType.Speed, template.Speed);
-            if (template.Jump > 0) temporaryStats.Add(TemporaryStatType.Jump, template.Jump);
-            if (template.Morph > 0) temporaryStats.Add(TemporaryStatType.Morph, template.Morph);
+            if (template.PAD > 0) stats.Add(TemporaryStatType.PAD, template.PAD);
+            if (template.PDD > 0) stats.Add(TemporaryStatType.PDD, template.PDD);
+            if (template.MAD > 0) stats.Add(TemporaryStatType.MAD, template.MAD);
+            if (template.MDD > 0) stats.Add(TemporaryStatType.MDD, template.MDD);
+            if (template.ACC > 0) stats.Add(TemporaryStatType.ACC, template.ACC);
+            if (template.EVA > 0) stats.Add(TemporaryStatType.EVA, template.EVA);
+            if (template.Craft > 0) stats.Add(TemporaryStatType.Craft, template.Craft);
+            if (template.Speed > 0) stats.Add(TemporaryStatType.Speed, template.Speed);
+            if (template.Jump > 0) stats.Add(TemporaryStatType.Jump, template.Jump);
+            if (template.Morph > 0) stats.Add(TemporaryStatType.Morph, template.Morph);
 
-            if (template.EMHP > 0) temporaryStats.Add(TemporaryStatType.EMHP, template.EMHP);
-            if (template.EMMP > 0) temporaryStats.Add(TemporaryStatType.EMMP, template.EMMP);
-            if (template.EPAD > 0) temporaryStats.Add(TemporaryStatType.EPAD, template.EPAD);
-            if (template.EPDD > 0) temporaryStats.Add(TemporaryStatType.EPDD, template.EPDD);
+            if (template.EMHP > 0) stats.Add(TemporaryStatType.EMHP, template.EMHP);
+            if (template.EMMP > 0) stats.Add(TemporaryStatType.EMMP, template.EMMP);
+            if (template.EPAD > 0) stats.Add(TemporaryStatType.EPAD, template.EPAD);
+            if (template.EPDD > 0) stats.Add(TemporaryStatType.EPDD, template.EPDD);
             // if (template.EMAD > 0) temporaryStats.Add(TemporaryStatType.EMAD, template.EMAD);
-            if (template.EMDD > 0) temporaryStats.Add(TemporaryStatType.EMDD, template.EMDD);
+            if (template.EMDD > 0) stats.Add(TemporaryStatType.EMDD, template.EMDD);
 
             var skill = (Skill) template.TemplateID;
-            
-            if (skill == Skill.RogueDarkSight)
-                temporaryStats.Add(TemporaryStatType.DarkSight, template.X);
-            
-            return temporaryStats;
+
+            switch (skill)
+            {
+                case Skill.MagicianMagicGuard:
+                case Skill.FlamewizardMagicGuard:
+                case Skill.EvanMagicGuard:
+                    stats.Add(TemporaryStatType.MagicGuard, template.X);
+                    break;
+                case Skill.RogueDarkSight:
+                case Skill.NightwalkerDarkSight:
+                    stats.Add(TemporaryStatType.DarkSight, template.X);
+                    break;
+                case Skill.FighterWeaponBooster:
+                case Skill.PageWeaponBooster:
+                case Skill.SpearmanWeaponBooster:
+                case Skill.Mage1MagicBooster:
+                case Skill.Mage2MagicBooster:
+                case Skill.HunterBowBooster:
+                case Skill.CrossbowmanCrossbowBooster:
+                case Skill.AssassinJavelinBooster:
+                case Skill.ThiefDaggerBooster:
+                case Skill.Dual1DualBooster:
+                case Skill.InfighterKnuckleBooster:
+                case Skill.GunslingerGunBooster:
+                case Skill.StrikerKnuckleBooster:
+                case Skill.SoulmasterSwordBooster:
+                case Skill.FlamewizardMagicBooster:
+                case Skill.WindbreakerBowBooster:
+                case Skill.NightwalkerJavelinBooster:
+                case Skill.AranPolearmBooster:
+                case Skill.EvanMagicBooster:
+                case Skill.BmageStaffBooster:
+                case Skill.WildhunterCrossbowBooster:
+                case Skill.MechanicBooster:
+                    stats.Add(TemporaryStatType.Booster, template.X);
+                    break;
+                case Skill.FighterPowerGuard:
+                case Skill.PagePowerGuard:
+                    stats.Add(TemporaryStatType.PowerGuard, template.X);
+                    break;
+                case Skill.NoviceHyperBody:
+                case Skill.SpearmanHyperBody:
+                case Skill.AdminHyperBody:
+                case Skill.NoblesseHyperBody:
+                case Skill.LegendHyperBody:
+                case Skill.EvanjrHyperBody:
+                case Skill.CitizenHyperBody:
+                    stats.Add(TemporaryStatType.MaxHP, template.X);
+                    stats.Add(TemporaryStatType.MaxMP, template.Y);
+                    break;
+                case Skill.ClericInvincible:
+                    stats.Add(TemporaryStatType.Invincible, template.X);
+                    break;
+                case Skill.HunterSoulArrowBow:
+                case Skill.CrossbowmanSoulArrowCrossbow:
+                case Skill.WindbreakerSoulArrowBow:
+                case Skill.WildhunterSoulArrowCrossbow:
+                    stats.Add(TemporaryStatType.SoulArrow, template.X);
+                    break;
+                // TODO: more buffs
+            }
+
+            return stats;
         }
     }
 }
