@@ -4,16 +4,16 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Effects
 {
     public class UserEffect : IEncodable
     {
-        public UserEffectType Type { get; }
+        private readonly UserEffectType _type;
         
         public UserEffect(UserEffectType type)
         {
-            Type = type;
+            _type = type;
         }
 
         public virtual void Encode(OutPacket packet)
         {
-            packet.Encode<byte>((byte) Type);
+            packet.Encode<byte>((byte) _type);
         }
     }
 }
