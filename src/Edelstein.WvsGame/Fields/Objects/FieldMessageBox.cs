@@ -30,7 +30,9 @@ namespace Edelstein.WvsGame.Fields.Objects
             }
         }
 
-        public override OutPacket GetLeaveFieldPacket()
+        public override OutPacket GetLeaveFieldPacket() => GetLeaveFieldPacket(false);
+
+        public OutPacket GetLeaveFieldPacket(bool fadeOut)
         {
             using (var p = new OutPacket(GameSendOperations.MessageBoxLeaveField))
             {
