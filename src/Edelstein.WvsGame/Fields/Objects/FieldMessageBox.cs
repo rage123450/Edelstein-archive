@@ -36,7 +36,7 @@ namespace Edelstein.WvsGame.Fields.Objects
         {
             using (var p = new OutPacket(GameSendOperations.MessageBoxLeaveField))
             {
-                p.Encode<bool>(true);
+                p.Encode<bool>(fadeOut);
                 p.Encode<int>(ID);
                 return p;
             }
