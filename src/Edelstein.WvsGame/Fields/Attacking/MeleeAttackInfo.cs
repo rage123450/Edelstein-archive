@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Edelstein.Database.Entities;
 using Edelstein.Network.Packets;
@@ -12,8 +13,15 @@ namespace Edelstein.WvsGame.Fields.Attacking
 
         public override void Decode(InPacket packet)
         {
-            packet.Decode<int>();
-            packet.Decode<int>();
+            // TODO: im not sure about this,
+            // but it doesn't throw exceptions anymore
+            if (packet.Decode<byte>() == 0xFF) 
+                packet.Buffer.SkipBytes(7);
+            else
+            {
+                packet.Decode<int>();
+                packet.Decode<int>();
+            }
 
             var damagePerMobAndCount = packet.Decode<byte>();
             DamagePerMob = damagePerMobAndCount & 0xF;
