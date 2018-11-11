@@ -15,6 +15,7 @@ using Edelstein.WvsGame.Conversations.Messages;
 using Edelstein.WvsGame.Fields.Attacking;
 using Edelstein.WvsGame.Fields.Movements;
 using Edelstein.WvsGame.Fields.Objects.Drops;
+using Edelstein.WvsGame.Fields.Objects.Users.Effects;
 using Edelstein.WvsGame.Fields.Objects.Users.Stats;
 using Edelstein.WvsGame.Packets;
 using MoreLinq.Extensions;
@@ -666,7 +667,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             }
 
             // TODO: party/map buffs
-            // TODO: remote effects
+            Effect(new SkillUseEffect(templateID, (byte) skillLevel), false);
             ModifyStats(exclRequest: true);
         }
 

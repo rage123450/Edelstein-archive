@@ -8,6 +8,7 @@ using Edelstein.Database.Entities;
 using Edelstein.Database.Entities.Types;
 using Edelstein.Network.Packets;
 using Edelstein.WvsGame.Conversations;
+using Edelstein.WvsGame.Fields.Objects.Users.Effects;
 using Edelstein.WvsGame.Fields.Objects.Users.Stats;
 using Edelstein.WvsGame.Interactions.Dialogue;
 using Edelstein.WvsGame.Packets;
@@ -103,6 +104,25 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             {
                 message.Encode(p);
                 return SendPacket(p);
+            }
+        }
+
+        public Task Effect(UserEffect effect, bool local = true)
+        {
+            if (local)
+            {
+                using (var p = new OutPacket(GameSendOperations.UserEffectLocal))
+                {
+                    effect.Encode(p);
+                    SendPacket(p);
+                }
+            }
+
+            using (var p = new OutPacket(GameSendOperations.UserEffectRemote))
+            {
+                p.Encode<int>(ID);
+                effect.Encode(p);
+                return Field.BroadcastPacket(this, p);
             }
         }
 
