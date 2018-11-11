@@ -2,9 +2,14 @@ using Edelstein.Network.Packets;
 
 namespace Edelstein.WvsGame.Fields.Objects.Users.Effects
 {
-    public abstract class UserEffect : IEncodable
+    public class UserEffect : IEncodable
     {
-        public abstract UserEffectType Type { get; }
+        public UserEffectType Type { get; }
+        
+        public UserEffect(UserEffectType type)
+        {
+            Type = type;
+        }
 
         public virtual void Encode(OutPacket packet)
         {

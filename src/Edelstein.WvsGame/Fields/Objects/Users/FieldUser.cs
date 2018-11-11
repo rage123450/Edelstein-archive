@@ -107,7 +107,12 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             }
         }
 
-        public Task Effect(UserEffect effect, bool local = true)
+        public Task Effect(UserEffectType type, bool local = true, bool remote = true)
+        {
+            return Effect(new UserEffect(type), local);
+        }
+
+        public Task Effect(UserEffect effect, bool local = true, bool remote = true)
         {
             if (local)
             {
@@ -118,12 +123,17 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 }
             }
 
-            using (var p = new OutPacket(GameSendOperations.UserEffectRemote))
+            if (remote)
             {
-                p.Encode<int>(ID);
-                effect.Encode(p);
-                return Field.BroadcastPacket(this, p);
+                using (var p = new OutPacket(GameSendOperations.UserEffectRemote))
+                {
+                    p.Encode<int>(ID);
+                    effect.Encode(p);
+                    Field.BroadcastPacket(this, p);
+                }
             }
+            
+            return Task.CompletedTask;
         }
 
         public override OutPacket GetEnterFieldPacket()
