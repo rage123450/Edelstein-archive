@@ -356,7 +356,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                     p.Encode<bool>(false);
                 }
 
-                p.Encode<long>(0);
+                p.Encode<long>(DateTime.Now.ToFileTime());
                 return p;
             }
         }
