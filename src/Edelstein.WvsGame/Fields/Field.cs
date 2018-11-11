@@ -104,6 +104,7 @@ namespace Edelstein.WvsGame.Fields
                     BroadcastPacket(user, getEnterPacket?.Invoke() ?? user.GetEnterFieldPacket());
 
                     if (!user.Socket.IsInstantiated) user.Socket.IsInstantiated = true;
+                    user.ResetForcedStats();
 
                     _objects
                         .Where(o => !o.Equals(obj))
