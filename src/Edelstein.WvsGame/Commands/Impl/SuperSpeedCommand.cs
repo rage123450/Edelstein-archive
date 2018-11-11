@@ -10,12 +10,14 @@ namespace Edelstein.WvsGame.Commands.Impl
 
         protected override Task Execute(CommandContext ctx)
         {
-            return ctx.User.ModifyForcedStats(s =>
-            {
-                s.Jump = byte.MaxValue;
-                s.Speed = byte.MaxValue;
-                s.SpeedMax = byte.MaxValue;
-            });
+            return ctx.Args.Count > 0
+                ? ctx.User.ResetForcedStats()
+                : ctx.User.ModifyForcedStats(s =>
+                {
+                    s.Jump = byte.MaxValue;
+                    s.Speed = byte.MaxValue;
+                    s.SpeedMax = byte.MaxValue;
+                });
         }
     }
 }
