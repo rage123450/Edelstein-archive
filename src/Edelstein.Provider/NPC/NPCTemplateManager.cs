@@ -2,9 +2,9 @@ using PKG1;
 
 namespace Edelstein.Provider.NPC
 {
-    public class NpcLazyTemplateManager : LazyTemplateManager<NPCTemplate>
+    public class NpcTemplateManager : LazyTemplateManager<NPCTemplate>
     {
-        public NpcLazyTemplateManager(PackageCollection collection) : base(collection)
+        public NpcTemplateManager(PackageCollection collection) : base(collection)
         {
         }
 

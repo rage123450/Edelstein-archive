@@ -2,9 +2,9 @@ using PKG1;
 
 namespace Edelstein.Provider.Reactors
 {
-    public class ReactorLazyTemplateManager : LazyTemplateManager<ReactorTemplate>
+    public class ReactorTemplateManager : LazyTemplateManager<ReactorTemplate>
     {
-        public ReactorLazyTemplateManager(PackageCollection collection) : base(collection)
+        public ReactorTemplateManager(PackageCollection collection) : base(collection)
         {
         }
 

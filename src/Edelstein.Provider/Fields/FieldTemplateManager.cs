@@ -2,9 +2,9 @@ using PKG1;
 
 namespace Edelstein.Provider.Fields
 {
-    public class FieldLazyTemplateManager : LazyTemplateManager<FieldTemplate>
+    public class FieldTemplateManager : LazyTemplateManager<FieldTemplate>
     {
-        public FieldLazyTemplateManager(PackageCollection collection) : base(collection)
+        public FieldTemplateManager(PackageCollection collection) : base(collection)
         {
         }
 

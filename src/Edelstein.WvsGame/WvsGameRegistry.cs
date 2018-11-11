@@ -60,11 +60,11 @@ namespace Edelstein.WvsGame
             For<EagerTemplateManager<ItemOptionTemplate>>().Use<ItemOptionTemplateManager>().Singleton();
             For<EagerTemplateManager<SetItemInfoTemplate>>().Use<SetItemInfoTemplateManager>().Singleton();
             For<LazyTemplateManager<SkillTemplate>>().Use<SkillTemplateManager>().Singleton();
-            For<LazyTemplateManager<ItemTemplate>>().Use<ItemLazyTemplateManager>().Singleton();
-            For<LazyTemplateManager<FieldTemplate>>().Use<FieldLazyTemplateManager>().Singleton();
-            For<LazyTemplateManager<NPCTemplate>>().Use<NpcLazyTemplateManager>().Singleton();
-            For<LazyTemplateManager<MobTemplate>>().Use<MobLazyTemplateManager>().Singleton();
-            For<LazyTemplateManager<ReactorTemplate>>().Use<ReactorLazyTemplateManager>().Singleton();
+            For<LazyTemplateManager<ItemTemplate>>().Use<ItemTemplateManager>().Singleton();
+            For<LazyTemplateManager<FieldTemplate>>().Use<FieldTemplateManager>().Singleton();
+            For<LazyTemplateManager<NPCTemplate>>().Use<NpcTemplateManager>().Singleton();
+            For<LazyTemplateManager<MobTemplate>>().Use<MobTemplateManager>().Singleton();
+            For<LazyTemplateManager<ReactorTemplate>>().Use<ReactorTemplateManager>().Singleton();
 
             For<ConversationManager<FieldUser, FieldNPC>>().Use<NPCConversationManager>().Singleton();
 

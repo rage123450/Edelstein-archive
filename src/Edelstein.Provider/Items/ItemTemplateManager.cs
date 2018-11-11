@@ -2,9 +2,9 @@ using PKG1;
 
 namespace Edelstein.Provider.Items
 {
-    public class ItemLazyTemplateManager : LazyTemplateManager<ItemTemplate>
+    public class ItemTemplateManager : LazyTemplateManager<ItemTemplate>
     {
-        public ItemLazyTemplateManager(PackageCollection collection) : base(collection)
+        public ItemTemplateManager(PackageCollection collection) : base(collection)
         {
         }
 
