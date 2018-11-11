@@ -13,6 +13,7 @@ using Edelstein.Provider.Items.Options;
 using Edelstein.Provider.Items.Set;
 using Edelstein.Provider.Mobs;
 using Edelstein.Provider.NPC;
+using Edelstein.Provider.Reactors;
 using Edelstein.Provider.Skills;
 using Edelstein.Provider.Strings;
 using Edelstein.WvsGame.Commands;
@@ -52,6 +53,7 @@ namespace Edelstein.WvsGame
         public LazyTemplateManager<FieldTemplate> FieldTemplates { get; set; }
         public LazyTemplateManager<NPCTemplate> NpcTemplates { get; set; }
         public LazyTemplateManager<MobTemplate> MobTemplates { get; set; }
+        public LazyTemplateManager<ReactorTemplate> ReactorTemplates { get; set; }
         public FieldFactory FieldFactory { get; set; }
 
         public IDictionary<int, NPCShopDlg> NPCShops { get; set; }
@@ -112,6 +114,7 @@ namespace Edelstein.WvsGame
             FieldTemplates = _container.GetInstance<LazyTemplateManager<FieldTemplate>>();
             NpcTemplates = _container.GetInstance<LazyTemplateManager<NPCTemplate>>();
             MobTemplates = _container.GetInstance<LazyTemplateManager<MobTemplate>>();
+            ReactorTemplates = _container.GetInstance<LazyTemplateManager<ReactorTemplate>>();
             FieldFactory = new FieldFactory(FieldTemplates, NpcTemplates, MobTemplates);
 
             using (var db = _container.GetInstance<DataContext>())

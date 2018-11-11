@@ -7,6 +7,7 @@ using Edelstein.Provider.Items.Options;
 using Edelstein.Provider.Items.Set;
 using Edelstein.Provider.Mobs;
 using Edelstein.Provider.NPC;
+using Edelstein.Provider.Reactors;
 using Edelstein.Provider.Skills;
 using Edelstein.Provider.Strings;
 using Edelstein.WvsGame.Commands;
@@ -63,6 +64,7 @@ namespace Edelstein.WvsGame
             For<LazyTemplateManager<FieldTemplate>>().Use<FieldLazyTemplateManager>().Singleton();
             For<LazyTemplateManager<NPCTemplate>>().Use<NpcLazyTemplateManager>().Singleton();
             For<LazyTemplateManager<MobTemplate>>().Use<MobLazyTemplateManager>().Singleton();
+            For<LazyTemplateManager<ReactorTemplate>>().Use<ReactorLazyTemplateManager>().Singleton();
 
             For<ConversationManager<FieldUser, FieldNPC>>().Use<NPCConversationManager>().Singleton();
 

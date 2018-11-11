@@ -20,6 +20,7 @@ namespace Edelstein.WvsGame.Commands
             Commands.Add(new ADBoardCommand());
             Commands.Add(new SuperSpeedCommand());
             Commands.Add(new EffectCommand());
+            Commands.Add(new ReactorCommand());
         }
 
         protected override Task Execute(CommandContext ctx)
