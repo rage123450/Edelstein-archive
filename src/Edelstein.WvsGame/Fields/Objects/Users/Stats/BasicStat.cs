@@ -133,6 +133,13 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
             INT += (int) (INT * (Option.INTr / 100d));
             LUK += (int) (LUK * (Option.LUKr / 100d));
 
+            var forced = _user.ForcedStat;
+
+            if (forced.STR > 0) STR = forced.STR;
+            if (forced.DEX > 0) STR = forced.DEX;
+            if (forced.INT > 0) STR = forced.INT;
+            if (forced.LUK > 0) STR = forced.LUK;
+            
             MaxHP += (int) (MaxHP * ((Option.MaxHPr + incMaxHPr) / 100d));
             MaxMP += (int) (MaxMP * ((Option.MaxMPr + incMaxMPr) / 100d));
 

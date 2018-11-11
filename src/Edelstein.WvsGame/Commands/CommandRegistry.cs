@@ -18,6 +18,7 @@ namespace Edelstein.WvsGame.Commands
             Commands.Add(new MsgBoxCommand());
             Commands.Add(new MapCommand());
             Commands.Add(new ADBoardCommand());
+            Commands.Add(new SuperSpeedCommand());
         }
 
         protected override Task Execute(CommandContext ctx)

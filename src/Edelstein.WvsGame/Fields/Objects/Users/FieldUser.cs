@@ -22,6 +22,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
         public ConversationContext ConversationContext { get; set; }
 
+        public ForcedStat ForcedStat { get; }
         public BasicStat BasicStat { get; }
         public SecondaryStat SecondaryStat { get; }
         public TemporaryStat TemporaryStat { get; }
@@ -73,6 +74,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             Socket = socket;
             Character = character;
 
+            ForcedStat = new ForcedStat();
             BasicStat = new BasicStat(this);
             SecondaryStat = new SecondaryStat(this);
             TemporaryStat = new TemporaryStat();

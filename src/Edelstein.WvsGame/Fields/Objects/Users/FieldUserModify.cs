@@ -34,6 +34,29 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             }
         }
 
+        public Task ModifyForcedStats(Action<ModifyForcedStatContext> action = null)
+        {
+            var context = new ModifyForcedStatContext(ForcedStat);
+
+            action?.Invoke(context);
+            ValidateStat();
+
+            if (!Socket.IsInstantiated) return Task.CompletedTask;
+            using (var p = new OutPacket(GameSendOperations.ForcedStatSet))
+            {
+                context.Encode(p);
+                return SendPacket(p);
+            }
+        }
+
+        public Task ResetForcedStats()
+        {
+            ForcedStat.Clear();
+            ValidateStat();
+
+            return SendPacket(new OutPacket(GameSendOperations.ForcedStatReset));
+        }
+
         public Task ModifyInventory(Action<ModifyInventoryContext> action = null, bool exclRequest = false)
         {
             var context = new ModifyInventoryContext(Character);

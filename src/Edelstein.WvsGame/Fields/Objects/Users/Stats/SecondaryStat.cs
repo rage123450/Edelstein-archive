@@ -149,13 +149,29 @@ namespace Edelstein.WvsGame.Fields.Objects.Users.Stats
             ACC += (int) (ACC * (Option.ACCr / 100d));
             EVA += (int) (EVA * (Option.EVAr / 100d));
 
+            var forced = _user.ForcedStat;
+
+            if (forced.PAD > 0) PAD = forced.PAD;
+            if (forced.PDD > 0) PDD = forced.PDD;
+            if (forced.MAD > 0) MAD = forced.MAD;
+            if (forced.MDD > 0) MDD = forced.MDD;
+            if (forced.ACC > 0) ACC = forced.ACC;
+            if (forced.EVA > 0) EVA = forced.EVA;
+            if (forced.Speed > 0) Speed = forced.Speed;
+            if (forced.Jump > 0) Jump = forced.Jump;
+
             PAD = Math.Min(PAD, 29999);
             PDD = Math.Min(PDD, 30000);
             MAD = Math.Min(MAD, 29999);
             MDD = Math.Min(MDD, 30000);
             ACC = Math.Min(ACC, 9999);
             EVA = Math.Min(EVA, 9999);
-            Speed = Math.Min(Math.Max(Speed, 100), 140);
+            Speed = Math.Min(
+                Math.Max(Speed, 100),
+                forced.SpeedMax > 0
+                    ? forced.SpeedMax
+                    : 140
+            );
             Jump = Math.Min(Math.Max(Jump, 100), 123);
         }
 
