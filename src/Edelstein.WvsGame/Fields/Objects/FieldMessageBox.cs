@@ -1,3 +1,4 @@
+using System;
 using Edelstein.Network.Packets;
 using Edelstein.WvsGame.Packets;
 
@@ -8,12 +9,14 @@ namespace Edelstein.WvsGame.Fields.Objects
         private readonly int _templateID;
         private readonly string _hope;
         private readonly string _name;
+        public readonly DateTime? _dateExpire;
 
-        public FieldMessageBox(int templateId, string hope, string name)
+        public FieldMessageBox(int templateId, string hope, string name, DateTime? dateExpire = null)
         {
             _templateID = templateId;
             _hope = hope;
             _name = name;
+            _dateExpire = dateExpire;
         }
 
         public override OutPacket GetEnterFieldPacket()
