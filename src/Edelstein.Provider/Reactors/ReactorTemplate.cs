@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using PKG1;
 
 namespace Edelstein.Provider.Reactors
@@ -5,18 +7,32 @@ namespace Edelstein.Provider.Reactors
     public class ReactorTemplate
     {
         public int TemplateID { get; set; }
+        public int StateCount => States.Count;
+        public bool Move { get; set; }
+        public bool NotHitable { get; set; }
+        public bool ActivateByTouch { get; set; }
+        public int QuestID { get; set; }
+
+        public ICollection<ReactorStateTemplate> States;
 
         public static ReactorTemplate Parse(int templateId, PackageCollection collection)
         {
-            var npcEntry = collection.Resolve($"Reactor/{templateId:D7}.img");
-            return Parse(templateId, npcEntry);
+            var reactorEntry = collection.Resolve($"Reactor/{templateId:D7}.img");
+
+            var link = reactorEntry.ResolveFor<int>("info/link");
+            return link.HasValue ? Parse(link.Value, collection) : Parse(templateId, reactorEntry);
         }
 
         public static ReactorTemplate Parse(int templateId, WZProperty p)
         {
-            return new ReactorTemplate()
+            return new ReactorTemplate
             {
-                TemplateID = templateId
+                TemplateID = templateId,
+                States = p.Children
+                    .Where(c => c.Name.All(char.IsDigit))
+                    .SelectMany(c => c.Children)
+                    .Select(ReactorStateTemplate.Parse)
+                    .ToList()
             };
         }
     }
