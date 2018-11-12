@@ -1,4 +1,3 @@
-using System.Linq;
 using Edelstein.Network.Packets;
 using Edelstein.Provider.Reactors;
 using Edelstein.WvsGame.Fields.Objects.Users;
@@ -10,14 +9,13 @@ namespace Edelstein.WvsGame.Fields.Objects
     public class FieldReactor : FieldObject
     {
         public ReactorTemplate Template { get; set; }
+        public bool Flip { get; set; }
         private byte _state;
-        private bool _flip;
 
         public FieldReactor(ReactorTemplate template)
         {
             Template = template;
             _state = 0;
-            _flip = false;
         }
 
         public bool OnPacket(FieldUser controller, GameRecvOperations operation, InPacket packet)
@@ -84,7 +82,7 @@ namespace Edelstein.WvsGame.Fields.Objects
                 p.Encode<byte>(_state);
                 p.Encode<short>(X);
                 p.Encode<short>(Y);
-                p.Encode<bool>(_flip);
+                p.Encode<bool>(Flip);
                 p.Encode<string>("");
                 return p;
             }

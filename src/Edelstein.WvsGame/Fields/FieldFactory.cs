@@ -3,6 +3,7 @@ using Edelstein.Provider;
 using Edelstein.Provider.Fields;
 using Edelstein.Provider.Mobs;
 using Edelstein.Provider.NPC;
+using Edelstein.Provider.Reactors;
 using Edelstein.WvsGame.Fields.Objects;
 using MoreLinq.Extensions;
 
@@ -13,17 +14,19 @@ namespace Edelstein.WvsGame.Fields
         private readonly LazyTemplateManager<FieldTemplate> _fieldLazyTemplateManager;
         private readonly LazyTemplateManager<NPCTemplate> _npcLazyTemplateManager;
         private readonly LazyTemplateManager<MobTemplate> _mobLazyTemplateManager;
+        private readonly LazyTemplateManager<ReactorTemplate> _reactorLazyTemplateManager;
         private readonly IDictionary<int, Field> _fields;
 
         public FieldFactory(
             LazyTemplateManager<FieldTemplate> fieldLazyTemplateManager,
             LazyTemplateManager<NPCTemplate> npcLazyTemplateManager,
-            LazyTemplateManager<MobTemplate> mobLazyTemplateManager
-        )
+            LazyTemplateManager<MobTemplate> mobLazyTemplateManager, 
+            LazyTemplateManager<ReactorTemplate> reactorLazyTemplateManager)
         {
             _fieldLazyTemplateManager = fieldLazyTemplateManager;
             _npcLazyTemplateManager = npcLazyTemplateManager;
             _mobLazyTemplateManager = mobLazyTemplateManager;
+            _reactorLazyTemplateManager = reactorLazyTemplateManager;
             _fields = new Dictionary<int, Field>();
         }
 
@@ -64,6 +67,18 @@ namespace Edelstein.WvsGame.Fields
                             });
                             break;
                     }
+                });
+                
+                field.Template.Reactors.ForEach(r =>
+                {
+                    var reactorTemplate = _reactorLazyTemplateManager.Get(r.TemplateID);
+
+                    field.Enter(new FieldReactor(reactorTemplate)
+                    {
+                        X = (short) r.X,
+                        Y = (short) r.Y,
+                        Flip = r.F
+                    });
                 });
                 return field;
             }

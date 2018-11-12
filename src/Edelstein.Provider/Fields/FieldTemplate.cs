@@ -11,6 +11,7 @@ namespace Edelstein.Provider.Fields
         public IDictionary<int, FieldFootholdTemplate> Footholds;
         public IDictionary<int, FieldPortalTemplate> Portals;
         public ICollection<FieldLifeTemplate> Life;
+        public ICollection<FieldReactorTemplate> Reactors;
 
         public static FieldTemplate Parse(int templateId, PackageCollection collection)
         {
@@ -38,6 +39,9 @@ namespace Edelstein.Provider.Fields
                     .ToDictionary(x => x.ID, x => x),
                 Life = p.Resolve("life").Children
                     .Select(FieldLifeTemplate.Parse)
+                    .ToList(),
+                Reactors = p.Resolve("reactor").Children
+                    .Select(FieldReactorTemplate.Parse)
                     .ToList()
             };
 

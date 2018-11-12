@@ -115,7 +115,7 @@ namespace Edelstein.WvsGame
             NpcTemplates = _container.GetInstance<LazyTemplateManager<NPCTemplate>>();
             MobTemplates = _container.GetInstance<LazyTemplateManager<MobTemplate>>();
             ReactorTemplates = _container.GetInstance<LazyTemplateManager<ReactorTemplate>>();
-            FieldFactory = new FieldFactory(FieldTemplates, NpcTemplates, MobTemplates);
+            FieldFactory = new FieldFactory(FieldTemplates, NpcTemplates, MobTemplates, ReactorTemplates);
 
             using (var db = _container.GetInstance<DataContext>())
             {
