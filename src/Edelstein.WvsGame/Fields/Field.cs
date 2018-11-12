@@ -48,6 +48,15 @@ namespace Edelstein.WvsGame.Fields
                         .FirstOrDefault(n => n.ID == objectID);
                     return npc?.OnPacket(user, operation, packet) ?? true;
                 }
+                case GameRecvOperations.ReactorHit:
+                case GameRecvOperations.ReactorTouch:
+                {
+                    var objectID = packet.Decode<int>();
+                    var reactor = Objects
+                        .OfType<FieldReactor>()
+                        .FirstOrDefault(n => n.ID == objectID);
+                    return reactor?.OnPacket(user, operation, packet) ?? true;
+                }
                 case GameRecvOperations.DropPickUpRequest:
                     OnDropPickUpRequest(user, packet);
                     break;
@@ -71,7 +80,7 @@ namespace Edelstein.WvsGame.Fields
                 .FirstOrDefault(n => n.ID == objectID);
 
             drop?.PickUp(user);
-            Leave(drop, () => drop.GetLeaveFieldPacket(0x2, user));
+            Leave(drop, () => drop?.GetLeaveFieldPacket(0x2, user));
         }
 
         public void Enter(FieldObject obj, Func<OutPacket> getEnterPacket = null)

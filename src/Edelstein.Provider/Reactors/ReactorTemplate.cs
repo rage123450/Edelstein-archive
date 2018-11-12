@@ -13,7 +13,7 @@ namespace Edelstein.Provider.Reactors
         public bool ActivateByTouch { get; set; }
         public int QuestID { get; set; }
 
-        public ICollection<ReactorStateTemplate> States;
+        public IDictionary<int, ReactorStateTemplate> States;
 
         public static ReactorTemplate Parse(int templateId, PackageCollection collection)
         {
@@ -30,9 +30,8 @@ namespace Edelstein.Provider.Reactors
                 TemplateID = templateId,
                 States = p.Children
                     .Where(c => c.Name.All(char.IsDigit))
-                    .SelectMany(c => c.Children)
                     .Select(ReactorStateTemplate.Parse)
-                    .ToList()
+                    .ToDictionary(c => c.ID, c => c)
             };
         }
     }

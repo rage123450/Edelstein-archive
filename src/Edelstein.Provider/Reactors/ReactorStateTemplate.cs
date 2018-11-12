@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using PKG1;
@@ -6,6 +7,7 @@ namespace Edelstein.Provider.Reactors
 {
     public class ReactorStateTemplate
     {
+        public int ID { get; set; }
         // TODO: timeOut
         public ICollection<ReactorEventTemplate> Events;
 
@@ -13,6 +15,7 @@ namespace Edelstein.Provider.Reactors
         {
             return new ReactorStateTemplate
             {
+                ID = Convert.ToInt32(p.Name),
                 Events = p.Resolve("event")?.Children
                              .Select(ReactorEventTemplate.Parse)
                              .ToList()
