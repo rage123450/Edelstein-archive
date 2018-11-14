@@ -1,3 +1,4 @@
+using System;
 using Edelstein.Network;
 using Edelstein.Network.Packets;
 using Edelstein.Provider.Reactors;
@@ -46,13 +47,12 @@ namespace Edelstein.WvsGame.Fields.Objects
             {
                 if (e.Type != 0) return;
                 var newState = (byte) (_state + 1);
-
-                if (newState < Template.StateCount) SetState(newState, delay);
-                else
-                {
-                    Field.Leave(this);
-                    user.Socket.WvsGame.ReactorConversationManager.Start(user, this);
-                }
+                
+                SetState(newState, delay);
+                
+                if (newState < Template.StateCount - 1) return;
+                user.Socket.WvsGame.ReactorConversationManager.Start(user, this);
+                Field.Leave(this);
             });
         }
 
