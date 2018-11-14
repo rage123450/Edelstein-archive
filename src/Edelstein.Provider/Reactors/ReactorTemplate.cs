@@ -12,6 +12,7 @@ namespace Edelstein.Provider.Reactors
         public bool NotHitable { get; set; }
         public bool ActivateByTouch { get; set; }
         public int QuestID { get; set; }
+        public string Action { get; set; }
 
         public IDictionary<int, ReactorStateTemplate> States;
 
@@ -31,7 +32,8 @@ namespace Edelstein.Provider.Reactors
                 States = p.Children
                     .Where(c => c.Name.All(char.IsDigit))
                     .Select(ReactorStateTemplate.Parse)
-                    .ToDictionary(c => c.ID, c => c)
+                    .ToDictionary(c => c.ID, c => c),
+                Action = p.ResolveForOrNull<string>("action")
             };
         }
     }
