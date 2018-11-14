@@ -1,3 +1,4 @@
+using Edelstein.Network;
 using Edelstein.Network.Packets;
 using Edelstein.Provider.Reactors;
 using Edelstein.WvsGame.Fields.Objects.Users;
@@ -23,7 +24,7 @@ namespace Edelstein.WvsGame.Fields.Objects
             switch (operation)
             {
                 case GameRecvOperations.ReactorHit:
-                    OnReactorHit(packet);
+                    OnReactorHit(controller, packet);
                     break;
                 default:
                     return false;
@@ -32,7 +33,7 @@ namespace Edelstein.WvsGame.Fields.Objects
             return true;
         }
 
-        private void OnReactorHit(InPacket packet)
+        private void OnReactorHit(FieldUser user, InPacket packet)
         {
             packet.Decode<int>();
             var hitOption = packet.Decode<int>();
@@ -47,7 +48,11 @@ namespace Edelstein.WvsGame.Fields.Objects
                 var newState = (byte) (_state + 1);
 
                 if (newState < Template.StateCount) SetState(newState, delay);
-                else Field.Leave(this);
+                else
+                {
+                    Field.Leave(this);
+                    user.Socket.WvsGame.ReactorConversationManager.Start(user, this);
+                }
             });
         }
 
