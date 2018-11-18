@@ -403,6 +403,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                     answers.Add(packet.Decode<string>());
                     break;
                 case ScriptMessageType.AskNumber:
+                case ScriptMessageType.AskMenu:
                     answers.Add(packet.Decode<int>());
                     break;
                 default:

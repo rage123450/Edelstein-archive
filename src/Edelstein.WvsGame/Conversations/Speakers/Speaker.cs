@@ -1,5 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Edelstein.WvsGame.Conversations.Messages;
 using Edelstein.WvsGame.Conversations.Messages.Requests;
+using MoreLinq;
 
 namespace Edelstein.WvsGame.Conversations.Speakers
 {
@@ -35,5 +39,17 @@ namespace Edelstein.WvsGame.Conversations.Speakers
 
         public int AskNumber(string text = "", int def = 0, int min = int.MinValue, int max = int.MaxValue)
             => Context.Send(new AskNumber(SpeakerTypeID, SpeakerTemplateID, SpeakerParam, text, def, min, max));
+
+        public int AskMenu(string text = "")
+            => Context.Send(new AskMenu(SpeakerTypeID, SpeakerTemplateID, SpeakerParam, text));
+
+        public int AskMenu(string text, IEnumerable<string> options)
+        {
+            text += "\r\n";
+            text = options
+                .Select((value, i) => new {i, value})
+                .Aggregate(text, (current, item) => current + "#L" + item.i + "#" + item.value + "#l\r\n");
+            return AskMenu(text);
+        }
     }
 }
