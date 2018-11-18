@@ -13,12 +13,12 @@ namespace Edelstein.WvsGame.Conversations
         private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
         private readonly string _scriptPath;
 
-        public ScriptedConversation(string scriptPath)
+        public ScriptedConversation(ConversationContext context, string scriptPath) : base(context)
         {
             _scriptPath = scriptPath;
         }
 
-        public override Task Start(ConversationContext context, T target, S self)
+        public override Task Start(T target, S self)
         {
             var script = new Script();
 
@@ -36,7 +36,7 @@ namespace Edelstein.WvsGame.Conversations
                         Logger.Error(e.ToString);
                     }
                 },
-                context.TokenSource.Token);
+                Context.TokenSource.Token);
         }
     }
 }

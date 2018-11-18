@@ -51,7 +51,7 @@ namespace Edelstein.WvsGame.Fields.Objects
                 if (newState < Template.StateCount - 1) SetState(newState, delay);
                 else
                 {
-                    user.Socket.WvsGame.ReactorConversationManager.Start(user, this);
+                    user.Socket.WvsGame.DefaultConversationManager.Start(user, Template.Action);
                     Field.Leave(this);
                 }
             });

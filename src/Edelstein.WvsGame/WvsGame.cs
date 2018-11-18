@@ -58,9 +58,8 @@ namespace Edelstein.WvsGame
 
         public IDictionary<int, NPCShopDlg> NPCShops { get; set; }
 
-        public ConversationManager<FieldUser, FieldNPC> NPCConversationManager { get; set; }
-        public ConversationManager<FieldUser, FieldReactor> ReactorConversationManager { get; set; }
-        public ConversationManager<FieldUser, FieldPortalTemplate> PortalConversationManager { get; set; }
+        public ScriptedNPCConversationManager NPCConversationManager { get; set; }
+        public ScriptedDefaultConversationManager DefaultConversationManager { get; set; }
 
         public WvsGame(IContainer container)
         {
@@ -131,9 +130,8 @@ namespace Edelstein.WvsGame
             UserData.RegisterType<FieldUserSpeaker>();
             UserData.RegisterType<FieldNPCSpeaker>();
             UserData.RegisterType<NPCSpeaker>();
-            NPCConversationManager = _container.GetInstance<ConversationManager<FieldUser, FieldNPC>>();
-            ReactorConversationManager = _container.GetInstance<ConversationManager<FieldUser, FieldReactor>>();
-            PortalConversationManager = _container.GetInstance<ConversationManager<FieldUser, FieldPortalTemplate>>();
+            NPCConversationManager = _container.GetInstance<ScriptedNPCConversationManager>();
+            DefaultConversationManager = _container.GetInstance<ScriptedDefaultConversationManager>();
 
             InteropClient = new Client<CenterServerSocket>(
                 options.InteropClientOptions,

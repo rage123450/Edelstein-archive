@@ -5,10 +5,10 @@ namespace Edelstein.WvsGame.Conversations.Speakers
 {
     public class FieldNPCSpeaker : Speaker
     {
-        private readonly FieldNPC _fieldNPC;
+        public readonly FieldNPC FieldNPC;
 
         public override byte SpeakerTypeID => 0;
-        public override int SpeakerTemplateID => _fieldNPC.Template.TemplateID;
+        public override int SpeakerTemplateID => FieldNPC.Template.TemplateID;
         public override SpeakerParamType SpeakerParam => 0;
 
         public FieldNPCSpeaker(
@@ -16,7 +16,7 @@ namespace Edelstein.WvsGame.Conversations.Speakers
             FieldNPC fieldNPC
         ) : base(context)
         {
-            _fieldNPC = fieldNPC;
+            FieldNPC = fieldNPC;
         }
     }
 }

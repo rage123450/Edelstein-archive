@@ -7,6 +7,13 @@ namespace Edelstein.WvsGame.Conversations
         where T : Speaker
         where S : Speaker
     {
-        public abstract Task Start(ConversationContext context, T target, S self);
+        public readonly ConversationContext Context;
+
+        public Conversation(ConversationContext context)
+        {
+            Context = context;
+        }
+
+        public abstract Task Start(T target, S self);
     }
 }
