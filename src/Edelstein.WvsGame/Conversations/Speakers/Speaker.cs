@@ -54,5 +54,8 @@ namespace Edelstein.WvsGame.Conversations.Speakers
 
         public byte AskAvatar(string text, int[] styles)
             => Context.Send(new AskAvatar(SpeakerTypeID, SpeakerTemplateID, SpeakerParam, text, styles));
+        
+        public byte AskMembershopAvatar(string text, int[] styles)
+            => Context.Send(new AskMembershopAvatar(SpeakerTypeID, SpeakerTemplateID, SpeakerParam, text, styles));
     }
 }
