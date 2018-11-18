@@ -51,5 +51,8 @@ namespace Edelstein.WvsGame.Conversations.Speakers
                 .Aggregate(text, (current, item) => current + "#L" + item.i + "#" + item.value + "#l\r\n");
             return AskMenu(text);
         }
+
+        public byte AskAvatar(string text, int[] styles)
+            => Context.Send(new AskAvatar(SpeakerTypeID, SpeakerTemplateID, SpeakerParam, text, styles));
     }
 }

@@ -406,6 +406,9 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 case ScriptMessageType.AskMenu:
                     answers.Add(packet.Decode<int>());
                     break;
+                case ScriptMessageType.AskAvatar:
+                    answers.Add(packet.Decode<byte>());
+                    break;
                 default:
                     answers.Add(answer);
                     break;
