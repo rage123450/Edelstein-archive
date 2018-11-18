@@ -14,15 +14,21 @@ namespace Edelstein.WvsGame.Conversations
         {
             _options = options;
         }
-        
+
         public bool Start(FieldUser user, T self, string script)
         {
             if (script == null) return false;
+
             script = Path.Combine(_options.ScriptPath, $"{script}.lua");
-            if (!File.Exists(script)) return false;
-            
+
+            if (!File.Exists(script))
+            {
+                user.Message(Path.GetFileNameWithoutExtension(script) + " does not exist.");
+                return false;
+            }
+
             var context = new ConversationContext(new CancellationTokenSource(), user.Socket);
-            
+
             return Start(
                 new FieldUserSpeaker(context, user),
                 GetSelfSpeaker(context, self),
