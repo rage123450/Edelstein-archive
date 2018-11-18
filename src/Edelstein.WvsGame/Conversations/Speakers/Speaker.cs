@@ -43,19 +43,29 @@ namespace Edelstein.WvsGame.Conversations.Speakers
         public int AskMenu(string text = "")
             => Context.Send(new AskMenu(SpeakerTypeID, SpeakerTemplateID, SpeakerParam, text));
 
-        public int AskMenu(string text, IEnumerable<string> options)
+        public int AskMenu(string text, IDictionary<int, string> options)
         {
             text += "\r\n";
             text = options
-                .Select((value, i) => new {i, value})
-                .Aggregate(text, (current, item) => current + "#L" + item.i + "#" + item.value + "#l\r\n");
+                .Aggregate(text, (current, item) => current + "#L" + item.Key + "#" + item.Value + "#l\r\n");
             return AskMenu(text);
         }
 
         public byte AskAvatar(string text, int[] styles)
-            => Context.Send(new AskAvatar(SpeakerTypeID, SpeakerTemplateID, SpeakerParam, text, styles));
+            => (byte) (1 + Context.Send(new AskAvatar(SpeakerTypeID, SpeakerTemplateID, SpeakerParam, text, styles)));
         
         public byte AskMembershopAvatar(string text, int[] styles)
-            => Context.Send(new AskMembershopAvatar(SpeakerTypeID, SpeakerTemplateID, SpeakerParam, text, styles));
+            => (byte) (1 + Context.Send(new AskMembershopAvatar(SpeakerTypeID, SpeakerTemplateID, SpeakerParam, text, styles)));
+        
+        public int AskSlideMenu(string text = "", int type = 0, int selected = 0)
+            => Context.Send(new AskSlideMenu(SpeakerTypeID, SpeakerTemplateID, SpeakerParam, type, selected, text));
+
+        public int AskSlideMenu(IDictionary<int, string> options, int type = 0, int selected = 0)
+        {
+            var text = "";
+            text = options
+                .Aggregate(text, (current, item) => current + "#" + item.Key + "#" + item.Value);
+            return AskSlideMenu(text, type, selected);
+        }
     }
 }
