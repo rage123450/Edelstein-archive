@@ -2,7 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MoreLinq.Extensions;
 
-namespace Edelstein.WvsGame.Commands.Impl
+namespace Edelstein.WvsGame.Commands.Impl.Util
 {
     public class AliasCommand : Command
     {

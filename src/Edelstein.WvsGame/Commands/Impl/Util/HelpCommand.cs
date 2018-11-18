@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using MoreLinq;
 
-namespace Edelstein.WvsGame.Commands.Impl
+namespace Edelstein.WvsGame.Commands.Impl.Util
 {
     public class HelpCommand : Command
     {
