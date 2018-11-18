@@ -28,6 +28,7 @@ namespace Edelstein.WvsGame.Commands
             Commands.Add(new ReactorCommand());
 
             MoreEnumerable.TraverseBreadthFirst((Command) this, c => c.Commands.AsEnumerable())
+                .Distinct()
                 .ToList()
                 .ForEach(c =>
                 {
