@@ -47,12 +47,13 @@ namespace Edelstein.WvsGame.Fields.Objects
             {
                 if (e.Type != 0) return;
                 var newState = (byte) (_state + 1);
-                
-                SetState(newState, delay);
-                
-                if (newState < Template.StateCount - 1) return;
-                user.Socket.WvsGame.ReactorConversationManager.Start(user, this);
-                Field.Leave(this);
+
+                if (newState < Template.StateCount - 1) SetState(newState, delay);
+                else
+                {
+                    user.Socket.WvsGame.ReactorConversationManager.Start(user, this);
+                    Field.Leave(this);
+                }
             });
         }
 
