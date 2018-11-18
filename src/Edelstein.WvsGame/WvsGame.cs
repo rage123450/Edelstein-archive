@@ -60,6 +60,7 @@ namespace Edelstein.WvsGame
 
         public ConversationManager<FieldUser, FieldNPC> NPCConversationManager { get; set; }
         public ConversationManager<FieldUser, FieldReactor> ReactorConversationManager { get; set; }
+        public ConversationManager<FieldUser, FieldPortalTemplate> PortalConversationManager { get; set; }
 
         public WvsGame(IContainer container)
         {
@@ -132,6 +133,7 @@ namespace Edelstein.WvsGame
             UserData.RegisterType<NPCSpeaker>();
             NPCConversationManager = _container.GetInstance<ConversationManager<FieldUser, FieldNPC>>();
             ReactorConversationManager = _container.GetInstance<ConversationManager<FieldUser, FieldReactor>>();
+            PortalConversationManager = _container.GetInstance<ConversationManager<FieldUser, FieldPortalTemplate>>();
 
             InteropClient = new Client<CenterServerSocket>(
                 options.InteropClientOptions,

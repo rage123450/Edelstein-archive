@@ -68,6 +68,7 @@ namespace Edelstein.WvsGame
 
             For<ConversationManager<FieldUser, FieldNPC>>().Use<NPCConversationManager>().Singleton();
             For<ConversationManager<FieldUser, FieldReactor>>().Use<ReactorConversationManager>().Singleton();
+            For<ConversationManager<FieldUser, FieldPortalTemplate>>().Use<PortalConversationManager>().Singleton();
 
             For<CenterServerSocketFactory>().Use<CenterServerSocketFactory>();
             For<GameClientSocketFactory>().Use<GameClientSocketFactory>();

@@ -109,6 +109,9 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 case GameRecvOperations.UserCharacterInfoRequest:
                     OnUserCharacterInfoRequest(packet);
                     break;
+                case GameRecvOperations.UserPortalScriptRequest:
+                    OnUserPortalScriptRequest(packet);
+                    break;
                 default:
                     return false;
             }
@@ -733,6 +736,16 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 chairs.ForEach(i => p.Encode<int>(i));
                 SendPacket(p);
             }
+        }
+
+        private void OnUserPortalScriptRequest(InPacket packet)
+        {
+            packet.Decode<byte>();
+
+            var portalName = packet.Decode<string>();
+            var portal = Field.Template.Portals.Values.Single(p => p.Name.Equals(portalName));
+            
+            Socket.WvsGame.PortalConversationManager.Start(this, portal);
         }
     }
 }
