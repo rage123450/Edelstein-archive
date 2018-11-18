@@ -6,7 +6,7 @@ namespace Edelstein.WvsGame.Commands.Impl
 {
     public class MsgBoxCommand : Command
     {
-        public override string Name => "msgbox";
+        public override string Name => "MsgBox";
         public override string Description => "Flies a message box in the current field position";
 
         protected override Task Execute(CommandContext ctx)

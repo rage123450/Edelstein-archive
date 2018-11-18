@@ -1,5 +1,9 @@
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Edelstein.WvsGame.Commands.Impl;
+using MoreLinq;
+using MoreLinq.Extensions;
 
 namespace Edelstein.WvsGame.Commands
 {
@@ -21,6 +25,14 @@ namespace Edelstein.WvsGame.Commands
             Commands.Add(new SuperSpeedCommand());
             Commands.Add(new EffectCommand());
             Commands.Add(new ReactorCommand());
+
+            MoreEnumerable.TraverseBreadthFirst((Command) this, c => c.Commands.AsEnumerable())
+                .ToList()
+                .ForEach(c =>
+                {
+                    c.Commands.Add(new HelpCommand(c));
+                    c.Commands.Add(new AliasCommand(c));
+                });
         }
 
         protected override Task Execute(CommandContext ctx)

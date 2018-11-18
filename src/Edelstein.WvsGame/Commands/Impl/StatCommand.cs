@@ -12,7 +12,7 @@ namespace Edelstein.WvsGame.Commands.Impl
 
         public StatCommand()
         {
-            Aliases.Add("set");
+            Aliases.Add("Set");
         }
 
         protected override Task Execute(CommandContext ctx)

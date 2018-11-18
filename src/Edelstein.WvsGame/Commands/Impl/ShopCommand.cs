@@ -5,7 +5,7 @@ namespace Edelstein.WvsGame.Commands.Impl
 {
     public class ShopCommand : Command
     {
-        public override string Name => "shop";
+        public override string Name => "Shop";
         public override string Description => "Opens a npc shop";
 
         protected override Task Execute(CommandContext ctx)
