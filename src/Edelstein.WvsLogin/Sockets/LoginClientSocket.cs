@@ -340,7 +340,7 @@ namespace Edelstein.WvsLogin.Sockets
         private void OnCreateNewCharacter(InPacket packet)
         {
             var name = packet.Decode<string>();
-            var job = packet.Decode<int>();
+            var race = packet.Decode<int>();
             var subJob = packet.Decode<short>();
             var face = packet.Decode<int>();
             var hair = packet.Decode<int>() + packet.Decode<int>();
