@@ -23,7 +23,7 @@ namespace Edelstein.WvsGame.Conversations
 
             if (!File.Exists(script))
             {
-                user.Message(Path.GetFileNameWithoutExtension(script) + " does not exist.");
+                user.Message("The script " + Path.GetFileNameWithoutExtension(script) + " does not exist.");
                 return false;
             }
 
