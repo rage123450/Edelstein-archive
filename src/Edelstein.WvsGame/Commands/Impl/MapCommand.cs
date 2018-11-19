@@ -26,18 +26,24 @@ namespace Edelstein.WvsGame.Commands.Impl
                     .Where(p => p.Value.ToLower().StartsWith(option.TemplateName.ToLower()))
                     .ToList();
 
-                if (option.Search)
-                    await Task.WhenAll(
-                        results.Select(r => user.Message(r.Key + " - " + r.Value))
-                    );
-                if (results.Any()) templateID = results.Select(r => r.Key).First();
+                if (results.Any())
+                {
+                    templateID = results.Select(r => r.Key).First();
+                    if (option.Search)
+                        if (!await user.Prompt(speaker =>
+                            templateID = speaker.AskMenu(
+                                "Which field would you like to transfer to?",
+                                results.ToDictionary(r => r.Key, r => $"{r.Value} ({r.Key})")
+                            ))
+                        )
+                            return;
+                }
             }
 
             if (!templateID.HasValue) return;
             var fieldFactory = user.Socket.WvsGame.FieldFactory;
             var field = fieldFactory.Get(templateID.Value);
 
-            if (option.Search) return;
             field.Enter(user);
 
             if (option.Verbose)
