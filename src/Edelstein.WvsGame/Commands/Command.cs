@@ -7,15 +7,15 @@ using Edelstein.WvsGame.Fields.Objects.Users;
 
 namespace Edelstein.WvsGame.Commands
 {
-    public abstract class Command<T> : ICommand<T>
-        where T : ICommandOption
+    public abstract class Command<T> : ICommand
+        where T : CommandOption
     {
         public abstract string Name { get; }
         public abstract string Description { get; }
-        public IEnumerable<string> Aliases { get; }
-        public IEnumerable<Command<ICommandOption>> Commands { get; }
+        public ICollection<string> Aliases { get; }
+        public ICollection<ICommand> Commands { get; }
 
-        public Command<ICommandOption> GetCommand(string name)
+        public ICommand GetCommand(string name)
         {
             return Commands.FirstOrDefault(c => c.Name.ToLower().StartsWith(name) ||
                                                 c.Aliases.Count(s => s.ToLower().StartsWith(name)) > 0);
@@ -57,14 +57,14 @@ namespace Edelstein.WvsGame.Commands
                 }
             }
 
-            return Execute(user, Parse(args));
+            return Parse(user, args);
         }
 
-        public T Parse(IEnumerable<string> args)
+        public Task Parse(FieldUser user, IEnumerable<string> args)
         {
-            if (Parser.Default.ParseArguments<T>(args) is Parsed<T> option)
-                return option.Value;
-            return default(T);
+            return Task.Run(() => Parser.Default.ParseArguments<T>(args)
+                .WithParsed(o => Execute(user, o))
+                .WithNotParsed(o => user.Message("An error has occured trying to parse command options.")));
         }
 
         public abstract Task Execute(FieldUser user, T option);
