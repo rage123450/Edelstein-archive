@@ -17,7 +17,7 @@ namespace Edelstein.WvsGame.Commands.Impl
 
         public override async Task Execute(FieldUser user, MapCommandOption option)
         {
-            var templateID = option.TemplateID;
+            var templateID = option.TemplateID ?? user.Field.ID;
 
             if (!string.IsNullOrEmpty(option.TemplateName))
             {
@@ -40,9 +40,8 @@ namespace Edelstein.WvsGame.Commands.Impl
                 }
             }
 
-            if (!templateID.HasValue) return;
             var fieldFactory = user.Socket.WvsGame.FieldFactory;
-            var field = fieldFactory.Get(templateID.Value);
+            var field = fieldFactory.Get(templateID);
 
             user.Character.FieldPortal = option.PortalID ?? 0;
             field.Enter(user);
@@ -50,7 +49,7 @@ namespace Edelstein.WvsGame.Commands.Impl
             if (option.Verbose)
             {
                 var fieldNames = user.Socket.WvsGame.FieldNames;
-                await user.Message($"Transferring to field {fieldNames.Get(templateID.Value)} ({templateID})");
+                await user.Message($"Transferring to field {fieldNames.Get(templateID)} ({templateID})");
             }
         }
     }
@@ -62,7 +61,7 @@ namespace Edelstein.WvsGame.Commands.Impl
 
         [Option('n', "name", HelpText = "The field's template name.")]
         public string TemplateName { get; set; }
-        
+
         [Option('p', "portal", HelpText = "The field's portal template ID.")]
         public byte? PortalID { get; set; }
 
