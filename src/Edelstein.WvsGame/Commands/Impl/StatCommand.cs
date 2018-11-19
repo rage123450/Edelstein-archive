@@ -24,25 +24,25 @@ namespace Edelstein.WvsGame.Commands.Impl
                 switch (option.Type)
                 {
                     case ModifyStatType.Skin:
-                        user.Prompt(speaker =>
+                        if (!await user.Prompt(speaker =>
                         {
-                            speaker.AskAvatar("Is this okay?", new[] {option.Value});
+                            speaker.AskAvatar($"Is {option.Type} this okay?", new[] {option.Value});
                             s.Skin = Convert.ToByte(option.Value);
-                        });
+                        })) return;
                         break;
                     case ModifyStatType.Face:
-                        user.Prompt(speaker =>
+                        if (!await user.Prompt(speaker =>
                         {
-                            speaker.AskAvatar("Is this okay?", new[] {option.Value});
+                            speaker.AskAvatar($"Is {option.Type} this okay?", new[] {option.Value});
                             s.Face = Convert.ToInt32(option.Value);
-                        });
+                        })) return;
                         break;
                     case ModifyStatType.Hair:
-                        user.Prompt(speaker =>
+                        if (!await user.Prompt(speaker =>
                         {
-                            speaker.AskAvatar("Is this okay?", new[] {option.Value});
+                            speaker.AskAvatar($"Is {option.Type} this okay?", new[] {option.Value});
                             s.Hair = Convert.ToInt32(option.Value);
-                        });
+                        })) return;
                         break;
                     default:
                     case ModifyStatType.Pet:
@@ -99,9 +99,9 @@ namespace Edelstein.WvsGame.Commands.Impl
                         s.TempEXP = Convert.ToInt32(option.Value);
                         break;
                 }
+                
+                await user.Message($"Successfully set {option.Type} to {option.Value}.");
             });
-
-            await user.Message($"Successfully set {option.Type} to {option.Value}.");
         }
     }
 

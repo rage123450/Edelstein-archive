@@ -139,7 +139,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             return Task.CompletedTask;
         }
 
-        public async void Prompt(Action<FieldUserSpeaker> action = null)
+        public async Task<bool> Prompt(Action<FieldUserSpeaker> action = null)
         {
             var context = new ConversationContext(Socket);
 
@@ -147,9 +147,21 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 throw new InvalidOperationException("Tried to prompt when already in conversation.");
 
             ConversationContext = context;
-            action?.Invoke(new FieldUserSpeaker(context, this));
-            ConversationContext = null;
-            await ModifyStats(exclRequest: true);
+
+            try
+            {
+                action?.Invoke(new FieldUserSpeaker(context, this));
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            finally
+            {
+                ConversationContext = null;
+                await ModifyStats(exclRequest: true);
+            }
+            return true;
         }
 
         public override OutPacket GetEnterFieldPacket()
