@@ -76,7 +76,7 @@ namespace Edelstein.WvsGame.Commands
             return Parse(user, args);
         }
 
-        public Task Parse(FieldUser user, IEnumerable<string> args)
+        public virtual Task Parse(FieldUser user, IEnumerable<string> args)
         {
             return Task.Run(() =>
             {
