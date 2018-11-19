@@ -17,9 +17,9 @@ namespace Edelstein.WvsGame.Commands.Impl
             Aliases.Add("Set");
         }
 
-        public override Task Execute(FieldUser user, StatCommandOption option)
+        public override async Task Execute(FieldUser user, StatCommandOption option)
         {
-            user.ModifyStats(s =>
+            await user.ModifyStats(s =>
             {
                 switch (option.Type)
                 {
@@ -89,8 +89,7 @@ namespace Edelstein.WvsGame.Commands.Impl
                 }
             });
             
-            user.Message($"Successfully set {option.Type} to {option.Value}.");
-            return Task.CompletedTask;
+            await user.Message($"Successfully set {option.Type} to {option.Value}.");
         }
     }
 
