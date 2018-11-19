@@ -12,6 +12,7 @@ namespace Edelstein.WvsGame.Commands
         public CommandRegistry()
         {
             Commands.Add(new MapCommand());
+            Commands.Add(new StatCommand());
         }
 
         public override Task Execute(FieldUser user, CommandOption option)
