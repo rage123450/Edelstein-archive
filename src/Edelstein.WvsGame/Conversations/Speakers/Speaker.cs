@@ -43,7 +43,7 @@ namespace Edelstein.WvsGame.Conversations.Speakers
 
         public int AskMenu(string text, IDictionary<int, string> options)
         {
-            text += "\r\n";
+            text += "\r\n#b";
             text = options
                 .Aggregate(text, (current, item) => current + "#L" + item.Key + "#" + item.Value + "#l\r\n");
             return AskMenu(text);
