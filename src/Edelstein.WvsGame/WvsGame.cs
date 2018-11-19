@@ -20,8 +20,6 @@ using Edelstein.WvsGame.Commands;
 using Edelstein.WvsGame.Conversations;
 using Edelstein.WvsGame.Conversations.Speakers;
 using Edelstein.WvsGame.Fields;
-using Edelstein.WvsGame.Fields.Objects;
-using Edelstein.WvsGame.Fields.Objects.Users;
 using Edelstein.WvsGame.Interactions.Dialogue;
 using Edelstein.WvsGame.Logging;
 using Edelstein.WvsGame.Sockets;

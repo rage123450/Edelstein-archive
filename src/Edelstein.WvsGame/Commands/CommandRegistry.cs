@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using CommandLine;
 using Edelstein.WvsGame.Commands.Impl;
 using Edelstein.WvsGame.Fields.Objects.Users;
 

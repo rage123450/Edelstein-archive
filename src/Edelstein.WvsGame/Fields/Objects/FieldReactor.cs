@@ -1,5 +1,3 @@
-using System;
-using Edelstein.Network;
 using Edelstein.Network.Packets;
 using Edelstein.Provider.Reactors;
 using Edelstein.WvsGame.Fields.Objects.Users;

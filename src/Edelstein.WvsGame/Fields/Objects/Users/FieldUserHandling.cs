@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Edelstein.Common.Packets;
 using Edelstein.Common.Packets.Stats;
-using Edelstein.Common.Utils;
 using Edelstein.Common.Utils.Extensions;
 using Edelstein.Common.Utils.Items;
 using Edelstein.Common.Utils.Skills;
@@ -16,7 +15,6 @@ using Edelstein.WvsGame.Fields.Attacking;
 using Edelstein.WvsGame.Fields.Movements;
 using Edelstein.WvsGame.Fields.Objects.Drops;
 using Edelstein.WvsGame.Fields.Objects.Users.Effects;
-using Edelstein.WvsGame.Fields.Objects.Users.Stats;
 using Edelstein.WvsGame.Packets;
 using MoreLinq.Extensions;
 

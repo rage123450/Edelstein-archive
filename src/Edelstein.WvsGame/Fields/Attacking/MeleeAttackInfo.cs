@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Edelstein.Database.Entities;
 using Edelstein.Network.Packets;

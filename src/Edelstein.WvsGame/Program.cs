@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using CommandLine;
 using Edelstein.Database;
 using Edelstein.WvsGame.Logging;
 using Lamar;

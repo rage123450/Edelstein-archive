@@ -12,8 +12,6 @@ using Edelstein.Provider.Skills;
 using Edelstein.Provider.Strings;
 using Edelstein.WvsGame.Commands;
 using Edelstein.WvsGame.Conversations;
-using Edelstein.WvsGame.Fields.Objects;
-using Edelstein.WvsGame.Fields.Objects.Users;
 using Edelstein.WvsGame.Sockets;
 using Lamar;
 using Microsoft.EntityFrameworkCore;
