@@ -44,6 +44,7 @@ namespace Edelstein.WvsGame.Commands.Impl
             var fieldFactory = user.Socket.WvsGame.FieldFactory;
             var field = fieldFactory.Get(templateID.Value);
 
+            user.Character.FieldPortal = option.PortalID ?? 0;
             field.Enter(user);
 
             if (option.Verbose)
@@ -61,6 +62,9 @@ namespace Edelstein.WvsGame.Commands.Impl
 
         [Option('n', "name", HelpText = "The field's template name.")]
         public string TemplateName { get; set; }
+        
+        [Option('p', "portal", HelpText = "The field's portal template ID.")]
+        public byte? PortalID { get; set; }
 
         [Value(0, MetaName = "templateID", HelpText = "The field's template ID.")]
         public int? TemplateID { get; set; }
