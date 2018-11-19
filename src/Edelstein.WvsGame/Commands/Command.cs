@@ -15,6 +15,12 @@ namespace Edelstein.WvsGame.Commands
         public ICollection<string> Aliases { get; }
         public ICollection<ICommand> Commands { get; }
 
+        public Command()
+        {
+            Aliases = new List<string>();
+            Commands = new List<ICommand>();
+        }
+
         public ICommand GetCommand(string name)
         {
             return Commands.FirstOrDefault(c => c.Name.ToLower().StartsWith(name) ||
