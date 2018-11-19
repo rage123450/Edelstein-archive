@@ -24,6 +24,11 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             ValidateStat();
 
             if (!Socket.IsInstantiated) return Task.CompletedTask;
+
+            if (context.Flag.HasFlag(ModifyStatType.Skin) ||
+                context.Flag.HasFlag(ModifyStatType.Face) ||
+                context.Flag.HasFlag(ModifyStatType.Hair))
+                AvatarModified();
             using (var p = new OutPacket(GameSendOperations.StatChanged))
             {
                 p.Encode<bool>(exclRequest);
@@ -83,21 +88,26 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 newEquipped.Except(equipped).Any())
             {
                 ValidateStat();
-                using (var p = new OutPacket(GameSendOperations.UserAvatarModified))
-                {
-                    p.Encode<int>(ID);
-                    p.Encode<byte>(0x1); // Flag
-                    Character.EncodeLook(p);
-                    p.Encode<bool>(false); // bCouple
-                    p.Encode<bool>(false); // bFriendship
-                    p.Encode<bool>(false); // Marriage
-                    p.Encode<int>(CompletedSetItemID ?? 0);
-
-                    Field.BroadcastPacket(this, p);
-                }
+                AvatarModified();
             }
 
             return Task.CompletedTask;
+        }
+
+        public void AvatarModified()
+        {
+            using (var p = new OutPacket(GameSendOperations.UserAvatarModified))
+            {
+                p.Encode<int>(ID);
+                p.Encode<byte>(0x1); // Flag
+                Character.EncodeLook(p);
+                p.Encode<bool>(false); // bCouple
+                p.Encode<bool>(false); // bFriendship
+                p.Encode<bool>(false); // Marriage
+                p.Encode<int>(CompletedSetItemID ?? 0);
+
+                Field.BroadcastPacket(this, p);
+            }
         }
 
         public Task ModifyTemporaryStat(Action<ModifyTemporaryStatContext> action = null)
