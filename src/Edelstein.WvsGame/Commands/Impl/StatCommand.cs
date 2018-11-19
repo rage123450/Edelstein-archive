@@ -26,21 +26,21 @@ namespace Edelstein.WvsGame.Commands.Impl
                     case ModifyStatType.Skin:
                         await user.Prompt(speaker =>
                         {
-                            speaker.AskAvatar($"Is {option.Type} this okay?", new[] {option.Value});
+                            speaker.AskAvatar($"Is this {option.Type} okay?", new[] {option.Value});
                             s.Skin = Convert.ToByte(option.Value);
                         });
                         return;
                     case ModifyStatType.Face:
                         await user.Prompt(speaker =>
                         {
-                            speaker.AskAvatar($"Is {option.Type} this okay?", new[] {option.Value});
+                            speaker.AskAvatar($"Is this {option.Type} okay?", new[] {option.Value});
                             s.Face = Convert.ToInt32(option.Value);
                         });
                         return;
                     case ModifyStatType.Hair:
                         await user.Prompt(speaker =>
                         {
-                            speaker.AskAvatar($"Is {option.Type} this okay?", new[] {option.Value});
+                            speaker.AskAvatar($"Is this {option.Type} okay?", new[] {option.Value});
                             s.Hair = Convert.ToInt32(option.Value);
                         });
                         return;
