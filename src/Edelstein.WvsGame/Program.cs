@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using CommandLine;
 using Edelstein.Database;
 using Edelstein.WvsGame.Logging;
 using Lamar;
@@ -23,13 +24,13 @@ namespace Edelstein.WvsGame
             var registry = new WvsGameRegistry();
             var container = new Container(registry);
             var wvsGame = container.GetInstance<WvsGame>();
-
+            
             using (var db = container.GetInstance<DataContext>())
             {
                 Logger.Info("Checking and running database migrations..");
                 db.Database.Migrate();
             }
-
+            
             wvsGame.Run().Wait();
 
             Console.CancelKeyPress += (sender, e) =>

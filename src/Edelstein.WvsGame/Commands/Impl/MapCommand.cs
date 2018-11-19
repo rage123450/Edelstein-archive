@@ -23,7 +23,7 @@ namespace Edelstein.WvsGame.Commands.Impl
             {
                 var fieldNames = user.Socket.WvsGame.FieldNames;
                 var results = fieldNames.All
-                    .Where(p => option.TemplateName.ToLower().StartsWith(p.Value.ToLower()))
+                    .Where(p => p.Value.ToLower().StartsWith(option.TemplateName.ToLower()))
                     .ToList();
 
                 if (option.Search)

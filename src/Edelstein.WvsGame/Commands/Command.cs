@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CommandLine;
+using CSharpx;
 using Edelstein.WvsGame.Fields.Objects.Users;
 
 namespace Edelstein.WvsGame.Commands
@@ -15,10 +16,17 @@ namespace Edelstein.WvsGame.Commands
         public ICollection<string> Aliases { get; }
         public ICollection<ICommand> Commands { get; }
 
+        private readonly Parser _parser;
+
         public Command()
         {
             Aliases = new List<string>();
             Commands = new List<ICommand>();
+            _parser = new Parser(settings =>
+            {
+                settings.CaseSensitive = false;
+                settings.CaseInsensitiveEnumValues = true;
+            });
         }
 
         public ICommand GetCommand(string name)
@@ -68,9 +76,9 @@ namespace Edelstein.WvsGame.Commands
 
         public Task Parse(FieldUser user, IEnumerable<string> args)
         {
-            return Task.Run(() => Parser.Default.ParseArguments<T>(args)
+            return Task.Run(() => _parser.ParseArguments<T>(args)
                 .WithParsed(o => Execute(user, o))
-                .WithNotParsed(o => user.Message("An error has occured trying to parse command options.")));
+                .WithNotParsed(errs => errs.ForEach(err => user.Message(err.ToString()))));
         }
 
         public abstract Task Execute(FieldUser user, T option);
