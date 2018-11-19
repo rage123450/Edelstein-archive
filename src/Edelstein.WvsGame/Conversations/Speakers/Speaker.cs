@@ -50,10 +50,10 @@ namespace Edelstein.WvsGame.Conversations.Speakers
         }
 
         public byte AskAvatar(string text, int[] styles)
-            => (byte) (1 + Context.Send(new AskAvatar(SpeakerTypeID, SpeakerTemplateID, SpeakerParam, text, styles)));
+            => Context.Send(new AskAvatar(SpeakerTypeID, SpeakerTemplateID, SpeakerParam, text, styles));
         
         public byte AskMembershopAvatar(string text, int[] styles)
-            => (byte) (1 + Context.Send(new AskMembershopAvatar(SpeakerTypeID, SpeakerTemplateID, SpeakerParam, text, styles)));
+            => Context.Send(new AskMembershopAvatar(SpeakerTypeID, SpeakerTemplateID, SpeakerParam, text, styles));
         
         public int AskSlideMenu(string text = "", int type = 0, int selected = 0)
             => Context.Send(new AskSlideMenu(SpeakerTypeID, SpeakerTemplateID, SpeakerParam, type, selected, text));
