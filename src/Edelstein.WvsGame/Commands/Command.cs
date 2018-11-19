@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CommandLine;
+using CommandLine.Text;
 using CSharpx;
 using Edelstein.WvsGame.Fields.Objects.Users;
 
@@ -76,9 +78,21 @@ namespace Edelstein.WvsGame.Commands
 
         public Task Parse(FieldUser user, IEnumerable<string> args)
         {
-            return Task.Run(() => _parser.ParseArguments<T>(args)
-                .WithParsed(o => Execute(user, o))
-                .WithNotParsed(errs => errs.ForEach(err => user.Message(err.ToString()))));
+            return Task.Run(() =>
+            {
+                var result = _parser.ParseArguments<T>(args);
+
+                result
+                    .WithParsed(o => Execute(user, o))
+                    .WithNotParsed(errs =>
+                        {
+                            var helpText = HelpText.AutoBuild(result, _parser.Settings.MaximumDisplayWidth);
+                            var lines = Regex.Split(helpText.ToString(), "\r\n|\r|\n");
+
+                            lines.ForEach(l => user.Message(l));
+                        }
+                    );
+            });
         }
 
         public abstract Task Execute(FieldUser user, T option);
