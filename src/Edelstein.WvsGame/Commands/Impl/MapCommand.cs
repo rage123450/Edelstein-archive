@@ -33,18 +33,17 @@ namespace Edelstein.WvsGame.Commands.Impl
                 if (results.Any()) templateID = results.Select(r => r.Key).First();
             }
 
+            if (!templateID.HasValue) return;
             var fieldFactory = user.Socket.WvsGame.FieldFactory;
-            var field = fieldFactory.Get(templateID);
+            var field = fieldFactory.Get(templateID.Value);
 
-            if (!option.Search)
+            if (option.Search) return;
+            field.Enter(user);
+
+            if (option.Verbose)
             {
-                field.Enter(user);
-
-                if (option.Verbose)
-                {
-                    var fieldNames = user.Socket.WvsGame.FieldNames;
-                    await user.Message($"Transferring to field {fieldNames.Get(templateID)} ({templateID})");
-                }
+                var fieldNames = user.Socket.WvsGame.FieldNames;
+                await user.Message($"Transferring to field {fieldNames.Get(templateID.Value)} ({templateID})");
             }
         }
     }
@@ -58,6 +57,6 @@ namespace Edelstein.WvsGame.Commands.Impl
         public string TemplateName { get; set; }
 
         [Value(0, MetaName = "templateID", HelpText = "The field's template ID.")]
-        public int TemplateID { get; set; }
+        public int? TemplateID { get; set; }
     }
 }
