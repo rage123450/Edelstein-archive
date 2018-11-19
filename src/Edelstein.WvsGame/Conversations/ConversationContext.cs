@@ -13,6 +13,13 @@ namespace Edelstein.WvsGame.Conversations
         public readonly BlockingCollection<object> Answers;
         public readonly CancellationTokenSource TokenSource;
         protected readonly Socket Socket;
+        
+        public ConversationContext(Socket socket)
+        {
+            Answers = new BlockingCollection<object>();
+            TokenSource = new CancellationTokenSource();
+            Socket = socket;
+        }
 
         public ConversationContext(CancellationTokenSource tokenSource, Socket socket)
         {

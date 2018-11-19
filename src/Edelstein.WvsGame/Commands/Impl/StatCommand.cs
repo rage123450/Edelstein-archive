@@ -88,7 +88,7 @@ namespace Edelstein.WvsGame.Commands.Impl
                         break;
                 }
             });
-            
+
             await user.Message($"Successfully set {option.Type} to {option.Value}.");
         }
     }

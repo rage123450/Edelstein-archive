@@ -27,7 +27,7 @@ namespace Edelstein.WvsGame.Conversations
                 return false;
             }
 
-            var context = new ConversationContext(new CancellationTokenSource(), user.Socket);
+            var context = new ConversationContext(user.Socket);
 
             return Start(
                 new FieldUserSpeaker(context, user),

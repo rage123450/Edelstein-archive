@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Timers;
@@ -8,6 +9,7 @@ using Edelstein.Database.Entities;
 using Edelstein.Database.Entities.Types;
 using Edelstein.Network.Packets;
 using Edelstein.WvsGame.Conversations;
+using Edelstein.WvsGame.Conversations.Messages;
 using Edelstein.WvsGame.Fields.Objects.Users.Effects;
 using Edelstein.WvsGame.Fields.Objects.Users.Stats;
 using Edelstein.WvsGame.Interactions.Dialogue;
@@ -132,8 +134,22 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                     Field.BroadcastPacket(this, p);
                 }
             }
-            
+
             return Task.CompletedTask;
+        }
+
+        public async Task<T> Prompt<T>(ConversationQuestion<T> request)
+        {
+            var context = new ConversationContext(Socket);
+
+            if (ConversationContext != null) 
+                throw new InvalidOperationException("Tried to prompt when already in conversation.");
+
+            ConversationContext = context;
+            var result = context.Send(request);
+            ConversationContext = null;
+            await ModifyStats(exclRequest: true);
+            return result;
         }
 
         public override OutPacket GetEnterFieldPacket()
