@@ -88,12 +88,16 @@ namespace Edelstein.WvsGame.Commands
                         {
                             var helpText = HelpText.AutoBuild(result, _parser.Settings.MaximumDisplayWidth);
 
-                            helpText.Heading = "";
-                            helpText.Copyright = "";
-                            
-                            var lines = Regex.Split(helpText.ToString(), "\r\n|\r|\n");
+                            helpText.Heading = string.Empty;
+                            helpText.Copyright = string.Empty;
 
-                            lines.ForEach(l => user.Message(l));
+                            helpText.AddPostOptionsLines(
+                                Commands.Select(c => $"{c.Name}\t\t\t\t{c.Description}")
+                            );
+
+                            Regex
+                                .Split(helpText.ToString(), "\r\n|\r|\n")
+                                .ForEach(l => user.Message(l));
                         }
                     );
             });
