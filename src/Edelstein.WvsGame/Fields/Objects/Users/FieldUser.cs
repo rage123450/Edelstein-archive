@@ -10,6 +10,7 @@ using Edelstein.Database.Entities.Types;
 using Edelstein.Network.Packets;
 using Edelstein.WvsGame.Conversations;
 using Edelstein.WvsGame.Conversations.Messages;
+using Edelstein.WvsGame.Conversations.Speakers;
 using Edelstein.WvsGame.Fields.Objects.Users.Effects;
 using Edelstein.WvsGame.Fields.Objects.Users.Stats;
 using Edelstein.WvsGame.Interactions.Dialogue;
@@ -138,18 +139,17 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             return Task.CompletedTask;
         }
 
-        public async Task<T> Prompt<T>(ConversationQuestion<T> request)
+        public async void Prompt(Action<FieldUserSpeaker> action = null)
         {
             var context = new ConversationContext(Socket);
 
-            if (ConversationContext != null) 
+            if (ConversationContext != null)
                 throw new InvalidOperationException("Tried to prompt when already in conversation.");
 
             ConversationContext = context;
-            var result = context.Send(request);
+            action?.Invoke(new FieldUserSpeaker(context, this));
             ConversationContext = null;
             await ModifyStats(exclRequest: true);
-            return result;
         }
 
         public override OutPacket GetEnterFieldPacket()

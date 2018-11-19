@@ -3,8 +3,6 @@ using System.Threading.Tasks;
 using CommandLine;
 using Edelstein.Common.Packets.Stats;
 using Edelstein.Database.Entities.Types;
-using Edelstein.WvsGame.Commands.Prompts;
-using Edelstein.WvsGame.Conversations.Messages.Requests;
 using Edelstein.WvsGame.Fields.Objects.Users;
 
 namespace Edelstein.WvsGame.Commands.Impl
@@ -26,16 +24,25 @@ namespace Edelstein.WvsGame.Commands.Impl
                 switch (option.Type)
                 {
                     case ModifyStatType.Skin:
-                        await user.Prompt(new AskAvatarPrompt("Is this okay?", new[] {option.Value}));
-                        s.Skin = Convert.ToByte(option.Value);
+                        user.Prompt(speaker =>
+                        {
+                            speaker.AskAvatar("Is this okay?", new[] {option.Value});
+                            s.Skin = Convert.ToByte(option.Value);
+                        });
                         break;
                     case ModifyStatType.Face:
-                        await user.Prompt(new AskAvatarPrompt("Is this okay?", new[] {option.Value}));
-                        s.Face = Convert.ToInt32(option.Value);
+                        user.Prompt(speaker =>
+                        {
+                            speaker.AskAvatar("Is this okay?", new[] {option.Value});
+                            s.Face = Convert.ToInt32(option.Value);
+                        });
                         break;
                     case ModifyStatType.Hair:
-                        await user.Prompt(new AskAvatarPrompt("Is this okay?", new[] {option.Value}));
-                        s.Hair = Convert.ToInt32(option.Value);
+                        user.Prompt(speaker =>
+                        {
+                            speaker.AskAvatar("Is this okay?", new[] {option.Value});
+                            s.Hair = Convert.ToInt32(option.Value);
+                        });
                         break;
                     default:
                     case ModifyStatType.Pet:
