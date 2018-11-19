@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading.Tasks;
 using Edelstein.WvsGame.Conversations.Speakers;
 using Edelstein.WvsGame.Fields.Objects;
 using Edelstein.WvsGame.Fields.Objects.Users;
@@ -11,7 +12,7 @@ namespace Edelstein.WvsGame.Conversations
         {
         }
 
-        public bool Start(FieldUser user, FieldNPC npc)
+        public Task Start(FieldUser user, FieldNPC npc)
         {
             return Start(user, npc, npc.Template.Scripts.FirstOrDefault()?.Script);
         }

@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Edelstein.WvsGame.Conversations.Messages;
 using Edelstein.WvsGame.Conversations.Speakers;
 using Edelstein.WvsGame.Fields.Objects.Users;
@@ -10,7 +11,7 @@ namespace Edelstein.WvsGame.Conversations
         {
         }
 
-        public bool Start(FieldUser user, string script, int templateID = 9010000)
+        public Task Start(FieldUser user, string script, int templateID = 9010000)
         {
             return Start(user, templateID, script);
         }

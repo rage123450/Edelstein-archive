@@ -1,5 +1,6 @@
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using Edelstein.WvsGame.Conversations.Speakers;
 using Edelstein.WvsGame.Fields.Objects.Users;
 
@@ -15,17 +16,16 @@ namespace Edelstein.WvsGame.Conversations
             _options = options;
         }
 
-        public bool Start(FieldUser user, T self, string script)
+        public Task Start(FieldUser user, T self, string script)
         {
-            if (script == null) return false;
+            if (script == null) return Task.CompletedTask;
 
             script = Path.Combine(_options.ScriptPath, $"{script}.lua");
 
             if (!File.Exists(script))
-            {
-                user.Message("The script " + Path.GetFileNameWithoutExtension(script) + " does not exist.");
-                return false;
-            }
+                return user
+                    .Message("The script " + Path.GetFileNameWithoutExtension(script) + " does not exist.")
+                    .ContinueWith(t => user.ModifyStats(exclRequest: true));
 
             var context = new ConversationContext(user.Socket);
 

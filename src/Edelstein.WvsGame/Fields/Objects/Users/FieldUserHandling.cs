@@ -749,8 +749,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             var portalName = packet.Decode<string>();
             var portal = Field.Template.Portals.Values.Single(p => p.Name.Equals(portalName));
 
-            if (!Socket.WvsGame.DefaultConversationManager.Start(this, portal.Script))
-                ModifyStats(exclRequest: true);
+            Socket.WvsGame.DefaultConversationManager.Start(this, portal.Script);
         }
     }
 }

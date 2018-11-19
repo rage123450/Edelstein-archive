@@ -24,26 +24,26 @@ namespace Edelstein.WvsGame.Commands.Impl
                 switch (option.Type)
                 {
                     case ModifyStatType.Skin:
-                        if (!await user.Prompt(speaker =>
+                        await user.Prompt(speaker =>
                         {
                             speaker.AskAvatar($"Is {option.Type} this okay?", new[] {option.Value});
                             s.Skin = Convert.ToByte(option.Value);
-                        })) return;
-                        break;
+                        });
+                        return;
                     case ModifyStatType.Face:
-                        if (!await user.Prompt(speaker =>
+                        await user.Prompt(speaker =>
                         {
                             speaker.AskAvatar($"Is {option.Type} this okay?", new[] {option.Value});
                             s.Face = Convert.ToInt32(option.Value);
-                        })) return;
-                        break;
+                        });
+                        return;
                     case ModifyStatType.Hair:
-                        if (!await user.Prompt(speaker =>
+                        await user.Prompt(speaker =>
                         {
                             speaker.AskAvatar($"Is {option.Type} this okay?", new[] {option.Value});
                             s.Hair = Convert.ToInt32(option.Value);
-                        })) return;
-                        break;
+                        });
+                        return;
                     default:
                     case ModifyStatType.Pet:
                     case ModifyStatType.Pet2:
@@ -99,7 +99,7 @@ namespace Edelstein.WvsGame.Commands.Impl
                         s.TempEXP = Convert.ToInt32(option.Value);
                         break;
                 }
-                
+            
                 await user.Message($"Successfully set {option.Type} to {option.Value}.");
             });
         }
