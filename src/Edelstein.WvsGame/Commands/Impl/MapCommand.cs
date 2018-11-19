@@ -43,7 +43,7 @@ namespace Edelstein.WvsGame.Commands.Impl
                 if (option.Verbose)
                 {
                     var fieldNames = user.Socket.WvsGame.FieldNames;
-                    await user.Message("Transferring to field " + fieldNames.Get(templateID) + " (" + templateID + ")");
+                    await user.Message($"Transferring to field {fieldNames.Get(templateID)} ({templateID})");
                 }
             }
         }
