@@ -146,9 +146,8 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
         {
             var context = new ConversationContext(Socket);
             var conversation = new ActionConversation(context, action);
-            var manager = new ConversationManager<FieldUserSpeaker, NPCSpeaker>();
-
-            return await manager.Start(
+            
+            return await ConversationManager<FieldUserSpeaker, NPCSpeaker>.Start(
                 new FieldUserSpeaker(context, this),
                 new NPCSpeaker(context, 901000, SpeakerParamType.NPCReplacedByNPC),
                 conversation

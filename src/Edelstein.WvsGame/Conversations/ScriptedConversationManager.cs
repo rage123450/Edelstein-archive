@@ -6,7 +6,7 @@ using Edelstein.WvsGame.Fields.Objects.Users;
 
 namespace Edelstein.WvsGame.Conversations
 {
-    public abstract class ScriptedConversationManager<T, S> : ConversationManager<FieldUserSpeaker, S>
+    public abstract class ScriptedConversationManager<T, S>
         where S : Speaker
     {
         private readonly WvsGameOptions _options;
@@ -32,7 +32,7 @@ namespace Edelstein.WvsGame.Conversations
 
             var context = new ConversationContext(user.Socket);
 
-            return Start(
+            return ConversationManager<FieldUserSpeaker, S>.Start(
                 new FieldUserSpeaker(context, user),
                 GetSelfSpeaker(context, self),
                 new ScriptedConversation<FieldUserSpeaker, S>(context, script)

@@ -3,11 +3,11 @@ using Edelstein.WvsGame.Conversations.Speakers;
 
 namespace Edelstein.WvsGame.Conversations
 {
-    public class ConversationManager<T, S>
+    public static class ConversationManager<T, S>
         where T : FieldUserSpeaker
         where S : Speaker
     {
-        public Task<bool> Start(T target, S self, Conversation<T, S> conversation)
+        public static Task<bool> Start(T target, S self, Conversation<T, S> conversation)
         {
             if (target.FieldUser.ConversationContext != null) return Task.FromResult(false);
 
