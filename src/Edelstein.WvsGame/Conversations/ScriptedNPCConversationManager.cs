@@ -12,10 +12,8 @@ namespace Edelstein.WvsGame.Conversations
         {
         }
 
-        public Task Start(FieldUser user, FieldNPC npc)
-        {
-            return Start(user, npc, npc.Template.Scripts.FirstOrDefault()?.Script);
-        }
+        public Task<bool> Start(FieldUser user, FieldNPC npc) 
+            => Start(user, npc, npc.Template.Scripts.FirstOrDefault()?.Script);
 
         public override FieldNPCSpeaker GetSelfSpeaker(ConversationContext context, FieldNPC obj)
             => new FieldNPCSpeaker(context, obj);

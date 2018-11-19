@@ -7,16 +7,18 @@ namespace Edelstein.WvsGame.Conversations
         where T : FieldUserSpeaker
         where S : Speaker
     {
-        public Task Start(T target, S self, Conversation<T, S> conversation)
+        public Task<bool> Start(T target, S self, Conversation<T, S> conversation)
         {
-            if (target.FieldUser.ConversationContext != null) return Task.CompletedTask;
+            if (target.FieldUser.ConversationContext != null) return Task.FromResult(false);
 
             target.FieldUser.ConversationContext = conversation.Context;
-            return conversation.Start(target, self).ContinueWith(t =>
+            var task = conversation.Start(target, self);
+            task.ContinueWith(t =>
             {
                 target.FieldUser.ConversationContext = null;
                 target.FieldUser.ModifyStats(exclRequest: true);
             });
+            return task;
         }
     }
 }

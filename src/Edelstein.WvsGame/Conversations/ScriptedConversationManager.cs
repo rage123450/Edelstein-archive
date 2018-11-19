@@ -16,16 +16,19 @@ namespace Edelstein.WvsGame.Conversations
             _options = options;
         }
 
-        public Task Start(FieldUser user, T self, string script)
+        public Task<bool> Start(FieldUser user, T self, string script)
         {
-            if (script == null) return Task.CompletedTask;
+            if (script == null) return Task.FromResult(false);
 
             script = Path.Combine(_options.ScriptPath, $"{script}.lua");
 
             if (!File.Exists(script))
-                return user
+            {
+                user
                     .Message("The script " + Path.GetFileNameWithoutExtension(script) + " does not exist.")
                     .ContinueWith(t => user.ModifyStats(exclRequest: true));
+                return Task.FromResult(false);
+            }
 
             var context = new ConversationContext(user.Socket);
 

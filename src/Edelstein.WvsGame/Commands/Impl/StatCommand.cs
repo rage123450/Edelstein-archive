@@ -19,31 +19,27 @@ namespace Edelstein.WvsGame.Commands.Impl
 
         public override async Task Execute(FieldUser user, StatCommandOption option)
         {
+            if (option.Type.HasFlag(ModifyStatType.Skin) ||
+                option.Type.HasFlag(ModifyStatType.Face) ||
+                option.Type.HasFlag(ModifyStatType.Hair))
+            {
+                if (!await user.Prompt(speaker
+                    => speaker.AskAvatar($"Is this {option.Type} okay?", new[] {option.Value}))) return;
+            }
+
             await user.ModifyStats(async s =>
             {
                 switch (option.Type)
                 {
                     case ModifyStatType.Skin:
-                        await user.Prompt(speaker =>
-                        {
-                            speaker.AskAvatar($"Is this {option.Type} okay?", new[] {option.Value});
-                            s.Skin = Convert.ToByte(option.Value);
-                        });
-                        return;
+                        s.Skin = Convert.ToByte(option.Value);
+                        break;
                     case ModifyStatType.Face:
-                        await user.Prompt(speaker =>
-                        {
-                            speaker.AskAvatar($"Is this {option.Type} okay?", new[] {option.Value});
-                            s.Face = Convert.ToInt32(option.Value);
-                        });
-                        return;
+                        s.Face = Convert.ToInt32(option.Value);
+                        break;
                     case ModifyStatType.Hair:
-                        await user.Prompt(speaker =>
-                        {
-                            speaker.AskAvatar($"Is this {option.Type} okay?", new[] {option.Value});
-                            s.Hair = Convert.ToInt32(option.Value);
-                        });
-                        return;
+                        s.Hair = Convert.ToInt32(option.Value);
+                        break;
                     default:
                     case ModifyStatType.Pet:
                     case ModifyStatType.Pet2:
@@ -99,7 +95,7 @@ namespace Edelstein.WvsGame.Commands.Impl
                         s.TempEXP = Convert.ToInt32(option.Value);
                         break;
                 }
-            
+
                 await user.Message($"Successfully set {option.Type} to {option.Value}.");
             });
         }

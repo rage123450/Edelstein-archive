@@ -11,10 +11,8 @@ namespace Edelstein.WvsGame.Conversations
         {
         }
 
-        public Task Start(FieldUser user, string script, int templateID = 9010000)
-        {
-            return Start(user, templateID, script);
-        }
+        public Task<bool> Start(FieldUser user, string script, int templateID = 9010000)
+            => Start(user, templateID, script);
 
         public override NPCSpeaker GetSelfSpeaker(ConversationContext context, int obj)
             => new NPCSpeaker(context, obj, SpeakerParamType.NPCReplacedByUser);

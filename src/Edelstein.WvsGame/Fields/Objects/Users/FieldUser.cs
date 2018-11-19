@@ -139,21 +139,20 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             return Task.CompletedTask;
         }
 
-        public Task Prompt(Action<FieldUserSpeaker> action = null)
-            => Prompt((s1, s2) => action?.Invoke(s1));
+        public async Task<bool> Prompt(Action<FieldUserSpeaker> action = null)
+            => await Prompt((s1, s2) => action?.Invoke(s1));
 
-        public Task Prompt(Action<FieldUserSpeaker, NPCSpeaker> action = null)
+        public async Task<bool> Prompt(Action<FieldUserSpeaker, NPCSpeaker> action = null)
         {
             var context = new ConversationContext(Socket);
             var conversation = new ActionConversation(context, action);
             var manager = new ConversationManager<FieldUserSpeaker, NPCSpeaker>();
 
-            manager.Start(
+            return await manager.Start(
                 new FieldUserSpeaker(context, this),
                 new NPCSpeaker(context, 901000, SpeakerParamType.NPCReplacedByNPC),
                 conversation
-            ).Wait();
-            return Task.CompletedTask;
+            );
         }
 
         public override OutPacket GetEnterFieldPacket()

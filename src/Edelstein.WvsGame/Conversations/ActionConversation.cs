@@ -14,19 +14,20 @@ namespace Edelstein.WvsGame.Conversations
             _action = action;
         }
 
-        public override Task Start(FieldUserSpeaker target, NPCSpeaker self)
+        public override Task<bool> Start(FieldUserSpeaker target, NPCSpeaker self)
         {
             return Task.Run(() =>
             {
                 try
                 {
-
                     _action.Invoke(target, self);
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    return false;
                 }
+
+                return true;
             }, Context.TokenSource.Token);
         }
     }

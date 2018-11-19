@@ -14,6 +14,6 @@ namespace Edelstein.WvsGame.Conversations
             Context = context;
         }
 
-        public abstract Task Start(T target, S self);
+        public abstract Task<bool> Start(T target, S self);
     }
 }

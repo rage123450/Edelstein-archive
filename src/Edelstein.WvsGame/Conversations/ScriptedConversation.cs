@@ -10,7 +10,6 @@ namespace Edelstein.WvsGame.Conversations
         where T : Speaker
         where S : Speaker
     {
-        private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
         private readonly string _scriptPath;
 
         public ScriptedConversation(ConversationContext context, string scriptPath) : base(context)
@@ -18,7 +17,7 @@ namespace Edelstein.WvsGame.Conversations
             _scriptPath = scriptPath;
         }
 
-        public override Task Start(T target, S self)
+        public override Task<bool> Start(T target, S self)
         {
             var script = new Script();
 
@@ -33,8 +32,10 @@ namespace Edelstein.WvsGame.Conversations
                     }
                     catch (Exception e)
                     {
-                        Logger.Error(e.ToString);
+                        return false;
                     }
+
+                    return true;
                 },
                 Context.TokenSource.Token);
         }
