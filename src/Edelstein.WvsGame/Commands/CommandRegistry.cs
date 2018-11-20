@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
-using Edelstein.WvsGame.Commands.Impl;
+using CSharpx;
 using Edelstein.WvsGame.Fields.Objects.Users;
 
 namespace Edelstein.WvsGame.Commands
@@ -12,8 +15,13 @@ namespace Edelstein.WvsGame.Commands
 
         public CommandRegistry()
         {
-            Commands.Add(new MapCommand());
-            Commands.Add(new StatCommand());
+            Assembly.GetExecutingAssembly().GetTypes()
+                .Where(t => t.Namespace.Equals($"{this.GetType().Namespace}.Impl"))
+                .Where(t => t.GetInterfaces().Contains(typeof(ICommand)))
+                .Where(t => t.GetConstructor(Type.EmptyTypes) != null)
+                .Select(Activator.CreateInstance)
+                .Cast<ICommand>()
+                .ForEach(Commands.Add);
         }
 
         public override Task Parse(FieldUser user, IEnumerable<string> args)
