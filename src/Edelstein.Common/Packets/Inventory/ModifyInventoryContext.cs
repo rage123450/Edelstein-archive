@@ -281,6 +281,12 @@ namespace Edelstein.Common.Packets.Inventory
             );
         }
 
+        public void Update(ItemSlot slot)
+        {
+            _operations.Add(new InventoryRemoveOperation(slot.ItemInventory.Type, slot.Position));
+            _operations.Add(new InventoryAddOperation(slot.ItemInventory.Type, slot));
+        }
+
         public void Encode(OutPacket packet)
         {
             packet.Encode<byte>((byte) _operations.Count);
