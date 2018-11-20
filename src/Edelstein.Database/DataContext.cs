@@ -39,6 +39,10 @@ namespace Edelstein.Database
                 .WithOne()
                 .OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Character>()
+                .HasMany(c => c.Macros)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Character>()
                 .HasMany(c => c.Inventories)
                 .WithOne()
                 .OnDelete(DeleteBehavior.Cascade);
@@ -74,6 +78,12 @@ namespace Edelstein.Database
                     {
                         if (character.FunctionKeys.All(f => f.ID != functionKey.ID))
                             Entry(functionKey).State = EntityState.Deleted;
+                    }
+
+                    foreach (var macro in existing.Macros)
+                    {
+                        if (character.Macros.All(f => f.ID != macro.ID))
+                            Entry(macro).State = EntityState.Deleted;
                     }
 
                     var existingItems = existing.Inventories.SelectMany(i => i.Items).ToList();

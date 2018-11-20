@@ -51,6 +51,7 @@ namespace Edelstein.Database.Entities
         public short SubJob { get; set; }
 
         public ICollection<FunctionKey> FunctionKeys { get; set; }
+        public ICollection<Macro> Macros { get; set; }
         public ICollection<ItemInventory> Inventories { get; set; }
         public ICollection<SkillRecord> SkillRecords { get; set; }
 
