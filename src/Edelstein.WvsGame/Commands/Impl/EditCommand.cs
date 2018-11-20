@@ -16,8 +16,13 @@ namespace Edelstein.WvsGame.Commands.Impl
         {
             return user.Prompt(speaker =>
             {
-                var items = user.Character.GetInventory(option.Type).Items;
-                var slot = speaker.AskMenu("Which item would you like to edit?",
+                var target = user.Field.Objects
+                                 .OfType<FieldUser>()
+                                 .FirstOrDefault(u => u.Character.Name.ToLower().Equals(option.Target))
+                             ?? user;
+                var items = target.Character.GetInventory(option.Type).Items;
+                var slot = speaker.AskMenu(
+                    $"Which item would you like to edit in #r{target.Character.Name}#k's {option.Type} inventory?",
                     items
                         .OrderBy(i => i.Position)
                         .ToDictionary(i => (int) i.Position, i => $"#z{i.TemplateID}# ({i.TemplateID})")
@@ -28,7 +33,7 @@ namespace Edelstein.WvsGame.Commands.Impl
                 if (option.Destroy)
                 {
                     if (speaker.AskYesNo($"Are you sure you would like to destroy #b#z{item.TemplateID}##k?"))
-                        user.ModifyInventory(i => i.Remove(item));
+                        target.ModifyInventory(i => i.Remove(item));
                     return;
                 }
 
@@ -42,13 +47,16 @@ namespace Edelstein.WvsGame.Commands.Impl
                         break;
                 }
 
-                user.ModifyInventory(i => i.Update(item));
+                target.ModifyInventory(i => i.Update(item));
             });
         }
     }
 
     public class EditCommandOption : CommandOption
     {
+        [Option('t', "target", HelpText = "The target in the current field.")]
+        public string Target { get; set; }
+
         [Option('d', "destroy", HelpText = "Destroys the item slot.")]
         public bool Destroy { get; set; }
 
