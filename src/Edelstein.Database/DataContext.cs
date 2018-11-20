@@ -39,6 +39,10 @@ namespace Edelstein.Database
                 .WithOne()
                 .OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Character>()
+                .HasMany(c => c.QuickslotKeys)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Character>()
                 .HasMany(c => c.Macros)
                 .WithOne()
                 .OnDelete(DeleteBehavior.Cascade);
@@ -79,6 +83,12 @@ namespace Edelstein.Database
                     {
                         if (character.FunctionKeys.All(f => f.ID != functionKey.ID))
                             Entry(functionKey).State = EntityState.Deleted;
+                    }
+                    
+                    foreach (var quickslotKey in existing.QuickslotKeys)
+                    {
+                        if (character.QuickslotKeys.All(f => f.ID != quickslotKey.ID))
+                            Entry(quickslotKey).State = EntityState.Deleted;
                     }
 
                     foreach (var macro in existing.Macros)
