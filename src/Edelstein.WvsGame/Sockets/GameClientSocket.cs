@@ -69,6 +69,7 @@ namespace Edelstein.WvsGame.Sockets
                     .Include(c => c.Data)
                     .ThenInclude(a => a.Account)
                     .Include(c => c.FunctionKeys)
+                    .Include(c => c.Macros)
                     .Include(c => c.Inventories)
                     .ThenInclude(c => c.Items)
                     .Include(c => c.SkillRecords)
@@ -98,6 +99,20 @@ namespace Edelstein.WvsGame.Sockets
                         p.Encode<int>(functionKey?.Action ?? 0);
                     }
 
+                    SendPacket(p);
+                }
+
+                using (var p = new OutPacket(GameSendOperations.MacroSysDataInit))
+                {
+                    p.Encode<byte>((byte) character.Macros.Count);
+                    character.Macros.ForEach(m =>
+                    {
+                        p.EncodeFixedString(m.Name, 13);
+                        p.Encode<bool>(m.Mute);
+                        p.Encode<int>(m.Skill1);
+                        p.Encode<int>(m.Skill2);
+                        p.Encode<int>(m.Skill3);
+                    });
                     SendPacket(p);
                 }
             }
@@ -173,7 +188,7 @@ namespace Edelstein.WvsGame.Sockets
                 }
 
                 u.ConversationContext?.TokenSource.Cancel();
-                u.TemporaryStatTimers.Values.ForEach(t => t.Stop());
+                MoreEnumerable.ForEach(u.TemporaryStatTimers.Values, t => t.Stop());
                 u.Field?.Leave(u);
             }
         }

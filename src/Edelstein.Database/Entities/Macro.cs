@@ -10,9 +10,9 @@ namespace Edelstein.Database.Entities
         public int ID { get; set; }
 
         public string Name { get; set; }
+        public bool Mute { get; set; }
         public int Skill1 { get; set; }
         public int Skill2 { get; set; }
         public int Skill3 { get; set; }
-        public bool Mute { get; set; }
     }
 }
