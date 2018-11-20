@@ -46,6 +46,9 @@ namespace Edelstein.WvsGame.Sockets
                 case GameRecvOperations.FuncKeyMappedModified:
                     OnFuncKeyMappedModified(packet);
                     break;
+                case GameRecvOperations.QuickslotKeyMappedModified:
+                    OnQuickslotKeyMappedModified(packet);
+                    break;
                 default:
                     if (!FieldUser?.Field.OnPacket(FieldUser, operation, packet) ?? false)
                         Logger.Warn($"Unhandled packet operation {operation}");
@@ -69,6 +72,7 @@ namespace Edelstein.WvsGame.Sockets
                     .Include(c => c.Data)
                     .ThenInclude(a => a.Account)
                     .Include(c => c.FunctionKeys)
+                    .Include(c => c.QuickslotKeys)
                     .Include(c => c.Macros)
                     .Include(c => c.Inventories)
                     .ThenInclude(c => c.Items)
@@ -97,6 +101,21 @@ namespace Edelstein.WvsGame.Sockets
 
                         p.Encode<byte>(functionKey?.Type ?? 0);
                         p.Encode<int>(functionKey?.Action ?? 0);
+                    }
+
+                    SendPacket(p);
+                }
+
+                using (var p = new OutPacket(GameSendOperations.QuickslotMappedInit))
+                {
+                    var quickslots = character.QuickslotKeys.ToList();
+                    var notDefault = quickslots.Count > 0;
+
+                    p.Encode<bool>(notDefault);
+                    if (notDefault)
+                    {
+                        for (var i = 0; i < 8; i++)
+                            p.Encode<int>(quickslots.ElementAtOrDefault(i)?.Key ?? 0);
                     }
 
                     SendPacket(p);
@@ -152,6 +171,18 @@ namespace Edelstein.WvsGame.Sockets
                     }
                 }
                 else functionKeys.Remove(functionKey);
+            }
+        }
+
+        private void OnQuickslotKeyMappedModified(InPacket packet)
+        {
+            var quickslots = FieldUser.Character.QuickslotKeys.ToList();
+            for (var i = 0; i < 8; i++)
+            {
+                var quickslot = quickslots.ElementAtOrDefault(i) ?? new QuickslotKey();
+
+                quickslot.Key = packet.Decode<int>();
+                if (!quickslots.Contains(quickslot)) FieldUser.Character.QuickslotKeys.Add(quickslot);
             }
         }
 

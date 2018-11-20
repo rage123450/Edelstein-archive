@@ -71,6 +71,7 @@ namespace Edelstein.Database
                 var existing = Characters
                     .AsNoTracking()
                     .Include(c => c.FunctionKeys)
+                    .Include(c => c.QuickslotKeys)
                     .Include(c => c.Macros)
                     .Include(c => c.Inventories)
                     .ThenInclude(c => c.Items)
