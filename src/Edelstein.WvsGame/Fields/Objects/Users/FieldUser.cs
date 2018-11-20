@@ -13,7 +13,7 @@ using Edelstein.WvsGame.Conversations.Messages;
 using Edelstein.WvsGame.Conversations.Speakers;
 using Edelstein.WvsGame.Fields.Objects.Users.Effects;
 using Edelstein.WvsGame.Fields.Objects.Users.Stats;
-using Edelstein.WvsGame.Interactions.Dialogue;
+using Edelstein.WvsGame.Interactions;
 using Edelstein.WvsGame.Packets;
 using Edelstein.WvsGame.Sockets;
 
@@ -146,7 +146,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
         {
             var context = new ConversationContext(Socket);
             var conversation = new ActionConversation(context, action);
-            
+
             return await ConversationManager<FieldUserSpeaker, NPCSpeaker>.Start(
                 new FieldUserSpeaker(context, this),
                 new NPCSpeaker(context, 901000, SpeakerParamType.NPCReplacedByNPC),

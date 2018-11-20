@@ -9,7 +9,7 @@ using Edelstein.WvsGame.Fields.Objects.Users;
 using Edelstein.WvsGame.Packets;
 using MoreLinq;
 
-namespace Edelstein.WvsGame.Interactions.Dialogue
+namespace Edelstein.WvsGame.Interactions
 {
     public class NPCShopDlg : Dialogue
     {

@@ -20,7 +20,7 @@ using Edelstein.WvsGame.Commands;
 using Edelstein.WvsGame.Conversations;
 using Edelstein.WvsGame.Conversations.Speakers;
 using Edelstein.WvsGame.Fields;
-using Edelstein.WvsGame.Interactions.Dialogue;
+using Edelstein.WvsGame.Interactions;
 using Edelstein.WvsGame.Logging;
 using Edelstein.WvsGame.Sockets;
 using Lamar;
