@@ -58,7 +58,7 @@ namespace Edelstein.Common.Utils.Skills
             if ((int) job == 100 * v4) return false;
             return (int) job % 10 == 2;
         }
-        
+
         public static IDictionary<TemporaryStatType, short> GetTemporaryStats(this SkillTemplate template, int level)
         {
             return template.LevelData[level].GetTemporaryStats();
@@ -146,7 +146,91 @@ namespace Edelstein.Common.Utils.Skills
                 case Skill.WildhunterSoulArrowCrossbow:
                     stats.Add(TemporaryStatType.SoulArrow, template.X);
                     break;
-                // TODO: more buffs
+                // TODO: Combo attack
+                // TODO: Weapon charge
+                case Skill.DragonknightDragonBlood:
+                    stats.Add(TemporaryStatType.DragonBlood, template.X);
+                    break;
+                case Skill.PriestHolySymbol:
+                case Skill.AdminHolySymbol:
+                    stats.Add(TemporaryStatType.HolySymbol, template.X);
+                    break;
+                case Skill.HermitMesoUp:
+                    stats.Add(TemporaryStatType.MesoUp, template.X);
+                    break;
+                case Skill.HermitShadowPartner:
+                case Skill.ThiefmasterShadowPartner:
+                case Skill.Dual4MirrorImaging:
+                case Skill.NightwalkerShadowPartner:
+                    stats.Add(TemporaryStatType.ShadowPartner, template.X);
+                    break;
+                case Skill.ThiefmasterPickpocket:
+                    stats.Add(TemporaryStatType.PickPocket, template.X);
+                    break;
+                case Skill.ThiefmasterMesoGuard:
+                    stats.Add(TemporaryStatType.MesoGuard, template.X);
+                    break;
+                case Skill.HeroMapleHero:
+                case Skill.PaladinMapleHero:
+                case Skill.DarkknightMapleHero:
+                case Skill.Archmage1MapleHero:
+                case Skill.Archmage2MapleHero:
+                case Skill.BishopMapleHero:
+                case Skill.BowmasterMapleHero:
+                case Skill.CrossbowmasterMapleHero:
+                case Skill.NightlordMapleHero:
+                case Skill.ShadowerMapleHero:
+                case Skill.Dual5MapleHero:
+                case Skill.ViperMapleHero:
+                case Skill.CaptainMapleHero:
+                case Skill.AranMapleHero:
+                case Skill.EvanMapleHero:
+                case Skill.BmageMapleHero:
+                case Skill.WildhunterMapleHero:
+                case Skill.MechanicMapleHero:
+                    stats.Add(TemporaryStatType.BasicStatUp, template.X);
+                    break;
+                case Skill.HeroStance:
+                case Skill.PaladinStance:
+                case Skill.DarkknightStance:
+                case Skill.AranFreezeStanding:
+                case Skill.BmageStance:
+                    stats.Add(TemporaryStatType.Stance, template.X);
+                    break;
+                // TODO: sharp eyes
+                case Skill.Archmage1ManaReflection:
+                case Skill.Archmage2ManaReflection:
+                case Skill.BishopManaReflection:
+                    stats.Add(TemporaryStatType.ManaReflection, template.X);
+                    break;
+                case Skill.NightlordSpiritJavelin:
+                    stats.Add(TemporaryStatType.SpiritJavelin, template.X);
+                    break;
+                case Skill.Archmage1Infinity:
+                case Skill.Archmage2Infinity:
+                case Skill.BishopInfinity:
+                    stats.Add(TemporaryStatType.Infinity, template.X);
+                    break;
+                case Skill.BishopHolyShield:
+                    stats.Add(TemporaryStatType.Holyshield, template.X);
+                    break;
+                case Skill.BowmasterHamstring:
+                    stats.Add(TemporaryStatType.HamString, template.X);
+                    break;
+                case Skill.CrossbowmasterBlind:
+                case Skill.WildhunterBlind:
+                    stats.Add(TemporaryStatType.Blind, template.X);
+                    break;
+                case Skill.BowmasterConcentration:
+                    stats.Add(TemporaryStatType.Concentration, template.X);
+                    break;
+                case Skill.NoviceMaxlevelEchobuff:
+                case Skill.NoblesseMaxlevelEchobuff:
+                case Skill.LegendMaxlevelEchobuff:
+                case Skill.EvanjrMaxlevelEchobuff:
+                case Skill.CitizenMaxlevelEchobuff:
+                    stats.Add(TemporaryStatType.MaxLevelBuff, template.X);
+                    break;
             }
 
             return stats;
