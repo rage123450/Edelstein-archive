@@ -19,7 +19,7 @@ namespace Edelstein.WvsGame.Commands.Impl
         public override async Task Execute(FieldUser user, CreateCommandOption option)
         {
             var templateID = option.TemplateID;
-            
+
             if (!string.IsNullOrEmpty(option.TemplateName))
             {
                 var itemNames = user.Socket.WvsGame.ItemNames;
@@ -45,7 +45,7 @@ namespace Edelstein.WvsGame.Commands.Impl
             var itemTemplates = user.Socket.WvsGame.ItemTemplates;
             var itemTemplate = itemTemplates.Get(templateID.Value);
 
-            await user.ModifyInventory(i =>i.Add(itemTemplate, option.Quantity));
+            await user.ModifyInventory(i => i.Add(itemTemplate, option.Quantity));
         }
     }
 
