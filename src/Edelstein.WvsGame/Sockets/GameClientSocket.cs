@@ -107,7 +107,7 @@ namespace Edelstein.WvsGame.Sockets
                     p.Encode<byte>((byte) character.Macros.Count);
                     character.Macros.ForEach(m =>
                     {
-                        p.EncodeFixedString(m.Name, 13);
+                        p.Encode<string>(m.Name);
                         p.Encode<bool>(m.Mute);
                         p.Encode<int>(m.Skill1);
                         p.Encode<int>(m.Skill2);

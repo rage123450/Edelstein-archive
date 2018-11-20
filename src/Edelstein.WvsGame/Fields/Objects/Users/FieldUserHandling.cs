@@ -6,6 +6,7 @@ using Edelstein.Common.Packets.Stats;
 using Edelstein.Common.Utils.Extensions;
 using Edelstein.Common.Utils.Items;
 using Edelstein.Common.Utils.Skills;
+using Edelstein.Database.Entities;
 using Edelstein.Database.Entities.Inventory;
 using Edelstein.Database.Entities.Types;
 using Edelstein.Network.Packets;
@@ -109,6 +110,9 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                     break;
                 case GameRecvOperations.UserPortalScriptRequest:
                     OnUserPortalScriptRequest(packet);
+                    break;
+                case GameRecvOperations.UserMacroSysDataModified:
+                    OnUserMacroSysDataModified(packet);
                     break;
                 default:
                     return false;
@@ -750,6 +754,24 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             var portal = Field.Template.Portals.Values.Single(p => p.Name.Equals(portalName));
 
             Socket.WvsGame.DefaultConversationManager.Start(this, portal.Script);
+        }
+
+        private void OnUserMacroSysDataModified(InPacket packet)
+        {
+            var count = packet.Decode<byte>();
+            var macros = Character.Macros.ToList();
+
+            for (var i = 0; i < count; i++)
+            {
+                var macro = macros.ElementAtOrDefault(i) ?? new Macro();
+
+                macro.Name = packet.Decode<string>();
+                macro.Mute = packet.Decode<bool>();
+                macro.Skill1 = packet.Decode<int>();
+                macro.Skill2 = packet.Decode<int>();
+                macro.Skill3 = packet.Decode<int>();
+                if (!macros.Contains(macro)) Character.Macros.Add(macro);
+            }
         }
     }
 }
