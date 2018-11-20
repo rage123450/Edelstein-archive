@@ -23,8 +23,8 @@ namespace Edelstein.WvsGame.Conversations.Speakers
         public int Say(string text = "", bool prev = false, bool next = false)
             => Context.Send(new Say(SpeakerTypeID, SpeakerTemplateID, SpeakerParam, text, prev, next));
 
-        public int AskYesNo(string text = "", bool quest = false)
-            => Context.Send(new AskYesNo(SpeakerTypeID, SpeakerTemplateID, SpeakerParam, text, quest));
+        public bool AskYesNo(string text = "", bool quest = false)
+            => Context.Send(new AskYesNo(SpeakerTypeID, SpeakerTemplateID, SpeakerParam, text, quest)) > 0;
 
         public string AskText(string text = "", string textDefault = "",
             short lenMin = short.MinValue, short lenMax = short.MaxValue)

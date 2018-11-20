@@ -25,6 +25,13 @@ namespace Edelstein.WvsGame.Commands.Impl
                 var item = items.FirstOrDefault(i => i.Position == slot);
 
                 if (item == null) return;
+                if (option.Destroy)
+                {
+                    if (speaker.AskYesNo($"Are you sure you would like to destroy #b#z{item.TemplateID}##k?"))
+                        user.ModifyInventory(i => i.Remove(item));
+                    return;
+                }
+
                 switch (item)
                 {
                     case ItemSlotEquip equip:
@@ -42,6 +49,9 @@ namespace Edelstein.WvsGame.Commands.Impl
 
     public class EditCommandOption : CommandOption
     {
+        [Option('d', "destroy", HelpText = "Destroys the item slot.")]
+        public bool Destroy { get; set; }
+
         [Value(0, MetaName = "inventoryType", Required = true, HelpText = "The inventory's type.")]
         public ItemInventoryType Type { get; set; }
     }
