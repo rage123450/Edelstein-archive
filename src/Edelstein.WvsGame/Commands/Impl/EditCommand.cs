@@ -18,7 +18,9 @@ namespace Edelstein.WvsGame.Commands.Impl
             {
                 var items = user.Character.GetInventory(option.Type).Items;
                 var slot = speaker.AskMenu("Which item would you like to edit?",
-                    items.ToDictionary(i => (int) i.Position, i => $"#z{i.TemplateID}# ({i.TemplateID})")
+                    items
+                        .OrderBy(i => i.Position)
+                        .ToDictionary(i => (int) i.Position, i => $"#z{i.TemplateID}# ({i.TemplateID})")
                 );
                 var item = items.FirstOrDefault(i => i.Position == slot);
 
