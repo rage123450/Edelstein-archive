@@ -80,15 +80,16 @@ namespace Edelstein.Common.Utils.Items
         {
             var temporaryStats = new Dictionary<TemporaryStatType, short>();
 
-            if (template.PAD > 0) temporaryStats.Add(TemporaryStatType.PAD, template.PAD);
-            if (template.PDD > 0) temporaryStats.Add(TemporaryStatType.PDD, template.PDD);
-            if (template.MAD > 0) temporaryStats.Add(TemporaryStatType.MAD, template.MAD);
-            if (template.MDD > 0) temporaryStats.Add(TemporaryStatType.MDD, template.MDD);
-            if (template.ACC > 0) temporaryStats.Add(TemporaryStatType.ACC, template.ACC);
-            if (template.EVA > 0) temporaryStats.Add(TemporaryStatType.EVA, template.EVA);
-            if (template.Craft > 0) temporaryStats.Add(TemporaryStatType.Craft, template.Craft);
-            if (template.Speed > 0) temporaryStats.Add(TemporaryStatType.Speed, template.Speed);
-            if (template.Jump > 0) temporaryStats.Add(TemporaryStatType.Jump, template.Jump);
+            if (template.PAD != 0) temporaryStats.Add(TemporaryStatType.PAD, template.PAD);
+            if (template.PDD != 0) temporaryStats.Add(TemporaryStatType.PDD, template.PDD);
+            if (template.MAD != 0) temporaryStats.Add(TemporaryStatType.MAD, template.MAD);
+            if (template.MDD != 0) temporaryStats.Add(TemporaryStatType.MDD, template.MDD);
+            if (template.ACC != 0) temporaryStats.Add(TemporaryStatType.ACC, template.ACC);
+            if (template.EVA != 0) temporaryStats.Add(TemporaryStatType.EVA, template.EVA);
+            if (template.Craft != 0) temporaryStats.Add(TemporaryStatType.Craft, template.Craft);
+            if (template.Speed != 0) temporaryStats.Add(TemporaryStatType.Speed, template.Speed);
+            if (template.Jump != 0) temporaryStats.Add(TemporaryStatType.Jump, template.Jump);
+            
             if (template.Morph > 0) temporaryStats.Add(TemporaryStatType.Morph, template.Morph);
 
             return temporaryStats;

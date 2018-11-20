@@ -68,23 +68,24 @@ namespace Edelstein.Common.Utils.Skills
         {
             var stats = new Dictionary<TemporaryStatType, short>();
 
-            if (template.PAD > 0) stats.Add(TemporaryStatType.PAD, template.PAD);
-            if (template.PDD > 0) stats.Add(TemporaryStatType.PDD, template.PDD);
-            if (template.MAD > 0) stats.Add(TemporaryStatType.MAD, template.MAD);
-            if (template.MDD > 0) stats.Add(TemporaryStatType.MDD, template.MDD);
-            if (template.ACC > 0) stats.Add(TemporaryStatType.ACC, template.ACC);
-            if (template.EVA > 0) stats.Add(TemporaryStatType.EVA, template.EVA);
-            if (template.Craft > 0) stats.Add(TemporaryStatType.Craft, template.Craft);
-            if (template.Speed > 0) stats.Add(TemporaryStatType.Speed, template.Speed);
-            if (template.Jump > 0) stats.Add(TemporaryStatType.Jump, template.Jump);
+            if (template.PAD != 0) stats.Add(TemporaryStatType.PAD, template.PAD);
+            if (template.PDD != 0) stats.Add(TemporaryStatType.PDD, template.PDD);
+            if (template.MAD != 0) stats.Add(TemporaryStatType.MAD, template.MAD);
+            if (template.MDD != 0) stats.Add(TemporaryStatType.MDD, template.MDD);
+            if (template.ACC != 0) stats.Add(TemporaryStatType.ACC, template.ACC);
+            if (template.EVA != 0) stats.Add(TemporaryStatType.EVA, template.EVA);
+            if (template.Craft != 0) stats.Add(TemporaryStatType.Craft, template.Craft);
+            if (template.Speed != 0) stats.Add(TemporaryStatType.Speed, template.Speed);
+            if (template.Jump != 0) stats.Add(TemporaryStatType.Jump, template.Jump);
+            
             if (template.Morph > 0) stats.Add(TemporaryStatType.Morph, template.Morph);
 
-            if (template.EMHP > 0) stats.Add(TemporaryStatType.EMHP, template.EMHP);
-            if (template.EMMP > 0) stats.Add(TemporaryStatType.EMMP, template.EMMP);
-            if (template.EPAD > 0) stats.Add(TemporaryStatType.EPAD, template.EPAD);
-            if (template.EPDD > 0) stats.Add(TemporaryStatType.EPDD, template.EPDD);
-            // if (template.EMAD > 0) temporaryStats.Add(TemporaryStatType.EMAD, template.EMAD);
-            if (template.EMDD > 0) stats.Add(TemporaryStatType.EMDD, template.EMDD);
+            if (template.EMHP != 0) stats.Add(TemporaryStatType.EMHP, template.EMHP);
+            if (template.EMMP != 0) stats.Add(TemporaryStatType.EMMP, template.EMMP);
+            if (template.EPAD != 0) stats.Add(TemporaryStatType.EPAD, template.EPAD);
+            if (template.EPDD != 0) stats.Add(TemporaryStatType.EPDD, template.EPDD);
+            // if (template.EMAD != 0) temporaryStats.Add(TemporaryStatType.EMAD, template.EMAD);
+            if (template.EMDD != 0) stats.Add(TemporaryStatType.EMDD, template.EMDD);
 
             var skill = (Skill) template.TemplateID;
 
