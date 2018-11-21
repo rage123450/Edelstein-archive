@@ -43,18 +43,59 @@ namespace Edelstein.WvsGame.Commands.Impl
                 return;
             }
 
-            await user.Prompt(speaker =>
+            switch (item)
             {
-                switch (item)
-                {
-                    case ItemSlotEquip equip:
-                        equip.Title = speaker.AskText("Specify a title", equip.Title);
-                        break;
-                    case ItemSlotBundle bundle:
-                        bundle.Title = speaker.AskText("Specify a title", bundle.Title);
-                        break;
-                }
-            });
+                case ItemSlotEquip equip:
+                    if (option.BasicStats)
+                    {
+                        await user.Prompt(s =>
+                            equip.STR = (short) s.AskNumber("Specify the STR", equip.STR, max: short.MaxValue));
+                        await user.Prompt(s =>
+                            equip.DEX = (short) s.AskNumber("Specify the DEX", equip.DEX, max: short.MaxValue));
+                        await user.Prompt(s =>
+                            equip.INT = (short) s.AskNumber("Specify the INT", equip.INT, max: short.MaxValue));
+                        await user.Prompt(s =>
+                            equip.LUK = (short) s.AskNumber("Specify the LUK", equip.LUK, max: short.MaxValue));
+                        await user.Prompt(s =>
+                            equip.MaxHP = (short) s.AskNumber("Specify the Max HP", equip.MaxHP, max: short.MaxValue));
+                        await user.Prompt(s =>
+                            equip.MaxMP = (short) s.AskNumber("Specify the Max MP", equip.MaxMP, max: short.MaxValue));
+                    }
+
+                    if (option.SecondaryStats)
+                    {
+                        await user.Prompt(s =>
+                            equip.PAD = (short) s.AskNumber("Specify the PAD", equip.PAD, max: short.MaxValue));
+                        await user.Prompt(s =>
+                            equip.MAD = (short) s.AskNumber("Specify the MAD", equip.MAD, max: short.MaxValue));
+                        await user.Prompt(s =>
+                            equip.PDD = (short) s.AskNumber("Specify the PDD", equip.PDD, max: short.MaxValue));
+                        await user.Prompt(s =>
+                            equip.MDD = (short) s.AskNumber("Specify the MDD", equip.MDD, max: short.MaxValue));
+                        await user.Prompt(s =>
+                            equip.ACC = (short) s.AskNumber("Specify the ACC", equip.ACC, max: short.MaxValue));
+                        await user.Prompt(s =>
+                            equip.EVA = (short) s.AskNumber("Specify the EVA", equip.EVA, max: short.MaxValue));
+                        await user.Prompt(s =>
+                            equip.Craft = (short) s.AskNumber("Specify the Craft", equip.Craft, max: short.MaxValue));
+                        await user.Prompt(s =>
+                            equip.Speed = (short) s.AskNumber("Specify the Speed", equip.Speed, max: short.MaxValue));
+                        await user.Prompt(s =>
+                            equip.Jump = (short) s.AskNumber("Specify the Jump", equip.Jump, max: short.MaxValue));
+                    }
+
+                    await user.Prompt(s => equip.Title = s.AskText("Specify the Title", equip.Title));
+                    break;
+                case ItemSlotBundle bundle:
+                    await user.Prompt(s =>
+                        bundle.Number = (short) s.AskNumber("Specify the Number", bundle.Number, max: short.MaxValue));
+                    await user.Prompt(s =>
+                        bundle.MaxNumber = (short) s.AskNumber("Specify the Max Number", bundle.MaxNumber,
+                            max: short.MaxValue));
+                    await user.Prompt(s => bundle.Title = s.AskText("Specify the Title", bundle.Title));
+                    break;
+            }
+
             await target.ModifyInventory(i => i.Update(item));
         }
     }
@@ -66,6 +107,12 @@ namespace Edelstein.WvsGame.Commands.Impl
 
         [Option('d', "destroy", HelpText = "Destroys the item slot.")]
         public bool Destroy { get; set; }
+
+        [Option('b', "basicstats", HelpText = "Allows editing of basic equip stats.")]
+        public bool BasicStats { get; set; } = true;
+
+        [Option('s', "secondarystats", HelpText = "Allows editing of secondary equip stats.")]
+        public bool SecondaryStats { get; set; } = true;
 
         [Value(0, MetaName = "inventoryType", Required = true, HelpText = "The inventory's type.")]
         public ItemInventoryType Type { get; set; }
