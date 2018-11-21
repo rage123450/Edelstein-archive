@@ -1,7 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using CommandLine;
-using CSharpx;
 using Edelstein.Database.Entities.Inventory;
 using Edelstein.WvsGame.Fields.Objects.Users;
 
