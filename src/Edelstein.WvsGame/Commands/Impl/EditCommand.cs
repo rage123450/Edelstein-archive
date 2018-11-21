@@ -12,14 +12,16 @@ namespace Edelstein.WvsGame.Commands.Impl
         public override string Name => "Edit";
         public override string Description => "Edits an inventory item";
 
-        public override Task Execute(FieldUser user, EditCommandOption option)
+        public override async Task Execute(FieldUser user, EditCommandOption option)
         {
-            return user.Prompt(speaker =>
+            var target = user.Field.Objects
+                             .OfType<FieldUser>()
+                             .FirstOrDefault(u => u.Character.Name.ToLower().Equals(option.Target))
+                         ?? user;
+            ItemSlot item = null;
+
+            await user.Prompt(speaker =>
             {
-                var target = user.Field.Objects
-                                 .OfType<FieldUser>()
-                                 .FirstOrDefault(u => u.Character.Name.ToLower().Equals(option.Target))
-                             ?? user;
                 var items = target.Character.GetInventory(option.Type).Items;
                 var slot = speaker.AskMenu(
                     $"Which item would you like to edit in #r{target.Character.Name}#k's {option.Type} inventory?",
@@ -27,16 +29,23 @@ namespace Edelstein.WvsGame.Commands.Impl
                         .OrderBy(i => i.Position)
                         .ToDictionary(i => (int) i.Position, i => $"#z{i.TemplateID}# ({i.TemplateID})")
                 );
-                var item = items.FirstOrDefault(i => i.Position == slot);
+                item = items.FirstOrDefault(i => i.Position == slot);
+            });
 
-                if (item == null) return;
-                if (option.Destroy)
+            if (item == null) return;
+            if (option.Destroy)
+            {
+                await user.Prompt(speaker =>
                 {
+                    if (!option.Destroy) return;
                     if (speaker.AskYesNo($"Are you sure you would like to destroy #b#z{item.TemplateID}##k?"))
                         target.ModifyInventory(i => i.Remove(item));
-                    return;
-                }
+                });
+                return;
+            }
 
+            await user.Prompt(speaker =>
+            {
                 switch (item)
                 {
                     case ItemSlotEquip equip:
@@ -46,9 +55,8 @@ namespace Edelstein.WvsGame.Commands.Impl
                         bundle.Title = speaker.AskText("Specify a title", bundle.Title);
                         break;
                 }
-
-                target.ModifyInventory(i => i.Update(item));
             });
+            await target.ModifyInventory(i => i.Update(item));
         }
     }
 
