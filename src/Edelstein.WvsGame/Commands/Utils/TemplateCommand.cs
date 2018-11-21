@@ -36,6 +36,7 @@ namespace Edelstein.WvsGame.Commands.Utils
                 }
             }
 
+            if (templateID == null) return;
             if (!templateID.HasValue) return;
             await Execute(user, templates.Get(templateID.Value), option);
         }
