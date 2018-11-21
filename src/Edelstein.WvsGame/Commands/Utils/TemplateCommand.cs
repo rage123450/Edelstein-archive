@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using CommandLine;
+using DotNet.Globbing;
 using Edelstein.Provider;
 using Edelstein.WvsGame.Fields.Objects.Users;
 
@@ -9,6 +10,8 @@ namespace Edelstein.WvsGame.Commands.Utils
     public abstract class TemplateCommand<T, S> : Command<S>
         where S : TemplateCommandOption
     {
+        private readonly GlobOptions _globOptions = new GlobOptions {Evaluation = {CaseInsensitive = true}};
+
         public override async Task Execute(FieldUser user, S option)
         {
             var templates = getTemplates(user);
@@ -17,8 +20,9 @@ namespace Edelstein.WvsGame.Commands.Utils
 
             if (!string.IsNullOrEmpty(option.Search))
             {
+                var glob = Glob.Parse(option.Search, _globOptions);
                 var results = stringTemplates.All
-                    .Where(p => p.Value.ToLower().Contains(option.Search.ToLower()))
+                    .Where(p => glob.IsMatch(p.Value))
                     .ToList();
 
                 if (results.Any())
@@ -26,7 +30,7 @@ namespace Edelstein.WvsGame.Commands.Utils
                     if (!await user.Prompt(speaker =>
                         templateID = speaker.AskMenu(
                             $"Here are the results for '{option.Search}'",
-                            results.ToDictionary(r => r.Key, r => $"#z{r.Key}# ({r.Key})")
+                            results.ToDictionary(r => r.Key, r => $"{r.Value} ({r.Key})")
                         ))
                     ) return;
                 }
