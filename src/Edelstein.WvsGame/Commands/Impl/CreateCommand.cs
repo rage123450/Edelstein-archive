@@ -1,12 +1,13 @@
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 using CommandLine;
+using Edelstein.Provider;
+using Edelstein.Provider.Items;
+using Edelstein.WvsGame.Commands.Utils;
 using Edelstein.WvsGame.Fields.Objects.Users;
 
 namespace Edelstein.WvsGame.Commands.Impl
 {
-    public class CreateCommand : Command<CreateCommandOption>
+    public class CreateCommand : TemplateCommand<ItemTemplate, CreateCommandOption>
     {
         public override string Name => "Create";
         public override string Description => "Creates an specific item";
@@ -16,51 +17,23 @@ namespace Edelstein.WvsGame.Commands.Impl
             Aliases.Add("Item");
         }
 
-        public override async Task Execute(FieldUser user, CreateCommandOption option)
-        {
-            var templateID = option.TemplateID;
+        public override Task Execute(
+            FieldUser user,
+            ItemTemplate template,
+            CreateCommandOption option
+        )
+            => user.ModifyInventory(i => i.Add(template, option.Quantity));
 
-            if (!string.IsNullOrEmpty(option.TemplateName))
-            {
-                var itemNames = user.Socket.WvsGame.ItemNames;
-                var results = itemNames.All
-                    .Where(p => p.Value.ToLower().Contains(option.TemplateName.ToLower()))
-                    .ToList();
+        public override ITemplateManager<ItemTemplate> getTemplates(FieldUser user)
+            => user.Socket.WvsGame.ItemTemplates;
 
-                if (results.Any())
-                {
-                    templateID = results.Select(r => r.Key).First();
-                    if (option.Search)
-                        if (!await user.Prompt(speaker =>
-                            templateID = speaker.AskMenu(
-                                "Which item would you like to create?",
-                                results.ToDictionary(r => r.Key, r => $"#z{r.Key}# ({r.Key})")
-                            ))
-                        )
-                            return;
-                }
-            }
-
-            if (!templateID.HasValue) return;
-            var itemTemplates = user.Socket.WvsGame.ItemTemplates;
-            var itemTemplate = itemTemplates.Get(templateID.Value);
-
-            await user.ModifyInventory(i => i.Add(itemTemplate, option.Quantity));
-        }
+        public override EagerTemplateManager<string> getStringTemplates(FieldUser user)
+            => user.Socket.WvsGame.ItemNames;
     }
 
-    public class CreateCommandOption : CommandOption
+    public class CreateCommandOption : TemplateCommandOption
     {
-        [Option('s', "search", HelpText = "Searches for the template.")]
-        public bool Search { get; set; }
-
-        [Option('n', "name", HelpText = "The item's template name.")]
-        public string TemplateName { get; set; }
-
         [Option('q', "quantity", HelpText = "The item's quantity.")]
         public short Quantity { get; set; } = 1;
-
-        [Value(0, MetaName = "templateID", HelpText = "The item's template ID.")]
-        public int? TemplateID { get; set; }
     }
 }
