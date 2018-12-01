@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Edelstein.Provider;
 using Edelstein.Provider.Fields;
 using Edelstein.Provider.Mobs;
@@ -20,7 +21,7 @@ namespace Edelstein.WvsGame.Fields
         public FieldFactory(
             LazyTemplateManager<FieldTemplate> fieldLazyTemplateManager,
             LazyTemplateManager<NPCTemplate> npcLazyTemplateManager,
-            LazyTemplateManager<MobTemplate> mobLazyTemplateManager, 
+            LazyTemplateManager<MobTemplate> mobLazyTemplateManager,
             LazyTemplateManager<ReactorTemplate> reactorLazyTemplateManager)
         {
             _fieldLazyTemplateManager = fieldLazyTemplateManager;
@@ -29,6 +30,8 @@ namespace Edelstein.WvsGame.Fields
             _reactorLazyTemplateManager = reactorLazyTemplateManager;
             _fields = new Dictionary<int, Field>();
         }
+
+        public ICollection<Field> All() => _fields.Values.ToList();
 
         public Field Get(int templateId)
         {
@@ -68,7 +71,7 @@ namespace Edelstein.WvsGame.Fields
                             break;
                     }
                 });
-                
+
                 field.Template.Reactors.ForEach(r =>
                 {
                     var reactorTemplate = _reactorLazyTemplateManager.Get(r.TemplateID);

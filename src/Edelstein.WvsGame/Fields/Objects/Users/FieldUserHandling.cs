@@ -543,7 +543,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 }
             }
 
-            ModifyInventory(i => i.Remove(item));
+            ModifyInventory(i => i.Remove(item, 1));
             ModifyStats(exclRequest: true);
         }
 

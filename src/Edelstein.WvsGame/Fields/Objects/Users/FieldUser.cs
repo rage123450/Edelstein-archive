@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
+using CSharpx;
 using Edelstein.Common.Packets;
 using Edelstein.Common.Packets.Messages;
 using Edelstein.Common.Packets.Stats;
@@ -16,10 +18,11 @@ using Edelstein.WvsGame.Fields.Objects.Users.Stats;
 using Edelstein.WvsGame.Interactions;
 using Edelstein.WvsGame.Packets;
 using Edelstein.WvsGame.Sockets;
+using Edelstein.WvsGame.Utils;
 
 namespace Edelstein.WvsGame.Fields.Objects.Users
 {
-    public partial class FieldUser : FieldObject
+    public partial class FieldUser : FieldObject, IUpdateable
     {
         public GameClientSocket Socket { get; set; }
         public Character Character { get; set; }
@@ -85,6 +88,46 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             ValidateStat();
 
             TemporaryStatTimers = new Dictionary<TemporaryStatType, Timer>();
+        }
+
+        public async Task Update(DateTime now)
+        {
+            if (!Socket.IsInstantiated) return;
+
+            var expiredItems = Character.Inventories
+                .SelectMany(i => i.Items)
+                .Where(i => i.DateExpire.HasValue)
+                .Where(i => (now - i.DateExpire.Value).Milliseconds >= 0)
+                .ToList();
+            var expiredSkills = Character.SkillRecords
+                .Where(s => s.DateExpire.HasValue)
+                .Where(s => (now - s.DateExpire.Value).Milliseconds >= 0)
+                .ToList();
+
+            if (expiredItems.Any())
+                await ModifyInventory(i => expiredItems.ForEach(e => i.Remove(e)));
+            if (expiredSkills.Any())
+                await ModifySkill(s => expiredSkills.ForEach(s.Remove));
+
+            var itemTemplates = Socket.WvsGame.ItemTemplates;
+            var expiredTemplates = expiredItems
+                .Select(i => itemTemplates.Get(i.TemplateID))
+                .ToList();
+            var expiredCashTemplates = expiredTemplates.Where(t => t.Cash).ToList();
+            var expiredGeneralTemplates = expiredTemplates.Except(expiredCashTemplates).ToList();
+
+            if (expiredCashTemplates.Any())
+                await Task.WhenAll(
+                    expiredCashTemplates
+                        .Select(t => Message(new CashItemExpireMessage(t.TemplateID)))
+                );
+            if (expiredGeneralTemplates.Any())
+                await Message(new GeneralItemExpireMessage(expiredGeneralTemplates
+                    .Select(t => t.TemplateID)
+                    .ToList())
+                );
+            if (expiredSkills.Any())
+                await Message(new SkillExpireMessage(expiredSkills.Select(s => s.Skill).ToList()));
         }
 
         public void ValidateStat()

@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Timers;
 using Edelstein.Common.Interop;
 using Edelstein.Common.Interop.Game;
 using Edelstein.Database;
@@ -23,13 +25,14 @@ using Edelstein.WvsGame.Fields;
 using Edelstein.WvsGame.Interactions;
 using Edelstein.WvsGame.Logging;
 using Edelstein.WvsGame.Sockets;
+using Edelstein.WvsGame.Utils;
 using Lamar;
 using Microsoft.EntityFrameworkCore;
 using MoonSharp.Interpreter;
 
 namespace Edelstein.WvsGame
 {
-    public class WvsGame
+    public class WvsGame : IUpdateable
     {
         private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
         private readonly IContainer _container;
@@ -53,6 +56,8 @@ namespace Edelstein.WvsGame
         public LazyTemplateManager<MobTemplate> MobTemplates { get; set; }
         public LazyTemplateManager<ReactorTemplate> ReactorTemplates { get; set; }
         public FieldFactory FieldFactory { get; set; }
+
+        public Timer Timer { get; set; }
 
         public IDictionary<int, NPCShopDlg> NPCShops { get; set; }
 
@@ -116,6 +121,11 @@ namespace Edelstein.WvsGame
             ReactorTemplates = _container.GetInstance<LazyTemplateManager<ReactorTemplate>>();
             FieldFactory = new FieldFactory(FieldTemplates, NpcTemplates, MobTemplates, ReactorTemplates);
 
+            Timer = new Timer();
+            Timer.Elapsed += async (sender, args) => await Update(DateTime.Now);
+            Timer.Interval = 1000;
+            Timer.Start();
+
             using (var db = _container.GetInstance<DataContext>())
             {
                 Logger.Info("Loading npc shops..");
@@ -156,6 +166,14 @@ namespace Edelstein.WvsGame
 
                 await InteropClient.Socket.SendPacket(p);
             }
+        }
+
+        public async Task Update(DateTime now)
+        {
+            await Task.WhenAll(FieldFactory
+                .All()
+                .Select(f => f.Update(now))
+            );
         }
     }
 }

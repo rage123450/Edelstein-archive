@@ -89,7 +89,7 @@ namespace Edelstein.WvsGame.Interactions
                         p.Encode<byte>(result);
                         user.SendPacket(p);
                     }
-                    
+
 
                     break;
                 }
@@ -109,21 +109,8 @@ namespace Edelstein.WvsGame.Interactions
                         {
                             user.ModifyInventory(i =>
                             {
-                                if (item is ItemSlotBundle bundle)
-                                {
-                                    if (!ItemInfo.IsRechargeableItem(item.TemplateID))
-                                    {
-                                        if (count < bundle.Number)
-                                        {
-                                            bundle.Number -= count;
-                                            i.UpdateQuantity(bundle);
-                                            return;
-                                        }
-                                    }
-                                }
-
+                                i.Remove(item, count);
                                 count = 1;
-                                i.Remove(item);
                             });
 
                             var templates = user.Socket.WvsGame.ItemTemplates;

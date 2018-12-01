@@ -142,7 +142,7 @@ namespace Edelstein.Common.Packets.Inventory
             if (item != null) Remove(item, count);
         }
 
-        public void Remove(ItemSlot item, int count = 1)
+        public void Remove(ItemSlot item, int count = 0)
         {
             var inventory = item.ItemInventory;
             var inventoryItems = inventory.Items;
@@ -152,13 +152,16 @@ namespace Edelstein.Common.Packets.Inventory
             if (item is ItemSlotBundle bundle &&
                 !ItemInfo.IsRechargeableItem(bundle.TemplateID))
             {
-                bundle.Number -= (short) count;
-                bundle.Number = Math.Max((short) 0, bundle.Number);
-
-                if (bundle.Number > 0)
+                if (count > 0)
                 {
-                    UpdateQuantity(bundle);
-                    return;
+                    bundle.Number -= (short) count;
+                    bundle.Number = Math.Max((short) 0, bundle.Number);
+
+                    if (bundle.Number > 0)
+                    {
+                        UpdateQuantity(bundle);
+                        return;
+                    }
                 }
             }
 

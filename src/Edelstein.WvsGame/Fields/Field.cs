@@ -3,17 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CSharpx;
 using Edelstein.Network.Packets;
 using Edelstein.Provider.Fields;
 using Edelstein.WvsGame.Fields.Objects;
 using Edelstein.WvsGame.Fields.Objects.Drops;
 using Edelstein.WvsGame.Fields.Objects.Users;
 using Edelstein.WvsGame.Packets;
+using Edelstein.WvsGame.Utils;
 using MoreLinq.Extensions;
 
 namespace Edelstein.WvsGame.Fields
 {
-    public class Field
+    public class Field : IUpdateable
     {
         public int ID { get; set; }
         public FieldTemplate Template { get; }
@@ -26,6 +28,14 @@ namespace Edelstein.WvsGame.Fields
             ID = id;
             Template = template;
             _objects = new List<FieldObject>();
+        }
+
+        public async Task Update(DateTime now)
+        {
+            await Task.WhenAll(Objects
+                .OfType<IUpdateable>()
+                .Select(o => o.Update(now))
+            );
         }
 
         public bool OnPacket(FieldUser user, GameRecvOperations operation, InPacket packet)
@@ -115,9 +125,8 @@ namespace Edelstein.WvsGame.Fields
                     if (!user.Socket.IsInstantiated) user.Socket.IsInstantiated = true;
                     user.ResetForcedStats();
 
-                    _objects
-                        .Where(o => !o.Equals(obj))
-                        .ForEach(o => user.SendPacket(o.GetEnterFieldPacket()));
+                    ForEachExtension.ForEach(_objects
+                        .Where(o => !o.Equals(obj)), o => user.SendPacket(o.GetEnterFieldPacket()));
                 }
                 else
                 {
@@ -151,9 +160,9 @@ namespace Edelstein.WvsGame.Fields
             var controllers = Objects.OfType<FieldUser>().Shuffle().ToList();
             var controlled = Objects.OfType<FieldObjectControlled>().ToList();
 
-            controlled
-                .Where(c => c.Controller == null || !controllers.Contains(c.Controller))
-                .ForEach(c => c.ChangeController(controllers.FirstOrDefault()));
+            ForEachExtension.ForEach(controlled
+                    .Where(c => c.Controller == null || !controllers.Contains(c.Controller)),
+                c => c.ChangeController(controllers.FirstOrDefault()));
         }
 
         public FieldObject GetObject(int id)
