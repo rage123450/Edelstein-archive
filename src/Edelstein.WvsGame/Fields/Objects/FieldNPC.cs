@@ -6,7 +6,7 @@ using Edelstein.WvsGame.Packets;
 
 namespace Edelstein.WvsGame.Fields.Objects
 {
-    public class FieldNPC : FieldObjectControlled
+    public class FieldNPC : FieldLifeControlled
     {
         public NPCTemplate Template { get; set; }
 

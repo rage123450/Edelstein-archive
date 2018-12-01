@@ -4,14 +4,14 @@ using Edelstein.WvsGame.Packets;
 
 namespace Edelstein.WvsGame.Fields.Objects.Drops
 {
-    public abstract class FieldDrop : FieldObject
+    public abstract class FieldDrop : FieldObj
     {
         public abstract bool IsMoney { get; }
         public abstract int Info { get; }
 
         public OutPacket GetEnterFieldPacket(
             byte enterType,
-            FieldObject source = null,
+            FieldObj source = null,
             short delay = 0
         )
         {
@@ -49,7 +49,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Drops
 
         public OutPacket GetLeaveFieldPacket(
             byte leaveType,
-            FieldObject source = null
+            FieldObj source = null
         )
         {
             using (var p = new OutPacket(GameSendOperations.DropLeaveField))

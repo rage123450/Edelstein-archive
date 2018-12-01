@@ -6,7 +6,7 @@ using MoreLinq;
 
 namespace Edelstein.WvsGame.Fields.Objects
 {
-    public class FieldReactor : FieldObject
+    public class FieldReactor : FieldObj
     {
         public ReactorTemplate Template { get; set; }
         public bool Flip { get; set; }

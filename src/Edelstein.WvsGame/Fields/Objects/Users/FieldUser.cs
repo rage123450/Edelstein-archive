@@ -22,7 +22,7 @@ using Edelstein.WvsGame.Utils;
 
 namespace Edelstein.WvsGame.Fields.Objects.Users
 {
-    public partial class FieldUser : FieldObject, IUpdateable
+    public partial class FieldUser : FieldLife, IUpdateable
     {
         public GameClientSocket Socket { get; set; }
         public Character Character { get; set; }

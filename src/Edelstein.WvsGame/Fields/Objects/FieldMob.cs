@@ -7,7 +7,7 @@ using Edelstein.WvsGame.Packets;
 
 namespace Edelstein.WvsGame.Fields.Objects
 {
-    public class FieldMob : FieldObjectControlled
+    public class FieldMob : FieldLifeControlled
     {
         public MobTemplate Template { get; set; }
 
@@ -22,11 +22,11 @@ namespace Edelstein.WvsGame.Fields.Objects
             MP = template.MaxMP;
         }
 
-        public void Damage(FieldObject source, int damage)
+        public void Damage(FieldObj source, int damage)
         {
             HP -= damage;
             Console.WriteLine("Total damage: " + damage + " HP: " + HP);
-            
+
             if (source is FieldUser user)
             {
                 var indicator = HP / (float) Template.MaxHP * 100f;
@@ -40,7 +40,7 @@ namespace Edelstein.WvsGame.Fields.Objects
                     user.SendPacket(p);
                 }
             }
-            
+
             if (HP <= 0) Field.Leave(this);
         }
 

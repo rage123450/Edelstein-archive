@@ -3,7 +3,7 @@ using Edelstein.WvsGame.Fields.Objects.Users;
 
 namespace Edelstein.WvsGame.Fields
 {
-    public abstract class FieldObjectControlled : FieldObject
+    public abstract class FieldLifeControlled : FieldLife
     {
         public FieldUser Controller { get; private set; }
 

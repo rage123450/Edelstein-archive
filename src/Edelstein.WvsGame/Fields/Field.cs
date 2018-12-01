@@ -20,14 +20,14 @@ namespace Edelstein.WvsGame.Fields
         public int ID { get; set; }
         public FieldTemplate Template { get; }
         private int _runningObjectID = 1;
-        private readonly List<FieldObject> _objects;
-        public IEnumerable<FieldObject> Objects => _objects.AsReadOnly();
+        private readonly List<FieldObj> _objects;
+        public IEnumerable<FieldObj> Objects => _objects.AsReadOnly();
 
         public Field(int id, FieldTemplate template)
         {
             ID = id;
             Template = template;
-            _objects = new List<FieldObject>();
+            _objects = new List<FieldObj>();
         }
 
         public async Task Update(DateTime now)
@@ -93,7 +93,7 @@ namespace Edelstein.WvsGame.Fields
             Leave(drop, () => drop?.GetLeaveFieldPacket(0x2, user));
         }
 
-        public void Enter(FieldObject obj, Func<OutPacket> getEnterPacket = null)
+        public void Enter(FieldObj obj, Func<OutPacket> getEnterPacket = null)
         {
             lock (this)
             {
@@ -143,7 +143,7 @@ namespace Edelstein.WvsGame.Fields
             }
         }
 
-        public void Leave(FieldObject obj, Func<OutPacket> getLeavePacket = null)
+        public void Leave(FieldObj obj, Func<OutPacket> getLeavePacket = null)
         {
             lock (this)
             {
@@ -158,14 +158,14 @@ namespace Edelstein.WvsGame.Fields
         public void UpdateControlledObjects()
         {
             var controllers = Objects.OfType<FieldUser>().Shuffle().ToList();
-            var controlled = Objects.OfType<FieldObjectControlled>().ToList();
+            var controlled = Objects.OfType<FieldLifeControlled>().ToList();
 
             ForEachExtension.ForEach(controlled
                     .Where(c => c.Controller == null || !controllers.Contains(c.Controller)),
                 c => c.ChangeController(controllers.FirstOrDefault()));
         }
 
-        public FieldObject GetObject(int id)
+        public FieldObj GetObject(int id)
         {
             return Objects
                 .Where(o => !(o is FieldUser))
@@ -179,7 +179,7 @@ namespace Edelstein.WvsGame.Fields
                 .SingleOrDefault(o => o.ID == id);
         }
 
-        public Task BroadcastPacket(FieldObject source, OutPacket packet)
+        public Task BroadcastPacket(FieldObj source, OutPacket packet)
         {
             return Task.WhenAll(Objects
                 .OfType<FieldUser>()
