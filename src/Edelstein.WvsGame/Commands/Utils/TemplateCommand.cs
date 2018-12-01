@@ -27,7 +27,7 @@ namespace Edelstein.WvsGame.Commands.Utils
                 
                 if (!results.Any())
                     results = stringTemplates.All
-                        .Where(p => p.Value.ToLower().StartsWith(option.Search.ToLower()))
+                        .Where(p => p.Value.ToLower().Contains(option.Search.ToLower()))
                         .ToList();
 
                 if (results.Any())
