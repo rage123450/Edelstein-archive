@@ -163,14 +163,13 @@ namespace Edelstein.WvsGame.Fields
             => GetObjects<T>().FirstOrDefault(o => o.ID == id);
 
         public ICollection<T> GetObjects<T>() where T : FieldObj
-            => GetPool<T>()?.Objects.Cast<T>().ToList();
+            => GetPool<T>()?.Objects.Cast<T>().ToList() ?? new List<T>();
 
         public ICollection<FieldObj> GetObjects()
             => Pools.Values.SelectMany(p => p.Objects).ToList();
 
         public Task BroadcastPacket(FieldObj source, OutPacket packet)
         {
-            if (GetPool<FieldUser>() == null) return Task.CompletedTask;
             return Task.WhenAll(GetObjects<FieldUser>()
                 .Where(c => !c.Equals(source))
                 .Select(c => c.Socket.SendPacket(packet)));
@@ -178,7 +177,6 @@ namespace Edelstein.WvsGame.Fields
 
         public Task BroadcastPacket(OutPacket packet)
         {
-            if (GetPool<FieldUser>() == null) return Task.CompletedTask;
             return Task.WhenAll(GetObjects<FieldUser>()
                 .Select(c => c.Socket.SendPacket(packet)));
         }
