@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using PKG1;
 
 namespace Edelstein.Provider.Fields
@@ -14,8 +15,7 @@ namespace Edelstein.Provider.Fields
         public int ToMap { get; set; }
         public string ToName { get; set; }
 
-        public int X { get; set; }
-        public int Y { get; set; }
+        public Point Position { get; set; }
 
         public static FieldPortalTemplate Parse(WZProperty p)
         {
@@ -27,8 +27,10 @@ namespace Edelstein.Provider.Fields
                 Script = p.ResolveForOrNull<string>("script"),
                 ToMap = p.ResolveFor<int>("tm") ?? int.MinValue,
                 ToName = p.ResolveForOrNull<string>("tn"),
-                X = p.ResolveFor<int>("x") ?? int.MinValue,
-                Y = p.ResolveFor<int>("y") ?? int.MinValue
+                Position = new Point(
+                    p.ResolveFor<int>("x") ?? int.MinValue,
+                    p.ResolveFor<int>("y") ?? int.MinValue
+                )
             };
 
             return res;

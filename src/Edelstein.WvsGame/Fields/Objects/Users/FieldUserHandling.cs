@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using Edelstein.Common.Packets;
 using Edelstein.Common.Packets.Stats;
@@ -147,8 +148,8 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             var movementPath = new MovementPath();
 
             movementPath.Decode(packet);
-            X = movementPath.X;
-            Y = movementPath.Y;
+
+            Position = new Point(movementPath.X, movementPath.Y);
             MoveAction = movementPath.MoveActionLast;
             Foothold = movementPath.FHLast;
 
@@ -486,7 +487,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 {
                     var item = Character.GetInventory(inventoryType).Items
                         .Single(ii => ii.Position == fromSlot);
-                    var drop = new FieldDropItem(item) {X = X, Y = Y};
+                    var drop = new FieldDropItem(item) {Position = this.Position};
 
                     i.Remove(item);
                     Field.Enter(drop, () => drop.GetEnterFieldPacket(0x1, this));
@@ -700,7 +701,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             ModifyStats(s =>
             {
                 if (s.Money < money) return;
-                var drop = new FieldDropMoney(money) {X = X, Y = Y};
+                var drop = new FieldDropMoney(money) {Position = this.Position};
 
                 s.Money -= money;
                 Field.Enter(drop, () => drop.GetEnterFieldPacket(0x1, this));

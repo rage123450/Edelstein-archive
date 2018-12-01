@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 using DotNetty.Buffers;
 
@@ -44,7 +45,14 @@ namespace Edelstein.Network.Packets
                 },
                 {typeof(float), (buffer, value) => buffer.WriteFloatLE((float) value)},
                 {typeof(double), (buffer, value) => buffer.WriteDoubleLE((double) value)},
-                {typeof(DateTime), (buffer, value) => buffer.WriteLongLE(((DateTime) value).ToFileTimeUtc())}
+                {typeof(DateTime), (buffer, value) => buffer.WriteLongLE(((DateTime) value).ToFileTimeUtc())},
+                {
+                    typeof(Point), (buffer, value) =>
+                    {
+                        buffer.WriteShort(((Point) value).X);
+                        buffer.WriteShort(((Point) value).Y);
+                    }
+                }
             };
     }
 }

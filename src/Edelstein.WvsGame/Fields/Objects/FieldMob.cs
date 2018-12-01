@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using Edelstein.Network.Packets;
 using Edelstein.Provider.Mobs;
 using Edelstein.WvsGame.Fields.Movements;
@@ -81,8 +82,8 @@ namespace Edelstein.WvsGame.Fields.Objects
             var movementPath = new MovementPath();
 
             movementPath.Decode(packet);
-            X = movementPath.X;
-            Y = movementPath.Y;
+            
+            Position = new Point(movementPath.X, movementPath.Y);
             MoveAction = movementPath.MoveActionLast;
             Foothold = movementPath.FHLast;
 
@@ -127,8 +128,7 @@ namespace Edelstein.WvsGame.Fields.Objects
                 p.Encode<long>(0); // Temporary Stat
                 p.Encode<long>(0); // Temporary Stat
 
-                p.Encode<short>(X);
-                p.Encode<short>(Y);
+                p.Encode<Point>(Position);
                 p.Encode<byte>(MoveAction);
                 p.Encode<short>(Foothold);
                 p.Encode<short>(Foothold);
@@ -167,8 +167,7 @@ namespace Edelstein.WvsGame.Fields.Objects
                     p.Encode<long>(0); // Temporary Stat
                     p.Encode<long>(0); // Temporary Stat
 
-                    p.Encode<short>(X);
-                    p.Encode<short>(Y);
+                    p.Encode<Point>(Position);
                     p.Encode<byte>(4);
                     p.Encode<short>(Foothold);
                     p.Encode<short>(Foothold);

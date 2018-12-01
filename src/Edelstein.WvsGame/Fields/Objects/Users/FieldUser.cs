@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
@@ -225,8 +226,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 p.Encode<int>(CompletedSetItemID ?? 0);
                 p.Encode<int>(PortableChairID ?? 0);
 
-                p.Encode<short>(X);
-                p.Encode<short>(Y);
+                p.Encode<Point>(Position);
                 p.Encode<byte>(MoveAction);
                 p.Encode<short>(Foothold);
                 p.Encode<byte>(0);

@@ -1,3 +1,4 @@
+using System.Drawing;
 using Edelstein.Network.Packets;
 using Edelstein.Provider.NPC;
 using Edelstein.WvsGame.Fields.Movements;
@@ -46,8 +47,7 @@ namespace Edelstein.WvsGame.Fields.Objects
 
                     movementPath.Decode(packet);
 
-                    X = movementPath.X;
-                    Y = movementPath.Y;
+                    Position = new Point(movementPath.X, movementPath.Y);
                     MoveAction = movementPath.MoveActionLast;
                     Foothold = movementPath.FHLast;
                     movementPath.Encode(p);
@@ -64,8 +64,7 @@ namespace Edelstein.WvsGame.Fields.Objects
                 p.Encode<int>(ID);
                 p.Encode<int>(Template.TemplateID);
 
-                p.Encode<short>(X);
-                p.Encode<short>(Y);
+                p.Encode<Point>(Position);
                 p.Encode<byte>(MoveAction);
                 p.Encode<short>(Foothold);
 

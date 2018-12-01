@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using System.Threading.Tasks;
 using Edelstein.Network.Packets;
 using Edelstein.WvsGame.Packets;
@@ -38,8 +39,7 @@ namespace Edelstein.WvsGame.Fields.Objects
                 p.Encode<int>(_templateID);
                 p.Encode<string>(_hope);
                 p.Encode<string>(_name);
-                p.Encode<short>(X);
-                p.Encode<short>(Y);
+                p.Encode<Point>(Position);
                 return p;
             }
         }

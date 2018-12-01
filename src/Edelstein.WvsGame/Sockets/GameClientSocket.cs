@@ -206,8 +206,8 @@ namespace Edelstein.WvsGame.Sockets
                         .Where(p => p.Type == FieldPortalType.Spawn)
                         .OrderBy(p =>
                         {
-                            var xd = p.X - u.X;
-                            var yd = p.Y - u.Y;
+                            var xd = p.Position.X - u.Position.X;
+                            var yd = p.Position.Y - u.Position.Y;
 
                             return xd * xd + yd * yd;
                         })
@@ -219,7 +219,7 @@ namespace Edelstein.WvsGame.Sockets
                 }
 
                 u.ConversationContext?.TokenSource.Cancel();
-                MoreEnumerable.ForEach(u.TemporaryStatTimers.Values, t => t.Stop());
+                u.TemporaryStatTimers.Values.ForEach(t => t.Stop());
                 u.Field?.Leave(u);
             }
         }

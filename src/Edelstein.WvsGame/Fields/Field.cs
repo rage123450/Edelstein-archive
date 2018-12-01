@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using Edelstein.Network.Packets;
@@ -107,13 +108,12 @@ namespace Edelstein.WvsGame.Fields
 
                     user.ID = user.Character.ID;
                     user.Character.FieldID = ID;
-                    user.X = (short) portal.X;
-                    user.Y = (short) portal.Y;
+                    user.Position = portal.Position;
 
                     if (portal.Type != FieldPortalType.Spawn)
                     {
                         var foothold = Template.Footholds.Values
-                            .Where(f => f.X1 <= portal.X && f.X2 >= portal.X)
+                            .Where(f => f.X1 <= portal.Position.X && f.X2 >= portal.Position.X)
                             .First(f => f.X1 < f.X2);
 
                         user.Foothold = (short) foothold.ID;

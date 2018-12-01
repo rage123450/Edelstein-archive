@@ -1,3 +1,4 @@
+using System.Drawing;
 using PKG1;
 
 namespace Edelstein.Provider.Fields
@@ -8,8 +9,7 @@ namespace Edelstein.Provider.Fields
         public FieldLifeType Type { get; set; }
 
         public byte F { get; set; }
-        public int X { get; set; }
-        public int Y { get; set; }
+        public Point Position { get; set; }
         public int RX0 { get; set; }
         public int RX1 { get; set; }
         public int FH { get; set; }
@@ -23,8 +23,10 @@ namespace Edelstein.Provider.Fields
                     ? FieldLifeType.NPC
                     : FieldLifeType.Monster,
                 F = (byte) (p.ResolveFor<bool>("f") ?? false ? 0 : 1),
-                X = p.ResolveFor<int>("x") ?? int.MinValue,
-                Y = p.ResolveFor<int>("y") ?? int.MinValue,
+                Position = new Point(
+                    p.ResolveFor<int>("x") ?? int.MinValue,
+                    p.ResolveFor<int>("y") ?? int.MinValue
+                ),
                 RX0 = p.ResolveFor<int>("rx0") ?? int.MinValue,
                 RX1 = p.ResolveFor<int>("rx1") ?? int.MinValue,
                 FH = p.ResolveFor<int>("fh") ?? 0

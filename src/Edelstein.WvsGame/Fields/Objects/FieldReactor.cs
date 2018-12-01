@@ -1,3 +1,4 @@
+using System.Drawing;
 using Edelstein.Network.Packets;
 using Edelstein.Provider.Reactors;
 using Edelstein.WvsGame.Fields.Objects.Users;
@@ -65,8 +66,7 @@ namespace Edelstein.WvsGame.Fields.Objects
                 {
                     p.Encode<int>(ID);
                     p.Encode<byte>(_state);
-                    p.Encode<short>(X);
-                    p.Encode<short>(Y);
+                    p.Encode<Point>(Position);
 
                     p.Encode<short>(delay);
                     p.Encode<byte>(properEventIdx);
@@ -84,8 +84,7 @@ namespace Edelstein.WvsGame.Fields.Objects
                 p.Encode<int>(ID);
                 p.Encode<int>(Template.TemplateID);
                 p.Encode<byte>(_state);
-                p.Encode<short>(X);
-                p.Encode<short>(Y);
+                p.Encode<Point>(Position);
                 p.Encode<bool>(Flip);
                 p.Encode<string>("");
                 return p;
@@ -98,8 +97,7 @@ namespace Edelstein.WvsGame.Fields.Objects
             {
                 p.Encode<int>(ID);
                 p.Encode<byte>(_state);
-                p.Encode<short>(X);
-                p.Encode<short>(Y);
+                p.Encode<Point>(Position);
                 return p;
             }
         }

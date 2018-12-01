@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using Edelstein.Provider;
 using Edelstein.Provider.Fields;
@@ -50,8 +51,7 @@ namespace Edelstein.WvsGame.Fields
 
                             field.Enter(new FieldNPC(npcTemplate)
                             {
-                                X = (short) l.X,
-                                Y = (short) l.Y,
+                                Position = l.Position,
                                 MoveAction = l.F,
                                 Foothold = (short) l.FH,
                                 RX0 = l.RX0,
@@ -63,8 +63,7 @@ namespace Edelstein.WvsGame.Fields
 
                             field.Enter(new FieldMob(mobTemplate)
                             {
-                                X = (short) l.X,
-                                Y = (short) l.Y,
+                                Position = l.Position,
                                 MoveAction = 0x4,
                                 Foothold = (short) l.FH
                             });
@@ -78,8 +77,7 @@ namespace Edelstein.WvsGame.Fields
 
                     field.Enter(new FieldReactor(reactorTemplate)
                     {
-                        X = (short) r.X,
-                        Y = (short) r.Y,
+                        Position = r.Position,
                         Flip = r.F
                     });
                 });

@@ -1,3 +1,4 @@
+using System.Drawing;
 using Edelstein.Network.Packets;
 using Edelstein.WvsGame.Fields.Objects.Users;
 using Edelstein.WvsGame.Packets;
@@ -24,8 +25,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Drops
                 p.Encode<int>(Info);
                 p.Encode<int>(0); // dwOwnerID
                 p.Encode<byte>(0x2); // nOwnType
-                p.Encode<short>(X);
-                p.Encode<short>(Y);
+                p.Encode<Point>(Position);
                 p.Encode<int>(source is FieldUser ? 0 : source?.ID ?? 0); // dwSourceID
 
                 if (enterType == 0x0 ||
@@ -33,8 +33,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Drops
                     enterType == 0x3 ||
                     enterType == 0x4)
                 {
-                    p.Encode<short>(source?.X ?? X);
-                    p.Encode<short>(source?.Y ?? Y);
+                    p.Encode<Point>(source?.Position ?? new Point(0, 0));
                     p.Encode<short>(delay);
                 }
 
