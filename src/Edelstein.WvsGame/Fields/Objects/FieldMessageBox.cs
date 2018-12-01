@@ -1,10 +1,12 @@
 using System;
+using System.Threading.Tasks;
 using Edelstein.Network.Packets;
 using Edelstein.WvsGame.Packets;
+using Edelstein.WvsGame.Utils;
 
 namespace Edelstein.WvsGame.Fields.Objects
 {
-    public class FieldMessageBox : FieldObject
+    public class FieldMessageBox : FieldObject, IUpdateable
     {
         private readonly int _templateID;
         private readonly string _hope;
@@ -17,6 +19,15 @@ namespace Edelstein.WvsGame.Fields.Objects
             _hope = hope;
             _name = name;
             _dateExpire = dateExpire;
+        }
+
+        public Task Update(DateTime now)
+        {
+            if (!_dateExpire.HasValue) return Task.CompletedTask;
+            if ((now - _dateExpire.Value).Milliseconds < 0) return Task.CompletedTask;
+
+            Field?.Leave(this);
+            return Task.CompletedTask;
         }
 
         public override OutPacket GetEnterFieldPacket()
