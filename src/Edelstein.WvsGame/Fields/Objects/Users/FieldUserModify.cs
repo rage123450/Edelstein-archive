@@ -118,13 +118,6 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
             if (context.ResetOperations.Count > 0)
             {
-                context.ResetOperations.ForEach(s =>
-                {
-                    if (!TemporaryStatTimers.ContainsKey(s.Type)) return;
-                    TemporaryStatTimers[s.Type].Stop();
-                    TemporaryStatTimers.Remove(s.Type);
-                });
-
                 using (var p = new OutPacket(GameSendOperations.TemporaryStatReset))
                 {
                     TemporaryStat.EncodeMask(p, context.ResetOperations);
@@ -142,26 +135,6 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
             if (context.SetOperations.Count > 0)
             {
-                context.SetOperations
-                    .Where(s => !s.Permanent)
-                    .GroupBy(s => s.DateExpire.Millisecond)
-                    .ForEach(g =>
-                    {
-                        var expire = g.First().DateExpire;
-                        var timer = new Timer((expire - DateTime.Now).TotalMilliseconds)
-                        {
-                            AutoReset = false
-                        };
-
-                        timer.Elapsed += (sender, args) =>
-                        {
-                            ModifyTemporaryStat(ts => { g.ForEach(s => { ts.Reset(s.Type); }); });
-                        };
-                        timer.Start();
-
-                        g.ForEach(s => { TemporaryStatTimers[s.Type] = timer; });
-                    });
-
                 using (var p = new OutPacket(GameSendOperations.TemporaryStatSet))
                 {
                     TemporaryStat.EncodeForLocal(p, context.SetOperations);

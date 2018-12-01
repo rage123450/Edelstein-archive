@@ -190,38 +190,36 @@ namespace Edelstein.WvsGame.Sockets
         {
             var u = FieldUser;
 
-            if (u != null)
+            if (u == null) return;
+            
+            using (var db = _container.GetInstance<DataContext>())
             {
-                using (var db = _container.GetInstance<DataContext>())
-                {
-                    var account = u.Character.Data.Account;
+                var account = u.Character.Data.Account;
 
-                    if (account.State != AccountState.MigratingIn)
-                        account.State = AccountState.LoggedOut;
+                if (account.State != AccountState.MigratingIn)
+                    account.State = AccountState.LoggedOut;
 
-                    var character = u.Character;
+                var character = u.Character;
 
-                    character.FieldPortal = (byte) u.Field.Template.Portals
-                        .Values
-                        .Where(p => p.Type == FieldPortalType.Spawn)
-                        .OrderBy(p =>
-                        {
-                            var xd = p.Position.X - u.Position.X;
-                            var yd = p.Position.Y - u.Position.Y;
+                character.FieldPortal = (byte) u.Field.Template.Portals
+                    .Values
+                    .Where(p => p.Type == FieldPortalType.Spawn)
+                    .OrderBy(p =>
+                    {
+                        var xd = p.Position.X - u.Position.X;
+                        var yd = p.Position.Y - u.Position.Y;
 
-                            return xd * xd + yd * yd;
-                        })
-                        .First()
-                        .ID;
+                        return xd * xd + yd * yd;
+                    })
+                    .First()
+                    .ID;
 
-                    db.Update(character);
-                    db.SaveChanges();
-                }
-
-                u.ConversationContext?.TokenSource.Cancel();
-                u.TemporaryStatTimers.Values.ForEach(t => t.Stop());
-                u.Field?.Leave(u);
+                db.Update(character);
+                db.SaveChanges();
             }
+
+            u.ConversationContext?.TokenSource.Cancel();
+            u.Field?.Leave(u);
         }
     }
 }

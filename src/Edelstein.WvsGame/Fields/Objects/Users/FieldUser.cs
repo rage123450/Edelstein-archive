@@ -75,8 +75,6 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             }
         }
 
-        public IDictionary<TemporaryStatType, Timer> TemporaryStatTimers;
-
         public FieldUser(GameClientSocket socket, Character character)
         {
             Socket = socket;
@@ -87,14 +85,16 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
             SecondaryStat = new SecondaryStat(this);
             TemporaryStat = new TemporaryStat();
             ValidateStat();
-
-            TemporaryStatTimers = new Dictionary<TemporaryStatType, Timer>();
         }
 
         public async Task Update(DateTime now)
         {
             if (!Socket.IsInstantiated) return;
 
+            var expiredStats = TemporaryStat.Entries.Values
+                .Where(s => !s.Permanent)
+                .Where(i => (now - i.DateExpire).Milliseconds >= 0)
+                .ToList();
             var expiredItems = Character.Inventories
                 .SelectMany(i => i.Items)
                 .Where(i => i.DateExpire.HasValue)
@@ -105,6 +105,8 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
                 .Where(s => (now - s.DateExpire.Value).Milliseconds >= 0)
                 .ToList();
 
+            if (expiredStats.Any())
+                await ModifyTemporaryStat(s => expiredStats.ForEach(e => s.Reset(e.Type)));
             if (expiredItems.Any())
                 await ModifyInventory(i => expiredItems.ForEach(e => i.Remove(e)));
             if (expiredSkills.Any())
