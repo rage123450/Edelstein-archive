@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using CommandLine;
 using Edelstein.Common.Packets.Stats;
 using Edelstein.Database.Entities.Types;
+using Edelstein.WvsGame.Fields.Objects;
 using Edelstein.WvsGame.Fields.Objects.Users;
 
 namespace Edelstein.WvsGame.Commands.Impl
@@ -19,6 +20,11 @@ namespace Edelstein.WvsGame.Commands.Impl
 
         public override async Task Execute(FieldUser user, StatCommandOption option)
         {
+            var box = new FieldMessageBox(5080000, "asd", "dsa", DateTime.Now.AddSeconds(10))
+            {
+                Position = user.Position
+            };
+            user.Field.Enter(box);
             if (option.Type.HasFlag(ModifyStatType.Skin) ||
                 option.Type.HasFlag(ModifyStatType.Face) ||
                 option.Type.HasFlag(ModifyStatType.Hair))

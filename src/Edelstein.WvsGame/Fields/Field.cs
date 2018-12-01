@@ -32,6 +32,7 @@ namespace Edelstein.WvsGame.Fields
         {
             await Task.WhenAll(Pools.Values
                 .SelectMany(p => p.Objects)
+                .ToList()
                 .OfType<IUpdateable>()
                 .Select(o => o.Update(now))
             );
