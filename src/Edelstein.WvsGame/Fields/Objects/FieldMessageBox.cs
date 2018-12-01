@@ -9,6 +9,8 @@ namespace Edelstein.WvsGame.Fields.Objects
 {
     public class FieldMessageBox : FieldObj, IUpdateable
     {
+        public override FieldObjType Type => FieldObjType.MessageBox;
+        
         private readonly int _templateID;
         private readonly string _hope;
         private readonly string _name;

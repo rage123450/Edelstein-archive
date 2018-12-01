@@ -5,6 +5,7 @@ namespace Edelstein.WvsGame.Fields
 {
     public abstract class FieldObj
     {
+        public abstract FieldObjType Type { get; }
         public int ID { get; set; }
         public Field Field { get; set; }
 

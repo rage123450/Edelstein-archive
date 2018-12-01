@@ -7,6 +7,8 @@ namespace Edelstein.WvsGame.Fields.Objects.Drops
 {
     public abstract class FieldDrop : FieldObj
     {
+        public override FieldObjType Type => FieldObjType.Drop;
+        
         public abstract bool IsMoney { get; }
         public abstract int Info { get; }
 

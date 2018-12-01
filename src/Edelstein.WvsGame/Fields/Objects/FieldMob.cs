@@ -10,6 +10,7 @@ namespace Edelstein.WvsGame.Fields.Objects
 {
     public class FieldMob : FieldLifeControlled
     {
+        public override FieldObjType Type => FieldObjType.Mob;
         public MobTemplate Template { get; set; }
 
         public int HP { get; set; }

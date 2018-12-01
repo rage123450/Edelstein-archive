@@ -9,7 +9,9 @@ namespace Edelstein.WvsGame.Fields.Objects
 {
     public class FieldReactor : FieldObj
     {
+        public override FieldObjType Type => FieldObjType.Reactor;
         public ReactorTemplate Template { get; set; }
+        
         public bool Flip { get; set; }
         private byte _state;
 

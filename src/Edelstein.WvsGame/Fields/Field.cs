@@ -16,16 +16,16 @@ namespace Edelstein.WvsGame.Fields
 {
     public class Field : IUpdateable
     {
-        public int ID { get; set; }
+        public int ID { get; }
         public FieldTemplate Template { get; }
-        private readonly IDictionary<Type, FieldObjPool> _pools;
-        public Dictionary<Type, FieldObjPool> Pools => _pools.ToDictionary();
+        private readonly IDictionary<FieldObjType, FieldObjPool> _pools;
+        public Dictionary<FieldObjType, FieldObjPool> Pools => _pools.ToDictionary();
 
         public Field(int id, FieldTemplate template)
         {
             ID = id;
             Template = template;
-            _pools = new Dictionary<Type, FieldObjPool>();
+            _pools = new Dictionary<FieldObjType, FieldObjPool>();
         }
 
         public async Task Update(DateTime now)
@@ -91,12 +91,12 @@ namespace Edelstein.WvsGame.Fields
                 obj.Field?.Leave(obj);
                 obj.Field = this;
 
-                var pool = GetPool<T>();
+                var pool = GetPool(obj.Type);
 
                 if (pool == null)
                 {
                     pool = new FieldObjPool();
-                    _pools[typeof(T)] = pool;
+                    _pools[obj.Type] = pool;
                 }
 
                 pool.Enter(obj);
@@ -141,7 +141,7 @@ namespace Edelstein.WvsGame.Fields
                 if (obj is FieldUser user) BroadcastPacket(user, user.GetLeaveFieldPacket());
                 else BroadcastPacket(getLeavePacket?.Invoke() ?? obj.GetLeaveFieldPacket());
 
-                GetPool<T>().Leave(obj);
+                GetPool(obj.Type).Leave(obj);
                 UpdateControlledObjects();
             }
         }
@@ -158,14 +158,14 @@ namespace Edelstein.WvsGame.Fields
                 .ForEach(c => c.ChangeController(controllers.FirstOrDefault()));
         }
 
-        public FieldObjPool GetPool<T>() where T : FieldObj
-            => Pools.GetValueOrDefault(typeof(T));
+        public FieldObjPool GetPool(FieldObjType type)
+            => Pools.GetValueOrDefault(type);
 
         public T GetObject<T>(int id) where T : FieldObj
             => GetObjects<T>().FirstOrDefault(o => o.ID == id);
 
         public ICollection<T> GetObjects<T>() where T : FieldObj
-            => GetPool<T>()?.Objects.Cast<T>().ToList() ?? new List<T>();
+            => GetObjects().OfType<T>().ToList();
 
         public IEnumerable<FieldObj> GetObjects()
             => Pools.Values.SelectMany(p => p.Objects).ToList();

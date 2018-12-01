@@ -9,6 +9,7 @@ namespace Edelstein.WvsGame.Fields.Objects
 {
     public class FieldNPC : FieldLifeControlled
     {
+        public override FieldObjType Type => FieldObjType.NPC;
         public NPCTemplate Template { get; set; }
 
         public int RX0 { get; set; }
