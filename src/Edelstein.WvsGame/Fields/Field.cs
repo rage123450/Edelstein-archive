@@ -165,7 +165,7 @@ namespace Edelstein.WvsGame.Fields
         public ICollection<T> GetObjects<T>() where T : FieldObj
             => GetPool<T>()?.Objects.Cast<T>().ToList() ?? new List<T>();
 
-        public ICollection<FieldObj> GetObjects()
+        public IEnumerable<FieldObj> GetObjects()
             => Pools.Values.SelectMany(p => p.Objects).ToList();
 
         public Task BroadcastPacket(FieldObj source, OutPacket packet)
