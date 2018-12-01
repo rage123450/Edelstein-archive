@@ -49,8 +49,8 @@ namespace Edelstein.Network.Packets
                 {
                     typeof(Point), (buffer, value) =>
                     {
-                        buffer.WriteShort(((Point) value).X);
-                        buffer.WriteShort(((Point) value).Y);
+                        buffer.WriteShortLE(((Point) value).X);
+                        buffer.WriteShortLE(((Point) value).Y);
                     }
                 }
             };
