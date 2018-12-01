@@ -6,7 +6,7 @@ using Edelstein.WvsGame.Utils;
 
 namespace Edelstein.WvsGame.Fields.Objects
 {
-    public class FieldMessageBox : FieldObject, IUpdateable
+    public class FieldMessageBox : FieldObj, IUpdateable
     {
         private readonly int _templateID;
         private readonly string _hope;
