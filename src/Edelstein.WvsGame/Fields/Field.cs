@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using CSharpx;
 using Edelstein.Network.Packets;
 using Edelstein.Provider.Fields;
 using Edelstein.WvsGame.Fields.Objects;
@@ -19,20 +17,20 @@ namespace Edelstein.WvsGame.Fields
     {
         public int ID { get; set; }
         public FieldTemplate Template { get; }
-        private int _runningObjectID = 1;
-        private readonly List<FieldObj> _objects;
-        public IEnumerable<FieldObj> Objects => _objects.AsReadOnly();
+        private readonly IDictionary<Type, FieldObjPool> _pools;
+        public Dictionary<Type, FieldObjPool> Pools => _pools.ToDictionary();
 
         public Field(int id, FieldTemplate template)
         {
             ID = id;
             Template = template;
-            _objects = new List<FieldObj>();
+            _pools = new Dictionary<Type, FieldObjPool>();
         }
 
         public async Task Update(DateTime now)
         {
-            await Task.WhenAll(Objects
+            await Task.WhenAll(Pools.Values
+                .SelectMany(p => p.Objects)
                 .OfType<IUpdateable>()
                 .Select(o => o.Update(now))
             );
@@ -45,26 +43,20 @@ namespace Edelstein.WvsGame.Fields
                 case GameRecvOperations.MobMove:
                 {
                     var objectID = packet.Decode<int>();
-                    var mob = Objects
-                        .OfType<FieldMob>()
-                        .FirstOrDefault(m => m.ID == objectID);
+                    var mob = GetObject<FieldMob>(objectID);
                     return mob?.OnPacket(user, operation, packet) ?? true;
                 }
                 case GameRecvOperations.NpcMove:
                 {
                     var objectID = packet.Decode<int>();
-                    var npc = Objects
-                        .OfType<FieldNPC>()
-                        .FirstOrDefault(n => n.ID == objectID);
+                    var npc = GetObject<FieldNPC>(objectID);
                     return npc?.OnPacket(user, operation, packet) ?? true;
                 }
                 case GameRecvOperations.ReactorHit:
                 case GameRecvOperations.ReactorTouch:
                 {
                     var objectID = packet.Decode<int>();
-                    var reactor = Objects
-                        .OfType<FieldReactor>()
-                        .FirstOrDefault(n => n.ID == objectID);
+                    var reactor = GetObject<FieldReactor>(objectID);
                     return reactor?.OnPacket(user, operation, packet) ?? true;
                 }
                 case GameRecvOperations.DropPickUpRequest:
@@ -85,20 +77,28 @@ namespace Edelstein.WvsGame.Fields
             packet.Decode<short>();
             var objectID = packet.Decode<int>();
             packet.Decode<int>();
-            var drop = Objects
-                .OfType<FieldDrop>()
-                .FirstOrDefault(n => n.ID == objectID);
+            var drop = GetObject<FieldDrop>(objectID);
 
             drop?.PickUp(user);
             Leave(drop, () => drop?.GetLeaveFieldPacket(0x2, user));
         }
 
-        public void Enter(FieldObj obj, Func<OutPacket> getEnterPacket = null)
+        public void Enter<T>(T obj, Func<OutPacket> getEnterPacket = null) where T : FieldObj
         {
             lock (this)
             {
                 obj.Field?.Leave(obj);
                 obj.Field = this;
+
+                var pool = GetPool<T>();
+
+                if (pool == null)
+                {
+                    pool = new FieldObjPool();
+                    _pools[typeof(T)] = pool;
+                }
+
+                pool.Enter(obj);
 
                 if (obj is FieldUser user)
                 {
@@ -124,73 +124,62 @@ namespace Edelstein.WvsGame.Fields
 
                     if (!user.Socket.IsInstantiated) user.Socket.IsInstantiated = true;
                     user.ResetForcedStats();
-
-                    ForEachExtension.ForEach(_objects
-                        .Where(o => !o.Equals(obj)), o => user.SendPacket(o.GetEnterFieldPacket()));
+                    GetObjects()
+                        .Where(o => o != user)
+                        .ForEach(o => user.SendPacket(o.GetEnterFieldPacket()));
                 }
-                else
-                {
-                    Interlocked.Increment(ref _runningObjectID);
-                    if (_runningObjectID == int.MinValue)
-                        Interlocked.Exchange(ref _runningObjectID, 1);
+                else BroadcastPacket(getEnterPacket?.Invoke() ?? obj.GetEnterFieldPacket());
 
-                    obj.ID = _runningObjectID;
-                    BroadcastPacket(getEnterPacket?.Invoke() ?? obj.GetEnterFieldPacket());
-                }
-
-                _objects.Add(obj);
                 UpdateControlledObjects();
             }
         }
 
-        public void Leave(FieldObj obj, Func<OutPacket> getLeavePacket = null)
+        public void Leave<T>(T obj, Func<OutPacket> getLeavePacket = null) where T : FieldObj
         {
             lock (this)
             {
                 if (obj is FieldUser user) BroadcastPacket(user, user.GetLeaveFieldPacket());
                 else BroadcastPacket(getLeavePacket?.Invoke() ?? obj.GetLeaveFieldPacket());
 
-                _objects.Remove(obj);
+                GetPool<T>().Leave(obj);
                 UpdateControlledObjects();
             }
         }
 
         public void UpdateControlledObjects()
         {
-            var controllers = Objects.OfType<FieldUser>().Shuffle().ToList();
-            var controlled = Objects.OfType<FieldLifeControlled>().ToList();
+            var controllers = GetObjects().OfType<FieldUser>().Shuffle().ToList();
+            var controlled = GetObjects().OfType<FieldLifeControlled>().ToList();
 
             ForEachExtension.ForEach(controlled
                     .Where(c => c.Controller == null || !controllers.Contains(c.Controller)),
                 c => c.ChangeController(controllers.FirstOrDefault()));
         }
 
-        public FieldObj GetObject(int id)
-        {
-            return Objects
-                .Where(o => !(o is FieldUser))
-                .SingleOrDefault(o => o.ID == id);
-        }
+        public FieldObjPool GetPool<T>() where T : FieldObj
+            => Pools.GetValueOrDefault(typeof(T));
 
-        public FieldUser GetUser(int id)
-        {
-            return Objects
-                .OfType<FieldUser>()
-                .SingleOrDefault(o => o.ID == id);
-        }
+        public T GetObject<T>(int id) where T : FieldObj
+            => GetObjects<T>().FirstOrDefault(o => o.ID == id);
+
+        public ICollection<T> GetObjects<T>() where T : FieldObj
+            => GetPool<T>()?.Objects.Cast<T>().ToList();
+
+        public ICollection<FieldObj> GetObjects()
+            => Pools.Values.SelectMany(p => p.Objects).ToList();
 
         public Task BroadcastPacket(FieldObj source, OutPacket packet)
         {
-            return Task.WhenAll(Objects
-                .OfType<FieldUser>()
+            if (GetPool<FieldUser>() == null) return Task.CompletedTask;
+            return Task.WhenAll(GetObjects<FieldUser>()
                 .Where(c => !c.Equals(source))
                 .Select(c => c.Socket.SendPacket(packet)));
         }
 
         public Task BroadcastPacket(OutPacket packet)
         {
-            return Task.WhenAll(Objects
-                .OfType<FieldUser>()
+            if (GetPool<FieldUser>() == null) return Task.CompletedTask;
+            return Task.WhenAll(GetObjects<FieldUser>()
                 .Select(c => c.Socket.SendPacket(packet)));
         }
     }

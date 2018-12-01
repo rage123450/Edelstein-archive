@@ -264,11 +264,10 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
 
             info.Entries.ForEach(e =>
             {
-                var fieldObject = Field.GetObject(e.MobID);
+                var mob = Field.GetObject<FieldMob>(e.MobID);
                 var totalDamage = e.Damage.Sum();
 
-                if (fieldObject is FieldMob mob)
-                    mob.Damage(this, Math.Min(mob.HP, totalDamage));
+                mob?.Damage(this, Math.Min(mob.HP, totalDamage));
             });
         }
 
@@ -369,8 +368,9 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
         private void OnUserSelectNPC(InPacket packet)
         {
             var objectID = packet.Decode<int>();
+            var npc = Field.GetObject<FieldNPC>(objectID);
 
-            if (!(Field.GetObject(objectID) is FieldNPC npc)) return;
+            if (npc == null) return;
 
             var template = npc.Template;
 
@@ -710,7 +710,7 @@ namespace Edelstein.WvsGame.Fields.Objects.Users
         private void OnUserCharacterInfoRequest(InPacket packet)
         {
             packet.Decode<int>();
-            var user = Field.GetUser(packet.Decode<int>());
+            var user = Field.GetObject<FieldUser>(packet.Decode<int>());
             if (user == null) return;
 
             using (var p = new OutPacket(GameSendOperations.CharacterInfo))

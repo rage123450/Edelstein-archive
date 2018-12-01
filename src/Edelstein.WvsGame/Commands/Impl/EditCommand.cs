@@ -13,8 +13,8 @@ namespace Edelstein.WvsGame.Commands.Impl
 
         public override async Task Execute(FieldUser user, EditCommandOption option)
         {
-            var target = user.Field.Objects
-                             .OfType<FieldUser>()
+            var target = user.Field
+                             .GetObjects<FieldUser>()
                              .FirstOrDefault(u => u.Character.Name.ToLower().Equals(option.Target))
                          ?? user;
             ItemSlot item = null;
