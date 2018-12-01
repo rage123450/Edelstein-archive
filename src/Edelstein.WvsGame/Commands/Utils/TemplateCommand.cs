@@ -24,6 +24,11 @@ namespace Edelstein.WvsGame.Commands.Utils
                 var results = stringTemplates.All
                     .Where(p => glob.IsMatch(p.Value))
                     .ToList();
+                
+                if (!results.Any())
+                    results = stringTemplates.All
+                        .Where(p => p.Value.ToLower().StartsWith(option.Search.ToLower()))
+                        .ToList();
 
                 if (results.Any())
                 {
