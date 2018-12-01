@@ -151,9 +151,11 @@ namespace Edelstein.WvsGame.Fields
             var controllers = GetObjects().OfType<FieldUser>().Shuffle().ToList();
             var controlled = GetObjects().OfType<FieldLifeControlled>().ToList();
 
-            ForEachExtension.ForEach(controlled
-                    .Where(c => c.Controller == null || !controllers.Contains(c.Controller)),
-                c => c.ChangeController(controllers.FirstOrDefault()));
+            controlled
+                .Where(
+                    c => c.Controller == null ||
+                         !controllers.Contains(c.Controller))
+                .ForEach(c => c.ChangeController(controllers.FirstOrDefault()));
         }
 
         public FieldObjPool GetPool<T>() where T : FieldObj
